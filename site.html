@@ -36,7 +36,7 @@ a { text-underline-offset: 3px; }
 @media (max-width: 920px) { .abertura .dentro { grid-template-columns: 1fr; align-items: start; } }
 .onde { display: flex; align-items: center; gap: 7px; color: var(--sobre-preto); font-weight: 500; }
 .onde svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.7; }
-h1.nome { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; font-size: clamp(54px, 10.5vw, 148px); line-height: .86; letter-spacing: -.035em; margin: 14px 0 22px; overflow-wrap: anywhere; text-wrap: balance; }
+h1.nome { color: var(--titulo, inherit); font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; font-size: clamp(54px, 10.5vw, 148px); line-height: .86; letter-spacing: -.035em; margin: 14px 0 22px; overflow-wrap: anywhere; text-wrap: balance; }
 .sobre { max-width: 34em; color: var(--sobre-preto); font-size: 17px; }
 .fatos { display: flex; flex-wrap: wrap; margin: 28px 0 0; padding: 0; border-top: 1px solid var(--fio); }
 .fatos div { padding: 14px 26px 0 0; margin-right: 26px; border-right: 1px solid var(--fio); }
@@ -44,11 +44,11 @@ h1.nome { font-family: var(--display); font-weight: 750; font-variation-settings
 .fatos dt { color: var(--sobre-preto); font-size: 13px; }
 .fatos dd { margin: 2px 0 0; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 24px; font-weight: 650; letter-spacing: -.01em; }
 .contato { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
-.btn--claro { background: transparent; color: var(--azul); border-color: rgba(14, 58, 71, .4); }
+.btn--claro { background: transparent; color: var(--azul); border-color: var(--claro-borda, rgba(14, 58, 71, .4)); }
 .btn--claro:hover { border-color: var(--azul); }
 
 /* o bilhete */
-.bilhete { position: relative; background: var(--azul); color: var(--nevoa); box-shadow: 0 30px 50px -30px rgba(19, 41, 75, .7); border-radius: 22px; --furo: 15px; }
+.bilhete { position: relative; background: var(--azul); color: var(--nevoa); box-shadow: 0 30px 50px -30px var(--sombra-bilhete, rgba(19, 41, 75, .7)); border-radius: 22px; --furo: 15px; }
 .bilhete::before, .bilhete::after { content: ""; position: absolute; top: var(--corte); width: calc(var(--furo) * 2); height: calc(var(--furo) * 2); border-radius: 50%; background: var(--c60); transform: translateY(-50%); }
 .bilhete::before { left: calc(var(--furo) * -1); }
 .bilhete::after { right: calc(var(--furo) * -1); }
@@ -72,17 +72,19 @@ h1.nome { font-family: var(--display); font-weight: 750; font-variation-settings
 /* quartos */
 .secao { padding: clamp(44px, 6vw, 80px) 0; border-top: 1px solid var(--fio); }
 .secao-cab { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
-h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px, 5vw, 56px); line-height: .95; font-weight: 750; letter-spacing: -.03em; }
+h2.titulo { font-family: var(--display); }
+.secao h2.titulo { color: var(--titulo, inherit); }
+h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px, 5vw, 56px); line-height: .95; font-weight: 750; letter-spacing: -.03em; }
 .secao-cab p { color: var(--sobre-preto); max-width: 32em; }
 .grade-q { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
 .q { background: var(--azul); color: var(--nevoa); border-radius: 18px; padding: 8px; display: flex; flex-direction: column; border: 2px solid transparent; }
-.q.escolhido { border-color: var(--laranja); box-shadow: 0 0 0 4px rgba(255, 122, 26, .45); }
+.q.escolhido { border-color: var(--escolhido, var(--laranja)); box-shadow: 0 0 0 4px var(--anel, rgba(255, 122, 26, .45)); }
 .q.fora { opacity: .6; }
 .q .f { aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: var(--c30-clara); position: relative; display: grid; place-items: center; }
 .q .f img { width: 100%; height: 100%; object-fit: cover; }
-.q .f .vazia { font-family: var(--display); font-variation-settings: "wdth" 78; font-weight: 750; font-size: 54px; color: var(--dourado); letter-spacing: -.03em; opacity: .85; padding: 0 12px; text-align: center; line-height: .9; overflow-wrap: anywhere; }
-.q .f .situ { position: absolute; left: 10px; top: 10px; height: 26px; padding: 0 10px; border-radius: 7px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; background: rgba(5, 25, 31, .6); color: var(--nevoa); }
-.q .f .situ.livre { background: var(--laranja); color: var(--marinho); }
+.q .f .vazia { font-family: var(--display); font-variation-settings: "wdth" 78; font-weight: 750; font-size: 54px; color: var(--vazia, var(--dourado)); letter-spacing: -.03em; opacity: .85; padding: 0 12px; text-align: center; line-height: .9; overflow-wrap: anywhere; }
+.q .f .situ { position: absolute; left: 10px; top: 10px; height: 26px; padding: 0 10px; border-radius: 7px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; background: var(--situ-fundo, rgba(5, 25, 31, .6)); color: var(--nevoa); }
+.q .f .situ.livre { background: var(--livre-fundo, var(--laranja)); color: var(--livre-tinta, var(--marinho)); }
 .q .c { padding: 14px 8px 8px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
 .q h3 { font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 23px; font-weight: 700; letter-spacing: -.015em; }
 .q .tipo { color: var(--c30-suave); font-size: 14px; }
@@ -105,7 +107,7 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
 .passos { list-style: none; margin: 0 0 22px; padding: 0; display: flex; gap: 8px; flex-wrap: wrap; counter-reset: p; }
 .passos li { counter-increment: p; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 14px 0 6px; border-radius: 999px; background: rgba(255, 255, 255, .1); font-weight: 600; font-size: 13.5px; color: var(--c30-suave); }
 .passos li::before { content: counter(p); width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .08); font-size: 12px; font-weight: 700; color: var(--nevoa); }
-.passos li.feito { background: rgba(255, 122, 26, .18); color: var(--dourado); }
+.passos li.feito { background: var(--feito-fundo, rgba(255, 122, 26, .18)); color: var(--dourado); }
 .passos li.feito::before { background: var(--dourado); color: var(--azul); }
 .passos li.agora { background: var(--nevoa); color: var(--azul); }
 .passos li.agora::before { background: var(--azul); color: var(--nevoa); }
@@ -182,26 +184,51 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
 .carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
 .ficha .erro, .bilhete .erro { margin: 0; }
 
+/* ---------- tema por pousada ----------
+   Pousada Guará: cores do logo (placa de madeira escura, letras brancas, guará vermelho).
+   Branco no fundo e vermelho nas superfícies fortes, ~45% cada; marrom e preto (~10%) no texto e nos detalhes. */
+:root[data-tema="guara"] {
+  --g-vermelho: #b5222d; --g-vermelho-esc: #8e1922; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #f8ecea;
+  --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
+  --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
+  --c10: #ffffff; --c10-esc: #f6e1de; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
+  --c30-suave: rgba(255, 255, 255, .86); --c30-clara: var(--g-fundo-foto);
+  --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2);
+  --titulo: var(--g-vermelho); --risco: var(--g-marrom); --barra: #ffffff; --vazia: var(--g-vermelho);
+  --claro-borda: rgba(181, 34, 45, .45); --sombra-bilhete: rgba(142, 25, 34, .75); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(142, 25, 34, .6);
+  --escolhido: #ffffff; --anel: var(--g-preto); --pulso: rgba(29, 21, 18, .8);
+  --situ-fundo: rgba(29, 21, 18, .6); --livre-fundo: var(--g-preto); --livre-tinta: #ffffff; --feito-fundo: rgba(255, 255, 255, .2);
+  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(181, 34, 45, .55);
+  --confete-1: var(--g-preto); --confete-3: var(--g-marrom);
+}
+[data-tema="guara"] :focus-visible { outline-color: var(--g-preto); }
+[data-tema="guara"] .btn--claro:hover { border-color: var(--g-vermelho); }
+[data-tema="guara"] .btn--cheio { box-shadow: 0 6px 16px -10px rgba(29, 21, 18, .55); }
+[data-tema="guara"] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
+[data-tema="guara"] .rodape a { color: rgba(255, 255, 255, .78); }
+
 /* ---------- movimento ----------
    Tudo tem tema de mar: o nome sobe da linha d'água letra por letra, um traço de onda laranja se desenha embaixo,
    os números contam, o bilhete desliza para a mão e o barquinho navega entre as datas. As ondas do fundo correm sem parar.
    Os estados escondidos só existem com a classe .anima, que o script só põe quando o sistema não pede menos movimento. */
 :root { --e-sai: cubic-bezier(.16, 1, .3, 1); --e-mola: cubic-bezier(.34, 1.56, .64, 1); }
-.topo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--laranja); transform-origin: left; transform: scaleX(var(--rol, 0)); }
+.topo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--barra, var(--laranja)); transform-origin: left; transform: scaleX(var(--rol, 0)); }
 .topo { transition: box-shadow .4s; }
-.topo.rolou { box-shadow: 0 10px 30px -18px rgba(19, 41, 75, .8); }
+.topo.rolou { box-shadow: 0 10px 30px -18px var(--sombra-topo, rgba(19, 41, 75, .8)); }
 .abertura { position: relative; overflow: hidden; padding-bottom: clamp(70px, 10vw, 130px); }
 .abertura .dentro { position: relative; z-index: 1; }
 .mar { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(60px, 9vw, 120px); overflow: hidden; pointer-events: none; z-index: 0; }
 .mar svg, .ondas-topo svg { position: absolute; left: 0; top: 0; width: 200%; height: 100%; }
-.mar path { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.mar path { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; stroke: var(--onda-1, rgba(19, 41, 75, .14)); }
+.mar svg:nth-child(2) path { stroke: var(--onda-2, rgba(19, 41, 75, .09)); }
+.mar svg:nth-child(3) path { stroke: var(--onda-3, rgba(255, 122, 26, .5)); }
 .ficha-faixa { position: relative; }
 .ondas-topo { position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: clamp(26px, 4vw, 46px); overflow: hidden; pointer-events: none; }
 .ondas-topo path { fill: var(--azul); }
 .ondas-topo svg + svg path { opacity: .3; }
 h1.nome .pal { display: inline-block; }
 h1.nome .le { display: inline-block; transform-origin: 0 100%; }
-.risco { display: block; width: min(340px, 62%); height: auto; margin: -8px 0 20px; color: var(--laranja); overflow: visible; }
+.risco { display: block; width: min(340px, 62%); height: auto; margin: -8px 0 20px; color: var(--risco, var(--laranja)); overflow: visible; }
 .risco path { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; }
 .fatos { position: relative; }
 .fatos dd { font-variant-numeric: tabular-nums; }
@@ -243,7 +270,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   @keyframes m-corte { from { clip-path: inset(0 100% 0 0); } }
   @keyframes m-zoom { from { scale: 1.25; } }
   @keyframes m-cartao { from { opacity: 0; translate: 0 56px; rotate: 2.5deg; scale: .96; } }
-  @keyframes m-pulso { 0% { box-shadow: 0 0 0 4px rgba(255, 122, 26, .9); } 100% { box-shadow: 0 0 0 26px rgba(255, 122, 26, 0); } }
+  @keyframes m-pulso { 0% { box-shadow: 0 0 0 4px var(--pulso, rgba(255, 122, 26, .9)); } 100% { box-shadow: 0 0 0 26px transparent; } }
   @keyframes m-carimbo { 0% { opacity: 0; scale: 2.8; rotate: -16deg; filter: blur(6px); } 55% { opacity: 1; scale: .92; rotate: -3deg; filter: blur(0); } 75% { scale: 1.04; } 100% { scale: 1; rotate: -3deg; } }
   @keyframes m-confete { 0% { opacity: 1; translate: 0 0; rotate: 0deg; } 55% { opacity: 1; translate: var(--x) var(--y); } 100% { opacity: 0; translate: calc(var(--x) * 1.25) calc(var(--y) + 120px); rotate: var(--r); } }
   @keyframes m-brilho { to { translate: 260% 0; } }
@@ -306,8 +333,8 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   .btn:active { scale: .97; translate: 0 0; }
   .mosaico .tile:hover img { scale: 1.05; }
   @media (hover: hover) and (pointer: fine) {
-    .q:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 30px 44px -26px rgba(19, 41, 75, .65); }
-    .q.escolhido:hover { box-shadow: 0 0 0 4px rgba(255, 122, 26, .45), 0 30px 44px -26px rgba(19, 41, 75, .65); }
+    .q:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 30px 44px -26px var(--sombra-q, rgba(19, 41, 75, .65)); }
+    .q.escolhido:hover { box-shadow: 0 0 0 4px var(--anel, rgba(255, 122, 26, .45)), 0 30px 44px -26px var(--sombra-q, rgba(19, 41, 75, .65)); }
     .q:hover::after { opacity: 1; }
     .q:hover .f img { scale: 1.06; }
   }
@@ -346,6 +373,9 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   document.title = `${P.nome}${P.cidade ? ", " + P.cidade : ""}`;
   document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
 
+  // tema de cores próprio de cada pousada (as outras ficam com o marinho e laranja padrão)
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#b5222d" } };
+  if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
   const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
 
   /* ---------- peças do movimento ---------- */
@@ -357,7 +387,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   // onda que se repete a cada "per" unidades, num desenho de 2400 de largura (o dobro da tela), para correr em loop sem emenda
   const onda = (y, amp, per) => { let d = `M0 ${y}`; for (let x = 0; x < 2400; x += per) d += ` Q${x + per / 4} ${y - amp} ${x + per / 2} ${y} T${x + per} ${y}`; return d; };
   const svgOnda = (h, d, extra = "") => `<svg viewBox="0 0 2400 ${h}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="${d}" ${extra}/></svg>`;
-  const MAR = `<div class="mar" aria-hidden="true">${svgOnda(120, onda(40, 14, 400), 'stroke="rgba(19,41,75,.14)"')}${svgOnda(120, onda(64, 10, 300), 'stroke="rgba(19,41,75,.09)"')}${svgOnda(120, onda(86, 8, 600), 'stroke="rgba(255,122,26,.5)"')}</div>`;
+  const MAR = `<div class="mar" aria-hidden="true">${svgOnda(120, onda(40, 14, 400))}${svgOnda(120, onda(64, 10, 300))}${svgOnda(120, onda(86, 8, 600))}</div>`;
   const ONDAS_TOPO = `<div class="ondas-topo" aria-hidden="true">${svgOnda(50, onda(24, 12, 600) + " L2400 50 L0 50 Z")}${svgOnda(50, onda(18, 10, 400) + " L2400 50 L0 50 Z")}</div>`;
   const RISCO = `<svg class="risco" viewBox="0 0 340 16" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 10 Q 23 2 44 9 T 86 9 T 128 9 T 170 9 T 212 9 T 254 9 T 296 9 T 338 8"/></svg>`;
   const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
@@ -528,7 +558,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     if (S.enviado) {
       const r = S.enviado, q = Q.find(x => x.id === r.quarto);
       const msg = `Olá! Mandei o pedido ${r.cod} pelo site: ${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}, ${plural(r.pessoas, "pessoa", "pessoas")}. Nome: ${r.nome}.`;
-      const cores = ["var(--laranja)", "#ffffff", "#ffb27a", "var(--c30-clara)"];
+      const cores = ["var(--confete-1, var(--laranja))", "#ffffff", "var(--confete-3, #ffb27a)", "var(--c30-clara)"];
       const confete = MOV ? `<span class="confete" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 140;
         return `<i style="--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d * .7 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;--t:${(Math.random() * .12).toFixed(2)}s;background:${cores[i % 4]}"></i>`; }).join("")}</span>` : "";
       box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}${confete}</span>
