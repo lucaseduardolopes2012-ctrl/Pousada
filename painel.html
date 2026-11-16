@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Painel da pousada</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#0c3452">
+<meta name="theme-color" content="#13294b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="app.css">
 <style>
 /* Estrutura da referência: menu lateral cinza-claro com a marca no topo; área principal branca, com borda fina e
@@ -335,7 +335,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   /* ---------- utilidades ---------- */
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
   const iniciais = s => String(s || "?").replace(/[^\p{L}\p{N}\s]/gu, "").trim().split(/\s+/).slice(0, 2).map(x => x[0] || "").join("").toUpperCase() || "?";
-  const AVS = [["#c7e0e6", "#0c3452"], ["#f7e1ec", "#8a0d4d"]];
+  const AVS = [["#e4e9f1", "#13294b"], ["#ffe9d8", "#b84d05"]];
   const av = (nome, cls = "av") => { let h = 0; for (const c of String(nome)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [b, t] = AVS[h % AVS.length]; return `<span class="${cls}" style="--av-bg:${b};--av-t:${t}">${esc(iniciais(nome))}</span>`; };
   const minutosBR = () => { const p = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()); return Number(p.find(x => x.type === "hour").value) % 24 * 60 + Number(p.find(x => x.type === "minute").value); };
   const agoraTxt = () => { const m = minutosBR(); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
