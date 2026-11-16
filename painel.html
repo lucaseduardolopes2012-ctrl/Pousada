@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quartos · Painel da pousada</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#e9efe6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+/* Layout: menu lateral fixo + barra de busca + conteúdo em cartões (como a referência). No celular o menu vira barra inferior. */
+.casca { display: grid; grid-template-columns: 240px minmax(0, 1fr); min-height: 100vh; }
+.lateral { position: sticky; top: 0; height: 100vh; padding: 20px 14px; display: flex; flex-direction: column; gap: 4px; background: var(--cartao); border-right: 1px solid var(--borda); }
+.marca { display: flex; align-items: center; gap: 10px; padding: 4px 8px 20px; }
+.marca i { width: 34px; height: 34px; border-radius: 9px; background: var(--salvia); color: var(--salvia-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 15px; flex: none; }
+.marca b { font-size: 15px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.nav-item { display: flex; align-items: center; gap: 11px; height: 42px; padding: 0 12px; border-radius: 10px; border: 0; background: none; color: var(--suave); font-weight: 600; font-size: 14.5px; text-decoration: none; cursor: pointer; width: 100%; text-align: left; }
+.nav-item svg { width: 19px; height: 19px; flex: none; }
+.nav-item:hover { background: var(--fundo); color: var(--tinta); }
+.nav-item[aria-current="page"] { background: var(--salvia); color: var(--salvia-tinta); }
+.nav-item .n { margin-left: auto; min-width: 22px; height: 22px; border-radius: 6px; background: var(--atraso); color: #fff; font-size: 12px; display: grid; place-items: center; padding: 0 6px; }
+.lateral .grupo { margin-top: 18px; padding: 0 12px 6px; font-size: 12.5px; color: var(--fraco); font-weight: 600; }
+.lateral .fim { margin-top: auto; }
+.principal { min-width: 0; padding: 0 28px 60px; }
+.barra { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; display: flex; align-items: center; gap: 12px; padding: 16px 0; background: var(--fundo); }
+.busca { position: relative; flex: 1; max-width: 420px; }
+.busca svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 17px; height: 17px; color: var(--fraco); }
+.busca #busca { padding-left: 38px; background: var(--cartao); }
+.barra .data { margin-left: auto; color: var(--suave); font-weight: 600; white-space: nowrap; }
+.inferior { display: none; }
+@media (max-width: 899px) {
+  .casca { grid-template-columns: 1fr; }
+  .lateral { display: none; }
+  .principal { padding: 0 16px 100px; }
+  .barra .data { display: none; }
+  .inferior { display: grid; grid-template-columns: repeat(4, 1fr); position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; background: var(--cartao); border-top: 1px solid var(--borda); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); }
+  .inferior .nav-item { flex-direction: column; height: 54px; gap: 3px; justify-content: center; font-size: 12px; padding: 0; text-align: center; }
+  .inferior .nav-item[aria-current="page"] { background: var(--salvia-clara); color: var(--salvia-esc); }
+}
+
+/* cabeçalho de página */
+.cab { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 8px 0 20px; }
+.cab h1 { font-size: 28px; }
+.cab p { color: var(--suave); margin-top: 4px; }
+.trilha { color: var(--suave); font-size: 14px; margin-bottom: 4px; }
+.trilha a { color: var(--suave); text-decoration: none; }
+.trilha a:hover { color: var(--tinta); }
+
+/* números do dia */
+.numeros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+@media (max-width: 1080px) { .numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.num { padding: 16px; display: grid; gap: 12px; }
+.num .topo { display: flex; align-items: center; gap: 10px; color: var(--suave); font-weight: 600; font-size: 13.5px; }
+.num .topo i { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--salvia); color: var(--salvia-tinta); }
+.num .topo i svg { width: 16px; height: 16px; }
+.num b { font-size: 30px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.num small { color: var(--fraco); font-size: 12.5px; border-top: 1px solid var(--linha); padding-top: 10px; }
+.num.alerta { border-color: var(--atraso); }
+.num.alerta .topo i { background: var(--atraso); color: #fff; }
+.num.alerta b { color: var(--atraso); }
+
+.duas { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 14px; margin-bottom: 18px; }
+@media (max-width: 1080px) { .duas { grid-template-columns: 1fr; } }
+.bloco { padding: 18px; min-width: 0; }
+.bloco-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.bloco-cab h2 { font-size: 16px; }
+.bloco-cab a, .bloco-cab button.link { color: var(--salvia-esc); font-weight: 700; font-size: 13.5px; text-decoration: none; background: none; border: 0; cursor: pointer; }
+
+/* gráfico */
+.grafico { position: relative; }
+.grafico svg { display: block; width: 100%; height: 230px; overflow: visible; }
+.grafico .grade line { stroke: var(--linha); stroke-width: 1; }
+.grafico .eixo text { fill: var(--suave); font-size: 11.5px; font-family: var(--f); }
+.grafico .eixo text.hj { fill: var(--tinta); font-weight: 700; }
+.grafico rect.barra-g { fill: var(--salvia); opacity: .78; }
+.grafico rect.barra-g.hj { opacity: 1; fill: var(--salvia-esc); }
+.grafico rect.alvo { fill: transparent; cursor: pointer; }
+.grafico rect.alvo:focus { outline: none; }
+.grafico rect.alvo:focus + rect, .grafico g.col:hover rect.barra-g { opacity: 1; }
+.dica { position: absolute; pointer-events: none; background: var(--tinta); color: var(--fundo); font-size: 12.5px; font-weight: 600; padding: 7px 10px; border-radius: 8px; white-space: nowrap; transform: translate(-50%, -100%); margin-top: -8px; }
+details.tabela-alt { margin-top: 8px; font-size: 13.5px; color: var(--suave); }
+details.tabela-alt table { margin-top: 8px; border-collapse: collapse; }
+details.tabela-alt td, details.tabela-alt th { padding: 4px 12px 4px 0; text-align: left; font-variant-numeric: tabular-nums; }
+
+/* listas de saída */
+.saidas { display: grid; gap: 10px; }
+.saida { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; background: var(--fundo); }
+.av { width: 40px; height: 40px; border-radius: 50%; background: var(--salvia-clara); color: var(--salvia-esc); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+.saida b { display: block; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.saida span { color: var(--suave); font-size: 13px; }
+.saida span.tarde { color: var(--atraso); font-weight: 700; }
+@media (max-width: 560px) { .saida { grid-template-columns: 40px minmax(0, 1fr); } .saida .btn { grid-column: 1 / -1; } }
+.vazio { padding: 22px; text-align: center; color: var(--suave); border: 1px dashed var(--borda); border-radius: 12px; }
+
+/* tabela de estadias */
+.tabela-caixa { overflow-x: auto; }
+table.tab { width: 100%; border-collapse: collapse; min-width: 720px; }
+.tab th { text-align: left; font-size: 12.5px; color: var(--suave); font-weight: 600; padding: 10px 12px; border-bottom: 1px solid var(--borda); white-space: nowrap; }
+.tab td { white-space: nowrap; padding: 12px; border-bottom: 1px solid var(--linha); font-size: 14px; vertical-align: middle; font-variant-numeric: tabular-nums; }
+.tab tr:last-child td { border-bottom: 0; }
+.tab .pessoa { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.tab .pessoa .av { width: 32px; height: 32px; font-size: 12.5px; }
+.tab .acoes { display: flex; gap: 6px; justify-content: flex-end; }
+.icone { width: 34px; height: 34px; display: inline-grid; place-items: center; border-radius: 8px; border: 1px solid var(--borda); background: var(--cartao); color: var(--suave); cursor: pointer; }
+.icone:hover { color: var(--tinta); border-color: var(--salvia); }
+.icone svg { width: 16px; height: 16px; }
+
+/* filtros */
+.filtros { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.filtro { height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--borda); background: var(--cartao); font-weight: 600; font-size: 13.5px; color: var(--suave); cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+.filtro b { font-weight: 700; color: var(--tinta); font-variant-numeric: tabular-nums; }
+.filtro[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: var(--fundo); }
+.filtro[aria-pressed="true"] b { color: var(--fundo); }
+
+/* grade de quartos */
+.quartos { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
+.quarto { overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.quarto .foto { position: relative; aspect-ratio: 16 / 10; background: var(--salvia-clara); overflow: hidden; }
+.quarto .foto img { width: 100%; height: 100%; object-fit: cover; }
+.quarto .foto .sem { position: absolute; inset: 0; display: grid; place-items: center; font-size: 46px; font-weight: 800; color: var(--salvia); letter-spacing: -.03em; opacity: .55; }
+.quarto .foto .etiqueta { position: absolute; left: 12px; top: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .12); }
+.quarto .foto .editar { position: absolute; right: 12px; top: 12px; height: 28px; padding: 0 10px; border-radius: 999px; border: 0; background: rgba(255, 255, 255, .92); color: #1e2a1c; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+.quarto .corpo { padding: 14px 16px 16px; display: grid; gap: 10px; align-content: start; }
+.quarto h3 { font-size: 17px; }
+.quarto .tipo { color: var(--suave); font-size: 13px; }
+.quarto .hospede { font-size: 14px; }
+.quarto .hospede b { font-weight: 700; }
+.quarto .rodape { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+.quarto .preco { font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; }
+.quarto .preco small { color: var(--suave); font-weight: 500; font-size: 12.5px; }
+
+/* a barra da estadia: quanto já passou e quanto falta */
+.estadia { display: grid; gap: 6px; }
+.estadia .trilho { height: 8px; border-radius: 999px; background: var(--linha); overflow: hidden; }
+.estadia .trilho span { display: block; height: 100%; border-radius: 999px; background: var(--ocupado); }
+.estadia.sai .trilho span { background: var(--sai); }
+.estadia.atrasado .trilho span { background: var(--atraso); }
+.estadia .txt { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: var(--suave); font-variant-numeric: tabular-nums; }
+.estadia.sai .txt .falta { color: var(--sai); font-weight: 700; }
+.estadia.atrasado .txt .falta { color: var(--atraso); font-weight: 700; }
+
+/* página do quarto */
+.quarto-pag { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 1000px) { .quarto-pag { grid-template-columns: 1fr; } }
+.capa-q { overflow: hidden; }
+.capa-q .foto { aspect-ratio: 16 / 10; background: var(--salvia-clara); position: relative; }
+.capa-q .foto img { width: 100%; height: 100%; object-fit: cover; }
+.capa-q .foto .sem { position: absolute; inset: 0; display: grid; place-items: center; font-size: 80px; font-weight: 800; color: var(--salvia); opacity: .5; }
+.capa-q .info { padding: 16px 18px; display: flex; justify-content: space-between; gap: 12px; align-items: center; flex-wrap: wrap; }
+.agora { padding: 20px; display: grid; gap: 16px; }
+.agora .nome { font-size: 24px; font-weight: 800; letter-spacing: -.02em; }
+.dados { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+.dados div span { display: block; color: var(--suave); font-size: 12.5px; }
+.dados div b { font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.agora .acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+.agora .estadia .trilho { height: 10px; }
+.linha-lista { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--linha); }
+.linha-lista:last-child { border-bottom: 0; }
+.linha-lista b { font-weight: 700; }
+.linha-lista span { color: var(--suave); font-size: 13px; }
+
+/* gaveta de formulário */
+.veu { position: fixed; inset: 0; z-index: 70; background: rgba(18, 24, 17, .4); }
+.gaveta { position: fixed; z-index: 71; top: 0; right: 0; bottom: 0; width: min(480px, 100%); background: var(--cartao); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; box-shadow: -20px 0 50px -20px rgba(0, 0, 0, .3); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.gaveta header { display: flex; justify-content: space-between; align-items: center; padding: 18px 20px; border-bottom: 1px solid var(--borda); }
+.gaveta header h2 { font-size: 19px; }
+.gaveta .meio { overflow-y: auto; padding: 18px 20px; display: grid; gap: 14px; align-content: start; }
+.gaveta footer { display: flex; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--borda); }
+@media (prefers-reduced-motion: no-preference) { .gaveta { animation: entra .22s ease-out; } @keyframes entra { from { transform: translateX(40px); opacity: 0; } } }
+
+.entrar { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+.entrar .cartao { width: min(420px, 100%); padding: 28px; display: grid; gap: 18px; }
+.entrar h1 { font-size: 24px; }
+</style>
+</head>
+<body>
+<div id="tela-entrar" class="entrar" hidden>
+  <form class="cartao" id="f-entrar" novalidate>
+    <div><h1>Entrar no painel</h1><p class="suave" style="margin-top:6px">Veja quem está em cada quarto e quem precisa sair.</p></div>
+    <div class="campos"><label class="todo">Email<input id="e-email" type="email" autocomplete="email" inputmode="email"></label><label class="todo">Senha<input id="e-senha" type="password" autocomplete="current-password"></label></div>
+    <p class="erro" id="e-erro" role="alert" hidden></p>
+    <button class="btn btn--cheio btn--grande btn--largo" type="submit" id="e-btn">Entrar</button>
+    <p class="suave" style="font-size:14px">Primeira vez? <a href="comecar.html" style="color:var(--salvia-esc);font-weight:700">Cadastre a pousada e os quartos</a>.</p>
+  </form>
+</div>
+
+<div id="app" class="casca" hidden>
+  <aside class="lateral" aria-label="Menu">
+    <div class="marca"><i id="m-ini"></i><b id="m-nome"></b></div>
+    <a class="nav-item" href="#geral" data-v="geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Visão geral<span class="n" data-atrasos hidden></span></a>
+    <a class="nav-item" href="#quartos" data-v="quartos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M3 18v2M21 18v2M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/></svg>Quartos</a>
+    <a class="nav-item" href="#estadias" data-v="estadias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>Estadias</a>
+    <p class="grupo">Ajustes</p>
+    <a class="nav-item" href="#config" data-v="config"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Configurações</a>
+    <button class="nav-item fim" type="button" data-sair><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>Sair</button>
+  </aside>
+  <div class="principal">
+    <header class="barra">
+      <label class="busca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="busca" type="search" placeholder="Buscar quarto ou hóspede" aria-label="Buscar quarto ou hóspede"></label>
+      <span class="data" id="data-hoje"></span>
+      <button class="btn btn--cheio" type="button" data-nova-estadia><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Registrar estadia</button>
+    </header>
+    <main id="vista"></main>
+  </div>
+  <nav class="inferior" aria-label="Menu">
+    <a class="nav-item" href="#geral" data-v="geral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Hoje</a>
+    <a class="nav-item" href="#quartos" data-v="quartos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M3 18v2M21 18v2M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/></svg>Quartos</a>
+    <a class="nav-item" href="#estadias" data-v="estadias"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>Estadias</a>
+    <a class="nav-item" href="#config" data-v="config"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg>Ajustes</a>
+  </nav>
+</div>
+<div class="veu" id="veu" hidden></div>
+<aside class="gaveta" id="gaveta" role="dialog" aria-modal="true" aria-labelledby="g-titulo" hidden></aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(async () => {
+  const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, ding, toast } = PG;
+  const $ = id => document.getElementById(id);
+  const S = { pousada: null, quartos: [], est: [], v: "geral", qid: null, filtro: "todos", aba: "andamento", busca: "", gaveta: null, email: "" };
+  const COLS = "id,slug,nome,cidade,checkin_hora,checkout_hora";
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const curto = n => { const r = String(n || "").replace(/^quarto\s*/i, "").trim(); return r && r.length <= 6 ? r : iniciais(n); };
+  const iniciais = s => String(s || "?").trim().split(/\s+/).slice(0, 2).map(x => x[0]).join("").toUpperCase();
+  const minutosBR = () => { const p = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()); return Number(p.find(x => x.type === "hour").value) * 60 + Number(p.find(x => x.type === "minute").value); };
+  const hm = s => { const [h, m] = String(s || "12:00").split(":").map(Number); return h * 60 + (m || 0); };
+  const dur = min => min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min} min`;
+  const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+  const semana = d => SEM[new Date(d + "T12:00:00Z").getUTCDay()];
+  const ROT = { ocupado: "Ocupado", sai: "Sai hoje", atrasado: "Saída atrasada", chega: "Chega hoje", livre: "Livre", fora: "Fora de uso", encerrada: "Encerrada" };
+
+  /* ---------- situação ---------- */
+  function situacaoEstadia(r) {
+    const h = hoje(), agora = minutosBR(), saidaMin = hm(S.pousada.checkout_hora);
+    if (r.status === "hospedado") {
+      if (r.saida < h || (r.saida === h && agora > saidaMin)) return "atrasado";
+      return r.saida === h ? "sai" : "ocupado";
+    }
+    if (r.status === "confirmada") return r.entrada <= h ? "chega" : "proxima";
+    return "encerrada";
+  }
+  function situacaoQuarto(q) {
+    const h = hoje(), da = S.est.filter(r => r.quarto_id === q.id);
+    const hosp = da.find(r => r.status === "hospedado");
+    if (hosp) return { k: situacaoEstadia(hosp), r: hosp };
+    const chega = da.find(r => r.status === "confirmada" && r.entrada <= h && r.saida > h);
+    if (chega) return { k: "chega", r: chega };
+    if (!q.ativo) return { k: "fora" };
+    const prox = da.filter(r => r.status === "confirmada" && r.entrada > h).sort((a, b) => a.entrada.localeCompare(b.entrada))[0];
+    return { k: "livre", prox };
+  }
+  function barraEstadia(r, k) {
+    const h = hoje(), tot = Math.max(1, noites(r.entrada, r.saida)), passou = Math.min(tot, Math.max(0, noites(r.entrada, h)));
+    const pct = k === "atrasado" ? 100 : Math.round((passou + (k === "sai" ? 1 : 0.5)) / tot * 100);
+    const agora = minutosBR(), saidaMin = hm(S.pousada.checkout_hora);
+    let falta;
+    if (k === "atrasado") falta = r.saida < h ? `Saída era ${dm(r.saida)}, atrasada ${plural(noites(r.saida, h), "dia", "dias")}` : `Saída era às ${S.pousada.checkout_hora}, atrasada ${dur(agora - saidaMin)}`;
+    else if (k === "sai") falta = `Sai hoje até ${S.pousada.checkout_hora} (falta ${dur(Math.max(0, saidaMin - agora))})`;
+    else { const d = noites(h, r.saida); falta = `Sai ${semana(r.saida)} ${dm(r.saida)}, em ${plural(d, "dia", "dias")}`; }
+    return `<div class="estadia ${k}"><div class="trilho" role="img" aria-label="Noite ${Math.min(tot, passou + 1)} de ${tot}"><span style="width:${Math.min(100, pct)}%"></span></div>
+      <div class="txt"><span>Noite ${Math.min(tot, passou + 1)} de ${tot}</span><span class="falta">${falta}</span></div></div>`;
+  }
+  const etiqueta = k => `<span class="etiqueta e-${k === "proxima" ? "chega" : k}">${k === "proxima" ? "Próxima" : ROT[k]}</span>`;
+
+  /* ---------- entrar ---------- */
+  $("f-entrar").addEventListener("submit", async e => {
+    e.preventDefault(); const err = $("e-erro"); err.hidden = true;
+    const email = $("e-email").value.trim(), password = $("e-senha").value;
+    if (!email || !password) { err.textContent = "Coloque o email e a senha."; err.hidden = false; return; }
+    $("e-btn").disabled = true; const r = await sb.auth.signInWithPassword({ email, password }); $("e-btn").disabled = false;
+    if (r.error) { err.textContent = errText(r.error); err.hidden = false; return; }
+    iniciar();
+  });
+  document.addEventListener("click", async e => { if (e.target.closest("[data-sair]")) { await sb.auth.signOut(); location.replace("painel.html"); } });
+
+  async function iniciar() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { $("tela-entrar").hidden = false; $("app").hidden = true; return; }
+    S.email = session.user.email;
+    const { data: m } = await sb.from("membros").select(`papel, pousada:pousadas(${COLS})`).limit(1);
+    if (!m || !m.length) { location.replace("comecar.html"); return; }
+    S.pousada = m[0].pousada;
+    $("m-nome").textContent = S.pousada.nome; $("m-ini").textContent = iniciais(S.pousada.nome);
+    document.title = `${S.pousada.nome} · Quartos`;
+    $("tela-entrar").hidden = true; $("app").hidden = false;
+    await carregar(); assinar(); rota();
+    setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
+  }
+  async function carregar() {
+    const P = S.pousada.id;
+    const [q, r] = await Promise.all([
+      sb.from("quartos").select("*").eq("pousada_id", P).order("nome"),
+      sb.from("reservas").select("*").eq("pousada_id", P).or(`saida.gte.${addDias(hoje(), -120)},status.in.(hospedado,confirmada)`).order("entrada").limit(1500),
+    ]);
+    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); S.est = r.data || [];
+    if (q.error || r.error) toast(errText(q.error || r.error));
+  }
+  function assinar() {
+    sb.channel("est-" + S.pousada.id).on("postgres_changes", { event: "*", schema: "public", table: "reservas", filter: `pousada_id=eq.${S.pousada.id}` }, p => {
+      const n = p.new, i = n && n.id ? S.est.findIndex(x => x.id === n.id) : -1;
+      if (p.eventType === "DELETE") S.est = S.est.filter(x => x.id !== (p.old || {}).id); else if (i >= 0) S.est[i] = n; else if (n && n.id) S.est.push(n);
+      if (!S.gaveta) desenha();
+    }).subscribe();
+  }
+
+  /* ---------- rotas ---------- */
+  function rota() {
+    const h = location.hash.replace("#", "") || "geral";
+    if (h.startsWith("quarto-")) { S.v = "quarto"; S.qid = h.slice(7); } else S.v = ["geral", "quartos", "estadias", "config"].includes(h) ? h : "geral";
+    desenha(); scrollTo(0, 0);
+  }
+  addEventListener("hashchange", rota);
+
+  function desenha() {
+    const atual = S.v === "quarto" ? "quartos" : S.v;
+    document.querySelectorAll("[data-v]").forEach(a => a.dataset.v === atual ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    const atrasos = S.quartos.filter(q => situacaoQuarto(q).k === "atrasado").length;
+    document.querySelectorAll("[data-atrasos]").forEach(n => { n.textContent = atrasos; n.hidden = !atrasos; });
+    const dl = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", weekday: "long", day: "numeric", month: "long" }).format(new Date());
+    $("data-hoje").textContent = dl.charAt(0).toUpperCase() + dl.slice(1);
+    $("vista").innerHTML = { geral: vGeral, quartos: vQuartos, quarto: vQuarto, estadias: vEstadias, config: vConfig }[S.v]();
+    if (S.v === "geral") desenhaGrafico();
+  }
+
+  /* ---------- visão geral ---------- */
+  function vGeral() {
+    const h = hoje(), sits = S.quartos.map(q => ({ q, ...situacaoQuarto(q) }));
+    const hosp = S.est.filter(r => r.status === "hospedado");
+    const pessoas = hosp.reduce((s, r) => s + r.adultos + r.criancas, 0);
+    const saem = sits.filter(s => s.k === "sai" || s.k === "atrasado").sort((a, b) => (a.k === "atrasado" ? -1 : 1));
+    const atras = sits.filter(s => s.k === "atrasado").length;
+    const livres = sits.filter(s => s.k === "livre").length, ativos = S.quartos.filter(q => q.ativo).length;
+    const chegam = sits.filter(s => s.k === "chega");
+    const hora = Math.floor(minutosBR() / 60), oi = hora < 5 ? "Boa noite" : hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+    const ic = { cama: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18"/></svg>`, sai: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>`, relogio: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`, porta: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18M15 12h.01"/></svg>` };
+    const andamento = S.est.filter(r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h && r.saida > h)).sort((a, b) => a.saida.localeCompare(b.saida));
+    return `<div class="cab"><div><h1>${oi}</h1><p>${saem.length ? `${plural(saem.length, "quarto precisa", "quartos precisam")} ser liberado${saem.length > 1 ? "s" : ""} hoje${atras ? `, ${plural(atras, "com saída atrasada", "com saídas atrasadas")}` : ""}.` : "Nenhuma saída marcada para hoje."}</p></div></div>
+      <section class="numeros">
+        <div class="cartao num"><div class="topo"><i>${ic.cama}</i>Hospedados agora</div><b>${hosp.length}</b><small>${plural(pessoas, "pessoa", "pessoas")} na pousada</small></div>
+        <div class="cartao num"><div class="topo"><i>${ic.sai}</i>Saem hoje</div><b>${saem.length - atras}</b><small>até as ${esc(S.pousada.checkout_hora)}</small></div>
+        <div class="cartao num ${atras ? "alerta" : ""}"><div class="topo"><i>${ic.relogio}</i>Saídas atrasadas</div><b>${atras}</b><small>${atras ? "passaram do horário de saída" : "ninguém passou do horário"}</small></div>
+        <div class="cartao num"><div class="topo"><i>${ic.porta}</i>Quartos livres</div><b>${livres}</b><small>de ${plural(ativos, "quarto em uso", "quartos em uso")}${chegam.length ? `, ${chegam.length} ${chegam.length > 1 ? "chegadas" : "chegada"} hoje` : ""}</small></div>
+      </section>
+      <section class="duas">
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Quartos ocupados nas próximas duas semanas</h2></div><div class="grafico" id="grafico"></div></div>
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Precisam sair hoje</h2><a href="#quartos" data-filtro-link="sai">Ver quartos</a></div>
+          <div class="saidas">${saem.length ? saem.map(s => `<div class="saida"><span class="av">${esc(iniciais(s.r.nome))}</span><div><b>${esc(s.r.nome)}</b><span class="${s.k === "atrasado" ? "tarde" : ""}">${esc(s.q.nome)} · ${s.k === "atrasado" ? "saída atrasada" : `até ${esc(S.pousada.checkout_hora)}`}</span></div><button class="btn btn--borda" data-acao="saida" data-id="${esc(s.r.id)}">Registrar saída</button></div>`).join("") : `<div class="vazio">Ninguém precisa sair hoje.</div>`}</div></div>
+      </section>
+      <section class="cartao bloco"><div class="bloco-cab"><h2>Estadias em andamento</h2><a href="#estadias">Ver todas</a></div>${tabela(andamento, "Nenhum hóspede na pousada agora. Use Registrar estadia quando alguém chegar.")}</section>`;
+  }
+
+  function tabela(lista, vazio) {
+    if (!lista.length) return `<div class="vazio">${vazio}</div>`;
+    const q = id => S.quartos.find(x => x.id === id) || { nome: "?" };
+    return `<div class="tabela-caixa"><table class="tab"><thead><tr><th>Hóspede</th><th>Quarto</th><th>Entrada</th><th>Saída</th><th>Noites</th><th>Situação</th><th><span class="suave" style="font-weight:400">Ações</span></th></tr></thead><tbody>
+      ${lista.map(r => { const k = situacaoEstadia(r); return `<tr><td><span class="pessoa"><span class="av">${esc(iniciais(r.nome))}</span>${esc(r.nome)}</span></td><td>${esc(q(r.quarto_id).nome)}</td><td>${semana(r.entrada)} ${dm(r.entrada)}</td><td>${semana(r.saida)} ${dm(r.saida)}</td><td>${noites(r.entrada, r.saida)}</td>
+        <td>${k === "encerrada" ? `<span class="etiqueta e-encerrada">${{ finalizada: "Saiu", cancelada: "Cancelada", no_show: "Não veio", solicitada: "Pedido" }[r.status] || "Encerrada"}</span>` : etiqueta(k)}</td>
+        <td><div class="acoes"><a class="icone" href="#quarto-${esc(r.quarto_id)}" title="Ver o quarto" aria-label="Ver o quarto de ${esc(r.nome)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></a><button class="icone" data-acao="editar" data-id="${esc(r.id)}" title="Editar estadia" aria-label="Editar estadia de ${esc(r.nome)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button></div></td></tr>`; }).join("")}</tbody></table></div>`;
+  }
+
+  /* ---------- gráfico: ocupação por noite, uma série ---------- */
+  function desenhaGrafico() {
+    const box = $("grafico"); if (!box) return;
+    const h = hoje(), dias = Array.from({ length: 14 }, (_, i) => addDias(h, i)), ativos = S.quartos.filter(q => q.ativo).length;
+    const val = dias.map(d => new Set(S.est.filter(r => ["hospedado", "confirmada"].includes(r.status) && r.entrada <= d && d < r.saida).map(r => r.quarto_id)).size);
+    const W = Math.max(300, box.clientWidth), H = 230, pe = 28, pt = 12, pb = 34;
+    const max = Math.max(1, ativos, ...val), passo = max <= 5 ? 1 : Math.ceil(max / 4);
+    const y = v => pt + (H - pt - pb) * (1 - v / max), banda = (W - pe) / dias.length, larg = Math.max(8, Math.min(26, banda * 0.5));
+    let grade = ""; for (let v = 0; v <= max; v += passo) grade += `<line x1="${pe}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text x="${pe - 8}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    const cols = dias.map((d, i) => { const cx = pe + banda * i + banda / 2, top = y(val[i]), alt = Math.max(0, H - pb - top);
+      return `<g class="col"><rect class="alvo" x="${pe + banda * i}" y="${pt}" width="${banda}" height="${H - pt - pb}" tabindex="0" data-i="${i}" aria-label="${semana(d)} ${dm(d)}: ${val[i]} de ${ativos} quartos ocupados"/>
+        ${val[i] ? `<rect class="barra-g ${d === h ? "hj" : ""}" x="${cx - larg / 2}" y="${top}" width="${larg}" height="${alt}" rx="4"/>` : ""}</g>
+        ${banda >= 34 || i % 2 === 0 ? `<text x="${cx}" y="${H - pb + 16}" text-anchor="middle" class="${d === h ? "hj" : ""}">${d === h ? "hoje" : semana(d)}</text><text x="${cx}" y="${H - pb + 30}" text-anchor="middle">${dm(d).slice(0, 2)}</text>` : ""}`; }).join("");
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Quartos ocupados por noite nas próximas duas semanas"><g class="grade eixo">${grade}</g><g class="eixo">${cols}</g></svg><div class="dica" id="dica" hidden></div>
+      <details class="tabela-alt"><summary>Ver em tabela</summary><table><tr><th>Noite</th><th>Quartos ocupados</th></tr>${dias.map((d, i) => `<tr><td>${semana(d)} ${dm(d)}</td><td>${val[i]} de ${ativos}</td></tr>`).join("")}</table></details>`;
+    const dica = $("dica");
+    const mostra = el => { const i = Number(el.dataset.i), r = el.getBoundingClientRect(), b = box.getBoundingClientRect();
+      dica.textContent = `${semana(dias[i])} ${dm(dias[i])}: ${val[i]} de ${ativos} ocupados`; dica.style.left = `${r.left - b.left + r.width / 2}px`; dica.style.top = `${y(val[i]) * (b.width / W) }px`; dica.hidden = false; };
+    box.querySelectorAll("rect.alvo").forEach(el => { el.addEventListener("mouseenter", () => mostra(el)); el.addEventListener("focus", () => mostra(el)); el.addEventListener("mouseleave", () => (dica.hidden = true)); el.addEventListener("blur", () => (dica.hidden = true)); });
+  }
+  let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (S.v === "geral") desenhaGrafico(); }, 150); });
+
+  /* ---------- quartos ---------- */
+  function cartaoQuarto(q) {
+    const s = situacaoQuarto(q), r = s.r;
+    const corpo = r && ["ocupado", "sai", "atrasado"].includes(s.k) ? `<p class="hospede"><b>${esc(r.nome)}</b> · ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}</p>${barraEstadia(r, s.k)}`
+      : s.k === "chega" ? `<p class="hospede">Chega hoje: <b>${esc(r.nome)}</b></p>` : s.k === "fora" ? `<p class="hospede suave">Fora de uso</p>`
+      : `<p class="hospede suave">${s.prox ? `Próxima chegada ${semana(s.prox.entrada)} ${dm(s.prox.entrada)}` : "Sem próximas chegadas"}</p>`;
+    return `<article class="cartao quarto"><div class="foto">${q.foto_url ? `<img src="${esc(q.foto_url)}" alt="${esc(q.nome)}" loading="lazy">` : `<span class="sem" aria-hidden="true">${esc(curto(q.nome))}</span>`}
+      <span class="etiqueta e-${s.k}">${ROT[s.k]}</span><button class="editar" data-acao="editar-quarto" data-id="${esc(q.id)}">Editar</button></div>
+      <div class="corpo"><div><h3>${esc(q.nome)}</h3><p class="tipo">${esc(q.tipo || "Quarto")} · até ${plural(q.capacidade, "pessoa", "pessoas")}</p></div>${corpo}
+      <div class="rodape"><span class="preco">${brl(q.diaria)} <small>/ noite</small></span><a class="btn btn--cheio" href="#quarto-${esc(q.id)}">Ver quarto</a></div></div></article>`;
+  }
+  function vQuartos() {
+    const sits = S.quartos.map(q => ({ q, k: situacaoQuarto(q).k }));
+    const conta = k => sits.filter(s => k === "todos" || s.k === k || (k === "ocupado" && ["ocupado", "sai", "atrasado"].includes(s.k))).length;
+    const F = [["todos", "Todos"], ["ocupado", "Ocupados"], ["sai", "Saem hoje"], ["atrasado", "Atrasados"], ["chega", "Chegam hoje"], ["livre", "Livres"]];
+    const b = S.busca.toLowerCase();
+    const lista = sits.filter(s => S.filtro === "todos" || s.k === S.filtro || (S.filtro === "ocupado" && ["ocupado", "sai", "atrasado"].includes(s.k)))
+      .filter(s => !b || s.q.nome.toLowerCase().includes(b) || S.est.some(r => r.quarto_id === s.q.id && ["hospedado", "confirmada"].includes(r.status) && r.nome.toLowerCase().includes(b)));
+    return `<div class="cab"><div><h1>Quartos</h1><p>${plural(S.quartos.length, "quarto cadastrado", "quartos cadastrados")}${b ? `, buscando "${esc(S.busca)}"` : ""}</p></div><button class="btn btn--borda" data-acao="novo-quarto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Adicionar quarto</button></div>
+      <div class="filtros" role="group" aria-label="Filtrar quartos">${F.map(([k, t]) => `<button class="filtro" data-filtro="${k}" aria-pressed="${S.filtro === k}">${t} <b>${conta(k)}</b></button>`).join("")}</div>
+      <div class="quartos">${lista.map(s => cartaoQuarto(s.q)).join("") || `<div class="vazio" style="grid-column:1/-1">Nenhum quarto nesse filtro.</div>`}</div>`;
+  }
+
+  /* ---------- um quarto ---------- */
+  function vQuarto() {
+    const q = S.quartos.find(x => x.id === S.qid);
+    if (!q) return `<div class="cab"><div><h1>Quarto não encontrado</h1><p><a href="#quartos">Voltar aos quartos</a></p></div></div>`;
+    const s = situacaoQuarto(q), r = s.r, h = hoje();
+    const prox = S.est.filter(x => x.quarto_id === q.id && x.status === "confirmada" && x.id !== (r || {}).id && x.entrada >= h).sort((a, b) => a.entrada.localeCompare(b.entrada));
+    const hist = S.est.filter(x => x.quarto_id === q.id && ["finalizada", "cancelada", "no_show"].includes(x.status)).sort((a, b) => b.saida.localeCompare(a.saida)).slice(0, 8);
+    const dado = (k, v) => `<div><span>${k}</span><b>${v}</b></div>`;
+    let agora;
+    if (r) {
+      const ac = r.status === "hospedado" ? `<button class="btn btn--cheio btn--grande" data-acao="saida" data-id="${esc(r.id)}">Registrar saída</button><button class="btn btn--borda btn--grande" data-acao="mais-noite" data-id="${esc(r.id)}">Mais 1 noite</button>`
+        : `<button class="btn btn--cheio btn--grande" data-acao="entrada" data-id="${esc(r.id)}">Registrar entrada</button><button class="btn btn--perigo btn--grande" data-acao="nao-veio" data-id="${esc(r.id)}">Não veio</button>`;
+      agora = `<div class="cartao agora"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center">${etiqueta(s.k)}<button class="btn btn--borda" data-acao="editar" data-id="${esc(r.id)}">Editar</button></div>
+        <div><p class="nome">${esc(r.nome)}</p>${r.telefone ? `<a href="tel:${esc(r.telefone.replace(/[^\d+]/g, ""))}" style="color:var(--salvia-esc);font-weight:700;text-decoration:none">${esc(r.telefone)}</a>` : ""}</div>
+        ${r.status === "hospedado" ? barraEstadia(r, s.k) : ""}
+        <div class="dados">${dado("Entrada", `${semana(r.entrada)} ${dmy(r.entrada)}`)}${dado("Saída", `${semana(r.saida)} ${dmy(r.saida)} até ${esc(S.pousada.checkout_hora)}`)}${dado("Pessoas", `${r.adultos} ${r.adultos > 1 ? "adultos" : "adulto"}${r.criancas ? ` e ${r.criancas} ${r.criancas > 1 ? "crianças" : "criança"}` : ""}`)}${dado("Valor", `${brl(r.valor_total)}${r.sinal_pago > 0 ? ` (pago ${brl(r.sinal_pago)})` : ""}`)}${r.documento ? dado("Documento", esc(r.documento)) : ""}</div>
+        ${r.observacoes ? `<p style="padding:10px 12px;border-radius:10px;background:var(--fundo)">${esc(r.observacoes)}</p>` : ""}
+        <div class="acoes">${ac}</div></div>`;
+    } else {
+      agora = `<div class="cartao agora">${etiqueta(s.k)}<p class="nome">${s.k === "fora" ? "Quarto fora de uso" : "Quarto livre"}</p><p class="suave">${s.prox ? `Próxima chegada: ${esc(s.prox.nome)}, ${semana(s.prox.entrada)} ${dm(s.prox.entrada)}.` : "Nenhuma chegada marcada."}</p>
+        ${q.ativo ? `<div class="acoes"><button class="btn btn--cheio btn--grande" data-nova-estadia data-quarto="${esc(q.id)}">Registrar estadia neste quarto</button></div>` : ""}</div>`;
+    }
+    return `<p class="trilha"><a href="#quartos">Quartos</a> › ${esc(q.nome)}</p><div class="cab" style="margin-top:0"><div><h1>${esc(q.nome)}</h1><p>${esc(q.tipo || "Quarto")} · até ${plural(q.capacidade, "pessoa", "pessoas")} · ${brl(q.diaria)} por noite</p></div><button class="btn btn--borda" data-acao="editar-quarto" data-id="${esc(q.id)}">Editar quarto</button></div>
+      <div class="quarto-pag">
+        <div class="cartao capa-q"><div class="foto">${q.foto_url ? `<img src="${esc(q.foto_url)}" alt="${esc(q.nome)}">` : `<span class="sem" aria-hidden="true">${esc(curto(q.nome))}</span>`}</div>
+          <div class="info"><span class="suave">${q.foto_url ? "Foto do quarto" : "Este quarto ainda não tem foto."}</span><label class="btn btn--borda" style="cursor:pointer"><input type="file" accept="image/*" data-foto="${esc(q.id)}" hidden>${q.foto_url ? "Trocar foto" : "Enviar foto"}</label></div></div>
+        <div style="display:grid;gap:16px">${agora}
+          <div class="cartao bloco"><div class="bloco-cab"><h2>Próximas chegadas</h2></div>${prox.length ? prox.map(x => `<div class="linha-lista"><div><b>${esc(x.nome)}</b><br><span>${semana(x.entrada)} ${dm(x.entrada)} a ${semana(x.saida)} ${dm(x.saida)}, ${plural(noites(x.entrada, x.saida), "noite", "noites")}</span></div><button class="icone" data-acao="editar" data-id="${esc(x.id)}" aria-label="Editar estadia de ${esc(x.nome)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></button></div>`).join("") : `<p class="suave">Nenhuma chegada marcada.</p>`}</div>
+          <div class="cartao bloco"><div class="bloco-cab"><h2>Últimas estadias</h2></div>${hist.length ? hist.map(x => `<div class="linha-lista"><div><b>${esc(x.nome)}</b><br><span>${dm(x.entrada)} a ${dm(x.saida)}</span></div><span class="etiqueta e-encerrada">${{ finalizada: "Saiu", cancelada: "Cancelada", no_show: "Não veio" }[x.status]}</span></div>`).join("") : `<p class="suave">Nada por aqui ainda.</p>`}</div>
+        </div></div>`;
+  }
+
+  /* ---------- estadias ---------- */
+  function vEstadias() {
+    const h = hoje(), b = S.busca.toLowerCase();
+    const A = { andamento: r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h), proximas: r => r.status === "confirmada" && r.entrada > h, encerradas: r => ["finalizada", "cancelada", "no_show"].includes(r.status) };
+    const nomeQ = id => (S.quartos.find(x => x.id === id) || {}).nome || "";
+    const conta = k => S.est.filter(A[k]).length;
+    let l = S.est.filter(A[S.aba]).filter(r => !b || r.nome.toLowerCase().includes(b) || nomeQ(r.quarto_id).toLowerCase().includes(b));
+    l = S.aba === "encerradas" ? l.sort((x, y) => y.saida.localeCompare(x.saida)).slice(0, 100) : l.sort((x, y) => (S.aba === "andamento" ? x.saida.localeCompare(y.saida) : x.entrada.localeCompare(y.entrada)));
+    return `<div class="cab"><div><h1>Estadias</h1><p>Quem está na pousada, quem vai chegar e quem já saiu.</p></div></div>
+      <div class="filtros" role="group" aria-label="Escolher estadias">${[["andamento", "Em andamento"], ["proximas", "Próximas"], ["encerradas", "Encerradas"]].map(([k, t]) => `<button class="filtro" data-aba="${k}" aria-pressed="${S.aba === k}">${t} <b>${conta(k)}</b></button>`).join("")}</div>
+      <section class="cartao bloco">${tabela(l, { andamento: "Ninguém hospedado agora.", proximas: "Nenhuma chegada marcada. Use Registrar estadia para anotar uma reserva.", encerradas: "Nenhuma estadia encerrada ainda." }[S.aba])}</section>`;
+  }
+
+  /* ---------- configurações ---------- */
+  function vConfig() {
+    const p = S.pousada;
+    return `<div class="cab"><div><h1>Configurações</h1><p>O horário de saída define quando uma estadia fica atrasada.</p></div></div>
+      <form class="cartao bloco" id="f-config" novalidate style="max-width:640px;display:grid;gap:16px"><div class="campos">
+        <label class="todo">Nome da pousada<input id="c-nome" maxlength="80" value="${esc(p.nome)}"></label>
+        <label class="todo">Cidade<input id="c-cid" maxlength="80" value="${esc(p.cidade)}"></label>
+        <label>Entrada a partir das<input id="c-ci" type="time" value="${esc(p.checkin_hora)}"></label>
+        <label>Saída até as<input id="c-co" type="time" value="${esc(p.checkout_hora)}"></label></div>
+        <p class="erro" id="c-err" role="alert" hidden></p>
+        <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
+        <p class="suave" style="font-size:13.5px;border-top:1px solid var(--linha);padding-top:14px">Conectado como ${esc(S.email)}.</p></form>`;
+  }
+
+  /* ---------- gaveta: estadia e quarto ---------- */
+  function abreGaveta(html) { S.gaveta = true; const g = $("gaveta"); g.innerHTML = html; g.hidden = false; $("veu").hidden = false; document.body.style.overflow = "hidden"; const f = g.querySelector("input, select, textarea"); if (f) f.focus(); }
+  function fechaGaveta() { S.gaveta = null; $("gaveta").hidden = true; $("veu").hidden = true; document.body.style.overflow = ""; desenha(); }
+  $("veu").onclick = fechaGaveta;
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && S.gaveta) fechaGaveta(); });
+
+  function gavetaEstadia(r, quartoId) {
+    const h = hoje(), q0 = quartoId || (r && r.quarto_id) || (S.quartos.find(q => q.ativo && situacaoQuarto(q).k === "livre") || S.quartos.find(q => q.ativo) || {}).id;
+    const f = r || { nome: "", telefone: "", documento: "", adultos: 2, criancas: 0, entrada: h, saida: addDias(h, 1), status: "hospedado", valor_total: "", sinal_pago: 0, observacoes: "" };
+    const opQ = S.quartos.filter(q => q.ativo || q.id === q0);
+    abreGaveta(`<header><h2 id="g-titulo">${r ? "Editar estadia" : "Registrar estadia"}</h2><button class="icone" type="button" data-fecha aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+      <form class="meio" id="f-est" novalidate><div class="campos">
+        <label class="todo">Quarto<select id="g-q">${opQ.map(q => `<option value="${esc(q.id)}" ${q.id === q0 ? "selected" : ""}>${esc(q.nome)}: ${ROT[situacaoQuarto(q).k].toLowerCase()}, até ${q.capacidade}</option>`).join("")}</select></label>
+        <label class="todo">Nome do hóspede<input id="g-nome" maxlength="100" value="${esc(f.nome)}" autocomplete="off"></label>
+        <label>Telefone<input id="g-tel" type="tel" maxlength="20" value="${esc(f.telefone)}"></label><label>Documento <small>opcional</small><input id="g-doc" maxlength="30" value="${esc(f.documento)}"></label>
+        <label>Entrada<input id="g-in" type="date" value="${esc(f.entrada)}"></label><label>Saída<input id="g-out" type="date" value="${esc(f.saida)}"></label>
+        <label>Adultos<input id="g-ad" type="number" min="1" max="20" value="${f.adultos}"></label><label>Crianças<input id="g-cr" type="number" min="0" max="20" value="${f.criancas}"></label>
+        <label class="todo">Situação<select id="g-st">${[["hospedado", "Já está hospedado"], ["confirmada", "Ainda vai chegar"], ["finalizada", "Já saiu"], ["cancelada", "Cancelada"], ["no_show", "Não veio"]].map(([k, t]) => `<option value="${k}" ${f.status === k ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label>Valor total (R$) <small>em branco: diárias</small><input id="g-val" type="number" min="0" step="0.01" value="${f.valor_total === "" ? "" : esc(f.valor_total)}"></label><label>Já pago (R$)<input id="g-pago" type="number" min="0" step="0.01" value="${esc(f.sinal_pago)}"></label>
+        <label class="todo">Observações<textarea id="g-obs" maxlength="500">${esc(f.observacoes)}</textarea></label></div>
+        <p class="erro" id="g-err" role="alert" hidden></p></form>
+      <footer><button class="btn btn--cheio btn--grande" type="submit" form="f-est" style="flex:1">${r ? "Salvar estadia" : "Registrar estadia"}</button>${r ? `<button class="btn btn--perigo btn--grande" type="button" data-acao="apagar" data-id="${esc(r.id)}">Apagar</button>` : ""}</footer>`);
+    $("g-in").addEventListener("change", () => { if (!$("g-out").value || $("g-out").value <= $("g-in").value) $("g-out").value = addDias($("g-in").value, 1); if ($("g-in").value > hoje() && $("g-st").value === "hospedado") $("g-st").value = "confirmada"; });
+    $("f-est").addEventListener("submit", async e => {
+      e.preventDefault(); const err = $("g-err"); err.hidden = true;
+      const q = S.quartos.find(x => x.id === $("g-q").value);
+      const d = { quarto_id: $("g-q").value, nome: $("g-nome").value.trim(), telefone: $("g-tel").value.trim(), documento: $("g-doc").value.trim(), entrada: $("g-in").value, saida: $("g-out").value, adultos: Number($("g-ad").value), criancas: Number($("g-cr").value || 0), status: $("g-st").value, sinal_pago: Number($("g-pago").value || 0), observacoes: $("g-obs").value.trim() };
+      const v = $("g-val").value; d.valor_total = v === "" ? (q ? q.diaria * Math.max(1, noites(d.entrada, d.saida)) : 0) : Number(v);
+      const falta = !d.nome ? "o nome do hóspede" : !d.entrada || !d.saida ? "as datas" : d.saida <= d.entrada ? "uma saída depois da entrada" : d.adultos < 1 ? "pelo menos 1 adulto" : q && d.adultos + d.criancas > q.capacidade ? `no máximo ${q.capacidade} pessoas neste quarto` : "";
+      if (falta) { err.textContent = `Confira: ${falta}.`; err.hidden = false; return; }
+      const btn = document.querySelector('#gaveta [type="submit"]'); btn.disabled = true;
+      const res = r ? await sb.from("reservas").update(d).eq("id", r.id).select().single() : await sb.from("reservas").insert({ ...d, pousada_id: S.pousada.id, origem: "balcao" }).select().single();
+      btn.disabled = false;
+      if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+      const i = S.est.findIndex(x => x.id === res.data.id); if (i >= 0) S.est[i] = res.data; else S.est.push(res.data);
+      toast(r ? "Estadia salva." : "Estadia registrada."); fechaGaveta();
+    });
+  }
+  function gavetaQuarto(q) {
+    const f = q || { nome: `Quarto ${S.quartos.length + 1}`, tipo: "Casal", capacidade: 2, diaria: "", ativo: true };
+    abreGaveta(`<header><h2 id="g-titulo">${q ? "Editar quarto" : "Adicionar quarto"}</h2><button class="icone" type="button" data-fecha aria-label="Fechar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+      <form class="meio" id="f-q" novalidate><div class="campos">
+        <label class="todo">Nome ou número<input id="q-nome" maxlength="60" value="${esc(f.nome)}"></label>
+        <label>Tipo<input id="q-tipo" maxlength="40" value="${esc(f.tipo)}" list="tipos"><datalist id="tipos"><option>Casal</option><option>Solteiro</option><option>Família</option><option>Suíte</option><option>Chalé</option></datalist></label>
+        <label>Cabem<input id="q-cap" type="number" min="1" max="20" value="${f.capacidade}"></label>
+        <label class="todo">Diária (R$)<input id="q-dia" type="number" min="0" step="0.01" value="${esc(f.diaria)}"></label>
+        <label class="todo" style="display:flex;gap:10px;align-items:center;flex-direction:row"><input id="q-ativo" type="checkbox" style="width:20px;height:20px;accent-color:var(--salvia)" ${f.ativo ? "checked" : ""}> Quarto em uso</label></div>
+        <p class="erro" id="q-err" role="alert" hidden></p></form>
+      <footer><button class="btn btn--cheio btn--grande" type="submit" form="f-q" style="flex:1">${q ? "Salvar quarto" : "Adicionar quarto"}</button></footer>`);
+    $("f-q").addEventListener("submit", async e => {
+      e.preventDefault(); const err = $("q-err"); err.hidden = true;
+      const d = { nome: $("q-nome").value.trim(), tipo: $("q-tipo").value.trim(), capacidade: Number($("q-cap").value), diaria: Number($("q-dia").value || 0), ativo: $("q-ativo").checked };
+      if (!d.nome) { err.textContent = "Dê um nome ou número ao quarto."; err.hidden = false; return; }
+      const res = q ? await sb.from("quartos").update(d).eq("id", q.id).select().single() : await sb.from("quartos").insert({ ...d, pousada_id: S.pousada.id }).select().single();
+      if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+      const i = S.quartos.findIndex(x => x.id === res.data.id); if (i >= 0) S.quartos[i] = res.data; else S.quartos.push(res.data);
+      S.quartos.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); toast(q ? "Quarto salvo." : "Quarto adicionado."); fechaGaveta();
+    });
+  }
+
+  /* ---------- ações ---------- */
+  async function muda(id, d, msg) {
+    const { data, error } = await sb.from("reservas").update(d).eq("id", id).select().single();
+    if (error) { toast(errText(error)); return; }
+    S.est[S.est.findIndex(x => x.id === id)] = data; toast(msg(data)); desenha();
+  }
+  document.addEventListener("click", async e => {
+    const t = e.target.closest("button, a"); if (!t) return; const d = t.dataset;
+    if (d.fecha !== undefined) return fechaGaveta();
+    if (d.novaEstadia !== undefined) { if (!S.quartos.some(q => q.ativo)) { toast("Cadastre um quarto primeiro."); return; } return gavetaEstadia(null, d.quarto); }
+    if (d.filtro) { S.filtro = d.filtro; return desenha(); }
+    if (d.aba) { S.aba = d.aba; return desenha(); }
+    if (d.filtroLink) { S.filtro = d.filtroLink; return; }
+    const r = d.id && S.est.find(x => x.id === d.id);
+    switch (d.acao) {
+      case "saida": t.disabled = true; return muda(d.id, { status: "finalizada" }, x => `Saída de ${x.nome} registrada. Quarto livre.`);
+      case "entrada": t.disabled = true; return muda(d.id, { status: "hospedado" }, x => `Entrada de ${x.nome} registrada.`);
+      case "nao-veio": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo para confirmar"; return; } return muda(d.id, { status: "no_show" }, x => `${x.nome} marcado como não veio.`);
+      case "mais-noite": t.disabled = true; return muda(d.id, { saida: addDias(r.saida, 1), valor_total: Number(r.valor_total) + Number((S.quartos.find(q => q.id === r.quarto_id) || {}).diaria || 0) }, x => `${x.nome} fica até ${dm(x.saida)}.`);
+      case "editar": return gavetaEstadia(r);
+      case "novo-quarto": return gavetaQuarto(null);
+      case "editar-quarto": return gavetaQuarto(S.quartos.find(q => q.id === d.id));
+      case "apagar": { if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo para apagar"; return; } const { error } = await sb.from("reservas").delete().eq("id", d.id); if (error) { toast(errText(error)); return; } S.est = S.est.filter(x => x.id !== d.id); toast("Estadia apagada."); return fechaGaveta(); }
+    }
+  });
+  $("busca").addEventListener("input", e => { S.busca = e.target.value.trim(); if (!["quartos", "estadias"].includes(S.v)) { location.hash = "quartos"; return; } desenha(); const i = $("busca"); i.focus(); });
+
+  // foto do quarto: reduz no aparelho e envia
+  document.addEventListener("change", async e => {
+    const inp = e.target.closest("[data-foto]"); if (!inp || !inp.files[0]) return;
+    const q = S.quartos.find(x => x.id === inp.dataset.foto), lbl = inp.parentElement; lbl.lastChild.textContent = "Enviando...";
+    try {
+      const img = await createImageBitmap(inp.files[0]); const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      const blob = await new Promise(res => c.toBlob(res, "image/jpeg", 0.82));
+      const path = `${S.pousada.id}/${q.id}-${Date.now()}.jpg`;
+      const up = await sb.storage.from("fotos").upload(path, blob, { contentType: "image/jpeg" }); if (up.error) throw up.error;
+      const url = `${PG_CONFIG.supabaseUrl}/storage/v1/object/public/fotos/${path}`;
+      const antiga = q.foto_url && q.foto_url.includes("/object/public/fotos/") ? q.foto_url.split("/object/public/fotos/")[1] : null;
+      const res = await sb.from("quartos").update({ foto_url: url }).eq("id", q.id).select().single(); if (res.error) throw res.error;
+      if (antiga) sb.storage.from("fotos").remove([antiga]);
+      S.quartos[S.quartos.findIndex(x => x.id === q.id)] = res.data; toast("Foto salva."); desenha();
+    } catch (err) { toast(err && err.message ? errText(err) : "Não deu para usar essa imagem. Tente uma foto JPG ou PNG."); desenha(); }
+  });
+  document.addEventListener("submit", async e => {
+    if (e.target.id !== "f-config") return; e.preventDefault(); const err = $("c-err"); err.hidden = true;
+    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00" };
+    if (d.nome.length < 2) { err.textContent = "Coloque o nome da pousada."; err.hidden = false; return; }
+    const res = await sb.from("pousadas").update(d).eq("id", S.pousada.id).select(COLS).single();
+    if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+    S.pousada = res.data; $("m-nome").textContent = res.data.nome; $("m-ini").textContent = iniciais(res.data.nome); toast("Configurações salvas."); desenha();
+  });
+  document.addEventListener("visibilitychange", async () => { if (!document.hidden && S.pousada && !S.gaveta) { await carregar(); desenha(); } });
+  iniciar();
+})();
+</script>
+</body>
+</html>
