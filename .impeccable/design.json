@@ -1,0 +1,836 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-16T11:29:25+00:00",
+  "title": "Design System: Painel e site da pousada",
+  "extensions": {
+    "colorMeta": {
+      "mar": {
+        "role": "secondary",
+        "displayName": "Azul de Mar Fundo",
+        "canonical": "oklch(31.4% 0.069 245.6)",
+        "tonalRamp": [
+          "#010c18",
+          "#122739",
+          "#29455d",
+          "#426583",
+          "#6287a7",
+          "#8aa9c5",
+          "#b3cde4",
+          "#def1ff"
+        ]
+      },
+      "mar-2": {
+        "role": "secondary",
+        "displayName": "Mar Médio",
+        "canonical": "oklch(39.4% 0.081 243.3)",
+        "tonalRamp": [
+          "#000c1a",
+          "#0c273b",
+          "#214561",
+          "#396689",
+          "#5a88ac",
+          "#83aaca",
+          "#aecee8",
+          "#daf2ff"
+        ]
+      },
+      "mar-3": {
+        "role": "secondary",
+        "displayName": "Mar Claro",
+        "canonical": "oklch(47.4% 0.094 242.9)",
+        "tonalRamp": [
+          "#000c1c",
+          "#05283f",
+          "#194665",
+          "#2f668e",
+          "#5288b2",
+          "#7dabcf",
+          "#a9ceec",
+          "#d6f3ff"
+        ]
+      },
+      "mar-suave": {
+        "role": "secondary",
+        "displayName": "Bruma",
+        "canonical": "oklch(80.6% 0.039 237.2)",
+        "tonalRamp": [
+          "#050c12",
+          "#1a272f",
+          "#334550",
+          "#4e6573",
+          "#6f8696",
+          "#94a8b6",
+          "#bbccd7",
+          "#e4f1f9"
+        ]
+      },
+      "agua": {
+        "role": "neutral",
+        "displayName": "Água de Carta",
+        "canonical": "oklch(95.5% 0.010 204.9)",
+        "tonalRamp": [
+          "#090c0c",
+          "#222626",
+          "#3e4344",
+          "#5c6364",
+          "#7c8485",
+          "#a0a6a7",
+          "#c5cacb",
+          "#ebeff0"
+        ]
+      },
+      "agua-2": {
+        "role": "neutral",
+        "displayName": "Água Funda",
+        "canonical": "oklch(93.0% 0.016 211.0)",
+        "tonalRamp": [
+          "#080c0d",
+          "#202628",
+          "#3b4446",
+          "#586466",
+          "#788587",
+          "#9ca7a9",
+          "#c2cbcd",
+          "#e9f0f1"
+        ]
+      },
+      "raso": {
+        "role": "neutral",
+        "displayName": "Água Rasa",
+        "canonical": "oklch(89.0% 0.028 213.8)",
+        "tonalRamp": [
+          "#050d0e",
+          "#1b272a",
+          "#354549",
+          "#51656a",
+          "#71878c",
+          "#97a9ad",
+          "#bdccd0",
+          "#e5f1f4"
+        ]
+      },
+      "agua-funda": {
+        "role": "neutral",
+        "displayName": "Água de Maré",
+        "canonical": "oklch(81.2% 0.048 216.7)",
+        "tonalRamp": [
+          "#020d11",
+          "#13292e",
+          "#2a474f",
+          "#436872",
+          "#648994",
+          "#8babb4",
+          "#b4ced6",
+          "#dff3f8"
+        ]
+      },
+      "papel": {
+        "role": "neutral",
+        "displayName": "Papel",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "campo": {
+        "role": "neutral",
+        "displayName": "Campo",
+        "canonical": "oklch(97.6% 0.005 211.0)",
+        "tonalRamp": [
+          "#0a0b0c",
+          "#232526",
+          "#404343",
+          "#5e6263",
+          "#7f8384",
+          "#a2a6a6",
+          "#c7caca",
+          "#edefef"
+        ]
+      },
+      "terra": {
+        "role": "tertiary",
+        "displayName": "Terra de Carta",
+        "canonical": "oklch(88.0% 0.073 90.1)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2407",
+          "#4e411c",
+          "#706031",
+          "#928152",
+          "#b3a47d",
+          "#d4c8a8",
+          "#f7eed5"
+        ]
+      },
+      "terra-clara": {
+        "role": "tertiary",
+        "displayName": "Terra Clara",
+        "canonical": "oklch(94.3% 0.042 92.2)",
+        "tonalRamp": [
+          "#0e0b03",
+          "#292516",
+          "#48422e",
+          "#696148",
+          "#8a8268",
+          "#aca58e",
+          "#cfc9b7",
+          "#f3eee0"
+        ]
+      },
+      "terra-tinta": {
+        "role": "tertiary",
+        "displayName": "Tinta de Terra",
+        "canonical": "oklch(41.9% 0.075 87.7)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2307",
+          "#4f401b",
+          "#725f30",
+          "#948051",
+          "#b4a37c",
+          "#d6c8a8",
+          "#f8eed5"
+        ]
+      },
+      "livre-borda": {
+        "role": "tertiary",
+        "displayName": "Borda de Terra",
+        "canonical": "oklch(85.1% 0.083 91.5)",
+        "tonalRamp": [
+          "#110a00",
+          "#2e2402",
+          "#4e4114",
+          "#716029",
+          "#93814a",
+          "#b4a477",
+          "#d5c9a4",
+          "#f8eed2"
+        ]
+      },
+      "magenta": {
+        "role": "primary",
+        "displayName": "Magenta de Carta",
+        "canonical": "oklch(48.3% 0.186 357.4)",
+        "tonalRamp": [
+          "#23000b",
+          "#4b0025",
+          "#780d42",
+          "#a72562",
+          "#ce4c83",
+          "#eb7ca6",
+          "#ffa9ca",
+          "#ffd7ef"
+        ]
+      },
+      "magenta-esc": {
+        "role": "primary",
+        "displayName": "Magenta Funda",
+        "canonical": "oklch(41.8% 0.162 357.4)",
+        "tonalRamp": [
+          "#20000b",
+          "#470525",
+          "#721b42",
+          "#9f3362",
+          "#c65683",
+          "#e382a5",
+          "#ffaec9",
+          "#ffdaef"
+        ]
+      },
+      "magenta-clara": {
+        "role": "primary",
+        "displayName": "Magenta Clara",
+        "canonical": "oklch(93.1% 0.028 345.9)",
+        "tonalRamp": [
+          "#0f090c",
+          "#2c2227",
+          "#4b3e44",
+          "#6d5c64",
+          "#8f7c86",
+          "#b0a0a8",
+          "#d2c5cb",
+          "#f6ebf0"
+        ]
+      },
+      "tinta": {
+        "role": "neutral",
+        "displayName": "Tinta",
+        "canonical": "oklch(24.3% 0.044 243.4)",
+        "tonalRamp": [
+          "#050c13",
+          "#1a2731",
+          "#334453",
+          "#4e6477",
+          "#6e8699",
+          "#94a8b9",
+          "#bbccda",
+          "#e3f0fb"
+        ]
+      },
+      "suave": {
+        "role": "neutral",
+        "displayName": "Suave",
+        "canonical": "oklch(47.8% 0.037 233.1)",
+        "tonalRamp": [
+          "#050c11",
+          "#1a272f",
+          "#33454f",
+          "#4e6572",
+          "#6e8694",
+          "#94a9b5",
+          "#bbccd6",
+          "#e4f1f9"
+        ]
+      },
+      "fraco": {
+        "role": "neutral",
+        "displayName": "Fraco",
+        "canonical": "oklch(60.6% 0.032 230.7)",
+        "tonalRamp": [
+          "#050c10",
+          "#1b272d",
+          "#35454d",
+          "#50656f",
+          "#718691",
+          "#96a8b2",
+          "#bdccd4",
+          "#e5f1f7"
+        ]
+      },
+      "fio": {
+        "role": "neutral",
+        "displayName": "Fio",
+        "canonical": "oklch(86.4% 0.022 218.6)",
+        "tonalRamp": [
+          "#070c0e",
+          "#1e272a",
+          "#384448",
+          "#556469",
+          "#75868b",
+          "#9aa8ac",
+          "#c0cbcf",
+          "#e7f0f3"
+        ]
+      },
+      "fio-forte": {
+        "role": "neutral",
+        "displayName": "Fio Forte",
+        "canonical": "oklch(77.2% 0.032 219.9)",
+        "tonalRamp": [
+          "#050d10",
+          "#1a272c",
+          "#33454b",
+          "#4f656d",
+          "#6f878f",
+          "#95a9b0",
+          "#bcccd2",
+          "#e4f1f5"
+        ]
+      },
+      "linha": {
+        "role": "neutral",
+        "displayName": "Linha",
+        "canonical": "oklch(92.0% 0.013 214.4)",
+        "tonalRamp": [
+          "#080c0d",
+          "#212628",
+          "#3c4345",
+          "#5a6366",
+          "#7a8487",
+          "#9ea7a9",
+          "#c3cbcc",
+          "#eaf0f1"
+        ]
+      },
+      "ok": {
+        "role": "status",
+        "displayName": "Ocupado",
+        "canonical": "oklch(46.3% 0.099 239.5)",
+        "tonalRamp": [
+          "#000d1c",
+          "#00283f",
+          "#104766",
+          "#266890",
+          "#4a8ab3",
+          "#78acd0",
+          "#a5cfed",
+          "#d3f4ff"
+        ]
+      },
+      "ok-bg": {
+        "role": "status",
+        "displayName": "Fundo de Ocupado",
+        "canonical": "oklch(93.7% 0.019 230.7)",
+        "tonalRamp": [
+          "#080c0e",
+          "#1f262a",
+          "#3a4449",
+          "#57636a",
+          "#78858b",
+          "#9ca7ad",
+          "#c2cbd0",
+          "#e9f0f3"
+        ]
+      },
+      "ok-borda": {
+        "role": "status",
+        "displayName": "Borda de Ocupado",
+        "canonical": "oklch(85.0% 0.040 232.7)",
+        "tonalRamp": [
+          "#040d12",
+          "#19272f",
+          "#324550",
+          "#4c6573",
+          "#6d8795",
+          "#93a9b5",
+          "#baccd7",
+          "#e3f1f9"
+        ]
+      },
+      "sai": {
+        "role": "status",
+        "displayName": "Sai Hoje",
+        "canonical": "oklch(48.6% 0.105 70.5)",
+        "tonalRamp": [
+          "#170600",
+          "#381e00",
+          "#5d3901",
+          "#845615",
+          "#a7783c",
+          "#c69d6c",
+          "#e5c39b",
+          "#ffeacc"
+        ]
+      },
+      "sai-bg": {
+        "role": "status",
+        "displayName": "Fundo de Sai Hoje",
+        "canonical": "oklch(95.4% 0.039 87.6)",
+        "tonalRamp": [
+          "#0e0b04",
+          "#2a2417",
+          "#494130",
+          "#6a604a",
+          "#8b816a",
+          "#ada490",
+          "#d0c9b8",
+          "#f4eee1"
+        ]
+      },
+      "sai-borda": {
+        "role": "status",
+        "displayName": "Borda de Sai Hoje",
+        "canonical": "oklch(87.2% 0.078 85.8)",
+        "tonalRamp": [
+          "#120a00",
+          "#2f2305",
+          "#503f18",
+          "#745e2e",
+          "#967f4f",
+          "#b6a37a",
+          "#d7c8a6",
+          "#f9edd4"
+        ]
+      },
+      "atraso": {
+        "role": "status",
+        "displayName": "Atraso",
+        "canonical": "oklch(49.5% 0.176 29.7)",
+        "tonalRamp": [
+          "#240000",
+          "#4d0000",
+          "#7a160e",
+          "#aa2e22",
+          "#d25444",
+          "#ee8272",
+          "#ffae9f",
+          "#ffdbce"
+        ]
+      },
+      "atraso-bg": {
+        "role": "status",
+        "displayName": "Fundo de Atraso",
+        "canonical": "oklch(94.9% 0.022 27.8)",
+        "tonalRamp": [
+          "#0f0a09",
+          "#2b2321",
+          "#4b3f3d",
+          "#6d5d5b",
+          "#8e7e7c",
+          "#b0a19f",
+          "#d2c6c4",
+          "#f5eceb"
+        ]
+      },
+      "atraso-borda": {
+        "role": "status",
+        "displayName": "Borda de Atraso",
+        "canonical": "oklch(84.5% 0.064 28.1)",
+        "tonalRamp": [
+          "#160605",
+          "#361d1a",
+          "#593833",
+          "#7f544e",
+          "#a3756f",
+          "#c29a94",
+          "#e2c0bb",
+          "#ffe8e3"
+        ]
+      },
+      "chega": {
+        "role": "status",
+        "displayName": "Chega Hoje",
+        "canonical": "oklch(46.9% 0.087 172.1)",
+        "tonalRamp": [
+          "#001009",
+          "#002d22",
+          "#0e4d3e",
+          "#25705c",
+          "#4a927d",
+          "#79b3a0",
+          "#a6d5c5",
+          "#d4f8eb"
+        ]
+      },
+      "chega-bg": {
+        "role": "status",
+        "displayName": "Fundo de Chega Hoje",
+        "canonical": "oklch(93.8% 0.024 169.9)",
+        "tonalRamp": [
+          "#070d0a",
+          "#1e2724",
+          "#394540",
+          "#55655f",
+          "#768780",
+          "#9aa9a3",
+          "#c0ccc8",
+          "#e8f1ed"
+        ]
+      },
+      "chega-borda": {
+        "role": "status",
+        "displayName": "Borda de Chega Hoje",
+        "canonical": "oklch(84.8% 0.053 168.7)",
+        "tonalRamp": [
+          "#020e09",
+          "#142a22",
+          "#2b493e",
+          "#446a5c",
+          "#658c7d",
+          "#8daea0",
+          "#b5d0c5",
+          "#dff4eb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Nome da pousada na abertura do site; tela de entrar, código do pedido confirmado e 404."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Data do dia no painel e pergunta de cada passo do cadastro; títulos de seção do site sobem para clamp(38px, 5vw, 60px)."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Cabeçalho de módulo (Tábua de hoje, Maré de ocupação); nomes de quarto e gaveta em 24-28px."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Hora na tábua, leituras da régua, preços e totais; sempre tabular."
+      },
+      "numeral-table": {
+        "displayName": "Numeral de tabela",
+        "purpose": "Datas, valores e códigos nas tabelas de estadias e fichas de dados."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Texto do painel; o site usa 16px/1.55."
+      },
+      "body-leitura": {
+        "displayName": "Body de leitura",
+        "purpose": "Termos de Uso e Aviso de Privacidade, medida de 68ch."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Rótulo de botão em palavras."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Cabeçalhos de coluna, etiquetas de situação e rótulos de dado; nunca em caixa alta."
+      }
+    },
+    "shadows": [
+      {
+        "name": "sombra-papel",
+        "value": "0 1px 2px rgba(12, 52, 82, .06), 0 8px 24px -16px rgba(12, 52, 82, .25)",
+        "purpose": "Menus suspensos, bilhete de datas, quarto escolhido."
+      },
+      {
+        "name": "brilho-acao",
+        "value": "0 1px 0 rgba(0, 0, 0, .12), 0 6px 14px -10px rgba(168, 19, 95, .9)",
+        "purpose": "Botão principal magenta."
+      },
+      {
+        "name": "anel-pedido",
+        "value": "0 0 0 1px #a8135f, 0 10px 24px -18px rgba(168, 19, 95, .7)",
+        "purpose": "Bloco de pedidos novos do site."
+      },
+      {
+        "name": "gaveta",
+        "value": "-24px 0 56px -24px rgba(8, 38, 60, .5)",
+        "purpose": "Gaveta lateral; espelhada no menu móvel."
+      },
+      {
+        "name": "recado",
+        "value": "0 14px 32px -14px rgba(8, 38, 60, .6)",
+        "purpose": "Toast no rodapé."
+      },
+      {
+        "name": "dica",
+        "value": "0 8px 18px -10px rgba(8, 38, 60, .7)",
+        "purpose": "Dica flutuante da curva de maré."
+      },
+      {
+        "name": "foco-campo",
+        "value": "0 0 0 3px #c7e0e6",
+        "purpose": "Campo em foco, com borda em mar."
+      },
+      {
+        "name": "foco-visivel",
+        "value": "outline: 2px solid #a8135f; outline-offset: 2px",
+        "purpose": "Foco por teclado em qualquer elemento."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-saida",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Curva única de entrada: gaveta, menu móvel, recado, confirmação, progresso do cadastro, zoom de foto."
+      },
+      {
+        "name": "estado",
+        "value": "150ms ease",
+        "purpose": "Cor de fundo, borda e sombra de botões."
+      },
+      {
+        "name": "menu-movel",
+        "value": "280ms",
+        "purpose": "Menu lateral deslizando abaixo de 900px."
+      },
+      {
+        "name": "entrada-gaveta",
+        "value": "320ms",
+        "purpose": "Gaveta e recado entrando (translate 40px / 10px + opacidade)."
+      },
+      {
+        "name": "confirmacao",
+        "value": "450ms",
+        "purpose": "Código do pedido aparecendo no site."
+      },
+      {
+        "name": "zoom-foto",
+        "value": "600ms, scale(1.03)",
+        "purpose": "Hover nas fotos do mosaico do site."
+      },
+      {
+        "name": "movimento-reduzido",
+        "value": "animation: none; transition: none",
+        "purpose": "Tudo desliga com prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "estreito",
+        "value": "420px"
+      },
+      {
+        "name": "celular",
+        "value": "560px"
+      },
+      {
+        "name": "tabela-ficha",
+        "value": "640px"
+      },
+      {
+        "name": "regua-2x2",
+        "value": "760px"
+      },
+      {
+        "name": "menu-gaveta",
+        "value": "899px"
+      },
+      {
+        "name": "site-empilha",
+        "value": "960px"
+      },
+      {
+        "name": "visao-empilha",
+        "value": "1150px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Botão principal",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Magenta de carta com brilho de ação; uma ação principal por região.",
+      "html": "<button class=\"ds-btn-cheio\"><svg viewBox=\"0 0 24 24\" width=\"17\" height=\"17\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\"><path d=\"M12 5v14M5 12h14\"/></svg>Registrar estadia</button>",
+      "css": ".ds-btn-cheio { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 5px; border: 1px solid transparent; font: 700 14px/1 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; background: var(--magenta, #a8135f); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.12), 0 6px 14px -10px rgba(168,19,95,.9); } .ds-btn-cheio:hover { background: var(--magenta-esc, #8a0d4d); } .ds-btn-cheio:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão de borda",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Ação por linha da tábua e ações secundárias.",
+      "html": "<button class=\"ds-btn-borda\">Registrar saída</button>",
+      "css": ".ds-btn-borda { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 5px; border: 1px solid transparent; font: 700 14px/1 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; background: var(--papel, #ffffff); border-color: var(--fio-forte, #9fbac3); color: var(--tinta, #0b2233); } .ds-btn-borda:hover { border-color: var(--mar, #0c3452); background: #f6fafb; } .ds-btn-borda:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão azul",
+      "kind": "button",
+      "refersTo": "button-navy",
+      "description": "Ação forte que não é a principal.",
+      "html": "<button class=\"ds-btn-sec\">Copiar link</button>",
+      "css": ".ds-btn-sec { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 5px; border: 1px solid transparent; font: 700 14px/1 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; background: var(--mar, #0c3452); color: #fff; } .ds-btn-sec:hover { background: var(--mar-2, #164a6e); } .ds-btn-sec:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; }"
+    },
+    {
+      "name": "Botão de perigo",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Recusar pedido, cancelar estadia.",
+      "html": "<button class=\"ds-btn-perigo\">Recusar</button>",
+      "css": ".ds-btn-perigo { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: 5px; border: 1px solid transparent; font: 700 14px/1 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; background: var(--papel, #ffffff); border-color: var(--atraso-borda, #f3bdb5); color: var(--atraso, #b0261a); } .ds-btn-perigo:hover { background: var(--atraso-bg, #fde9e6); border-color: var(--atraso, #b0261a); } .ds-btn-perigo:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; }"
+    },
+    {
+      "name": "Campo de texto",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Campo com rótulo acima; datas e números em Barlow tabular.",
+      "html": "<label class=\"ds-campo\">Nome do hóspede <input placeholder=\"Como está no documento\"></label><label class=\"ds-campo\">Entrada <input class=\"ds-num\" value=\"16/11/2026\"></label>",
+      "css": ".ds-campo { display: grid; gap: 6px; font: 700 13.5px/1.3 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; color: var(--tinta, #0b2233); max-width: 320px; margin-bottom: 12px; } .ds-campo input { height: 44px; padding: 0 12px; border-radius: 5px; border: 1px solid var(--fio-forte, #9fbac3); background: var(--papel, #ffffff); font: 400 15px \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; color: var(--tinta, #0b2233); caret-color: var(--magenta, #a8135f); } .ds-campo input::placeholder { color: var(--fraco, #6f8692); } .ds-campo input.ds-num { font: 600 18px \"Barlow Condensed\", \"Arial Narrow\", sans-serif; font-variant-numeric: tabular-nums; } .ds-campo input:focus { outline: none; border-color: var(--mar, #0c3452); box-shadow: 0 0 0 3px var(--raso, #c7e0e6); }"
+    },
+    {
+      "name": "Etiquetas de situação",
+      "kind": "chip",
+      "refersTo": "tag-ocupado",
+      "description": "Quadradinho de cor + palavra; nunca só cor. Pedido é a única cheia.",
+      "html": "<span class=\"ds-etq ds-ocupado\">Ocupado</span> <span class=\"ds-etq ds-sai\">Sai hoje</span> <span class=\"ds-etq ds-atraso\">Saída atrasada</span> <span class=\"ds-etq ds-chega\">Chega hoje</span> <span class=\"ds-etq ds-livre\">Livre</span> <span class=\"ds-etq ds-pedido\">Pedido novo</span>",
+      "css": ".ds-etq { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 3px; border: 1px solid; font: 700 12.5px \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; white-space: nowrap; margin: 2px; } .ds-etq::before { content: \"\"; width: 7px; height: 7px; background: currentColor; } .ds-ocupado { background: var(--ok-bg, #deedf5); border-color: var(--ok-borda, #b5d3e4); color: var(--ok, #0f5f8a); } .ds-sai { background: var(--sai-bg, #fbefd3); border-color: var(--sai-borda, #ecd29a); color: var(--sai, #845300); } .ds-atraso { background: var(--atraso-bg, #fde9e6); border-color: var(--atraso-borda, #f3bdb5); color: var(--atraso, #b0261a); } .ds-chega { background: var(--chega-bg, #dcf0e8); border-color: var(--chega-borda, #acd9c7); color: var(--chega, #0e6a55); } .ds-livre { background: var(--terra-clara, #f6eccd); border-color: var(--livre-borda, #e2cd8f); color: var(--terra-tinta, #5e4a14); } .ds-pedido { background: var(--magenta, #a8135f); border-color: var(--magenta, #a8135f); color: #fff; }"
+    },
+    {
+      "name": "Menu lateral",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Trilho em azul de mar; ativo em mar-2 com ícone em terra; contador quadrado.",
+      "html": "<nav class=\"ds-trilho\"><a class=\"ds-nav\" aria-current=\"page\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><rect x=\"4\" y=\"4\" width=\"7\" height=\"7\"/><rect x=\"13\" y=\"4\" width=\"7\" height=\"7\"/><rect x=\"4\" y=\"13\" width=\"7\" height=\"7\"/><rect x=\"13\" y=\"13\" width=\"7\" height=\"7\"/></svg>Visão geral<span class=\"ds-n\">1</span></a><a class=\"ds-nav\" href=\"#\"><svg viewBox=\"0 0 24 24\" width=\"19\" height=\"19\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linejoin=\"round\"><rect x=\"4\" y=\"5\" width=\"16\" height=\"15\"/><path d=\"M4 10h16M9 3v4M15 3v4\"/></svg>Estadias<span class=\"ds-n ds-v\">2</span></a></nav>",
+      "css": ".ds-trilho { width: 248px; padding: 14px; background: var(--mar, #0c3452); display: grid; gap: 2px; } .ds-nav { display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 0 12px; border-radius: 5px; color: #dbe8f0; font: 400 15px \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; text-decoration: none; } .ds-nav svg { color: var(--mar-suave, #a9c4d6); flex: none; } .ds-nav:hover { background: rgba(255,255,255,.07); color: #fff; } .ds-nav:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; } .ds-nav[aria-current=\"page\"] { background: var(--mar-2, #164a6e); color: #fff; font-weight: 700; box-shadow: inset 0 0 0 1px rgba(255,255,255,.1); } .ds-nav[aria-current=\"page\"] svg { color: var(--terra, #ead6a0); } .ds-n { margin-left: auto; min-width: 24px; height: 22px; padding: 0 6px; border-radius: 3px; background: var(--atraso, #b0261a); color: #fff; font: 700 14px/22px \"Barlow Condensed\", \"Arial Narrow\", sans-serif; text-align: center; } .ds-n.ds-v { background: var(--magenta, #a8135f); }"
+    },
+    {
+      "name": "Tábua de hoje",
+      "kind": "custom",
+      "refersTo": "module-paper",
+      "description": "Movimentos do dia por hora; módulo de fio, linha 'agora' em magenta.",
+      "html": "<section class=\"ds-tabua\"><h2>Tábua de hoje</h2><div class=\"ds-lin ds-atr\"><div class=\"ds-h\">11:00<small>há 1 dia</small></div><span class=\"ds-etq-a\">Saída atrasada</span><div class=\"ds-q\"><b>Quarto 2</b><span>João Batista Pereira, 1 pessoa</span></div></div><div class=\"ds-agora\">agora 08:24</div><div class=\"ds-lin\"><div class=\"ds-h\">14:00<small>entrada</small></div><span class=\"ds-etq-c\">Chega hoje</span><div class=\"ds-q\"><b>Quarto 4</b><span>Ricardo Tanaka, 3 pessoas</span></div></div></section>",
+      "css": ".ds-tabua { border-top: 2px solid var(--mar, #0c3452); padding-top: 12px; max-width: 520px; font-family: \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; color: var(--tinta, #0b2233); } .ds-tabua h2 { margin: 0 0 8px; font: 700 23px/1.1 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; } .ds-lin { display: grid; grid-template-columns: 80px 130px 1fr; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--linha, #dbe7ea); } .ds-h { font: 600 26px/1 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; font-variant-numeric: tabular-nums; } .ds-h small { display: block; font: 700 12px/1.3 \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; color: var(--suave, #48616f); margin-top: 3px; } .ds-atr .ds-h, .ds-atr .ds-h small { color: var(--atraso, #b0261a); } .ds-q b { display: block; font-size: 15px; } .ds-q span { color: var(--suave, #48616f); font-size: 13.5px; } .ds-etq-a, .ds-etq-c { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 3px; border: 1px solid; font-size: 12.5px; font-weight: 700; justify-self: start; } .ds-etq-a { background: var(--atraso-bg, #fde9e6); border-color: var(--atraso-borda, #f3bdb5); color: var(--atraso, #b0261a); } .ds-etq-c { background: var(--chega-bg, #dcf0e8); border-color: var(--chega-borda, #acd9c7); color: var(--chega, #0e6a55); } .ds-agora { display: flex; align-items: center; gap: 10px; padding: 6px 0; font: 600 15px/1 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; color: var(--magenta, #a8135f); border-bottom: 1px solid var(--linha, #dbe7ea); } .ds-agora::after { content: \"\"; flex: 1; height: 1px; background: var(--magenta, #a8135f); }"
+    },
+    {
+      "name": "Régua do dia",
+      "kind": "custom",
+      "refersTo": "module-paper",
+      "description": "Quatro leituras numa linha entre fios, em vez de blocos de KPI.",
+      "html": "<dl class=\"ds-regua\"><div><dt>Hospedados agora</dt><dd>4 <small>9 pessoas</small></dd></div><div><dt>Saem hoje</dt><dd>1 <small>até 11:00</small></dd></div><div class=\"ds-alerta\"><dt>Saídas atrasadas</dt><dd>1 <small>passaram do horário</small></dd></div><div><dt>Quartos livres</dt><dd>1 <small>de 6</small></dd></div></dl>",
+      "css": ".ds-regua { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0; border-top: 2px solid var(--mar, #0c3452); border-bottom: 1px solid var(--fio-forte, #9fbac3); font-family: \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; color: var(--tinta, #0b2233); } .ds-regua div { padding: 10px 16px 12px 0; } .ds-regua div + div { padding-left: 16px; border-left: 1px solid var(--fio, #c3d6dc); } .ds-regua dt { font-size: 13.5px; color: var(--suave, #48616f); } .ds-regua dd { margin: 2px 0 0; font: 600 28px/1 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; font-variant-numeric: tabular-nums; display: flex; align-items: baseline; gap: 8px; } .ds-regua dd small { font: 500 17px/1.3 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; color: var(--suave, #48616f); } .ds-regua .ds-alerta dd { color: var(--atraso, #b0261a); }"
+    },
+    {
+      "name": "Bilhete de datas",
+      "kind": "card",
+      "refersTo": "ticket-head",
+      "description": "Formulário de datas do site como bilhete de travessia: cabeça em azul de mar, papel embaixo.",
+      "html": "<form class=\"ds-bilhete\"><div class=\"ds-p1\"><h2>Quando você vem?</h2><div class=\"ds-rota\"><label>Entrada<input value=\"16/11/2026\"></label><label>Saída<input value=\"17/11/2026\"></label></div></div><div class=\"ds-p2\"><button type=\"button\" class=\"ds-ver\">Ver quartos livres</button></div></form>",
+      "css": ".ds-bilhete { width: 380px; background: var(--papel, #ffffff); border: 1px solid var(--fio-forte, #9fbac3); border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(12,52,82,.06), 0 8px 24px -16px rgba(12,52,82,.25); font-family: \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; } .ds-p1 { background: var(--mar, #0c3452); color: #fff; padding: 20px 22px; } .ds-p1 h2 { margin: 0; font: 700 28px/1 \"Barlow Condensed\", \"Arial Narrow\", sans-serif; } .ds-rota { display: grid; grid-template-columns: 1fr 1fr; margin-top: 16px; border-top: 1px solid rgba(255,255,255,.25); } .ds-rota label { display: grid; gap: 6px; padding-top: 10px; font-size: 13.5px; font-weight: 700; color: var(--mar-suave, #a9c4d6); } .ds-rota label + label { padding-left: 14px; border-left: 1px solid rgba(255,255,255,.25); } .ds-rota input { height: 48px; padding: 0 10px; border-radius: 5px; border: 1px solid rgba(255,255,255,.2); background: var(--mar-2, #164a6e); color: #fff; font: 600 21px \"Barlow Condensed\", \"Arial Narrow\", sans-serif; font-variant-numeric: tabular-nums; min-width: 0; } .ds-rota input:focus { outline: none; border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.25); } .ds-p2 { padding: 20px 22px; } .ds-ver { width: 100%; min-height: 52px; border: 0; border-radius: 5px; background: var(--magenta, #a8135f); color: #fff; font: 700 16px \"Digitos\", \"Atkinson Hyperlegible\", \"Segoe UI\", system-ui, sans-serif; cursor: pointer; } .ds-ver:hover { background: var(--magenta-esc, #8a0d4d); } .ds-ver:focus-visible { outline: 2px solid var(--magenta, #a8135f); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Tábua de Marés",
+    "overview": "O dia da pousada se lê como uma tábua de marés publicada numa carta náutica: movimentos listados por horário em colunas, números condensados alinhados como num almanaque, e a ocupação das próximas semanas desenhada como uma curva de maré, com preamar (\"Mais cheia\") e baixa-mar (\"Mais vazia\"). O sistema serve a quem está no balcão ou no celular com pressa: a primeira linha da tábua é a próxima coisa a fazer.\n\nO mundo é o da carta impressa: um menu em azul de mar fundo, o chão em água rasa clara, a terra em ocre claro para o que está livre ou quieto, e o magenta das cartas náuticas reservado ao que exige ação. Os módulos não são cartões estufados; são seções abertas por um fio grosso de mar e divididas por linhas finas, densas como uma página de almanaque. Palavras em Atkinson Hyperlegible, feita para ler fácil por gente de todas as idades; horários, datas, preços e números de quarto em Barlow Condensed, sempre tabulares.\n\nO mesmo mundo veste o site público de cada pousada, onde a pousada é a protagonista: o nome dela em letras condensadas enormes, a escolha de datas como um bilhete de travessia (entrada e saída em colunas), e uma faixa de maré em dois tons de água separando a abertura dos quartos. O que este sistema recusa é o painel SaaS genérico de quatro blocos de KPI sobre um gráfico de barras.",
+    "keyCharacteristics": [
+      "Chão em água de carta (`agua`), nunca creme nem branco puro; papel branco só para o que se destaca do chão.",
+      "Magenta de carta só para ação: pedido novo, botão principal, linha \"agora\", marcador de hoje, foco.",
+      "Fios em vez de caixas: módulo abre com fio de 2px em azul de mar e se divide com linhas de 1px.",
+      "Duas vozes tipográficas com papéis fixos: Atkinson para palavras, Barlow Condensed para tudo que é número ou título.",
+      "Cada estadia e cada quarto é identificado pelo número primeiro.",
+      "Situação sempre como etiqueta com quadradinho de cor e palavra, nunca só cor."
+    ],
+    "rules": [
+      {
+        "name": "A Regra do Magenta de Carta",
+        "body": "Magenta só marca o que exige ação agora ou onde você está agora. Se nada na tela pede ação, o único magenta é o botão principal.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra do Chão de Água",
+        "body": "O chão é sempre `agua`. Não é creme, não é branco. Papel branco é um módulo levantado do chão, não o fundo da página.",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Palavra ao Lado da Cor",
+        "body": "Nenhuma situação é comunicada só por cor: etiqueta com quadradinho de 7px e a palavra (\"Sai hoje\", \"Chega hoje\"), ou a hora em vermelho acompanhada de \"há 1 dia\".",
+        "section": "colors"
+      },
+      {
+        "name": "A Regra da Coluna de Números",
+        "body": "Toda hora, data, preço, contagem e número de quarto sai em Barlow Condensed com algarismos tabulares, inclusive dentro de campos `date`, `time` e `number` (600, 18px). Palavras nunca saem em Barlow em corpo de texto.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Número Primeiro",
+        "body": "Quarto e estadia são identificados pelo número antes do nome: \"Quarto 2\", \"#00101\", e o quarto sem foto mostra o próprio número como placa de chaveiro.",
+        "section": "typography"
+      },
+      {
+        "name": "A Regra do Fio, Não do Cartão",
+        "body": "Um módulo abre com um fio de 2px em `mar` e se divide com linhas de 1px; não ganha caixa, sombra nem padding de cartão. Só ganha papel e borda o que precisa se destacar: o bloco de pedidos, o aviso de termos, o bilhete de datas e os cartões de quarto do site.",
+        "section": "layout"
+      },
+      {
+        "name": "A Regra da Carta Plana",
+        "body": "Superfície parada não tem sombra. Sombra significa \"isto está flutuando\" ou \"isto pede ação\", e é sempre tingida de mar ou de magenta.",
+        "section": "elevation"
+      },
+      {
+        "name": "A Regra da Etiqueta Reta",
+        "body": "Nenhum canto passa de 6px e nada vira pílula. Curva só na água.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do manter o chão de toda página em `agua` (#e9f2f3) e usar papel branco só para módulos que se destacam.",
+      "Do abrir cada módulo com fio de 2px em `mar` e separar linhas com 1px `linha`; use `fio-forte` sob cabeçalhos de coluna.",
+      "Do escrever toda hora, data, preço e número de quarto em Barlow Condensed tabular, e toda palavra em Atkinson Hyperlegible.",
+      "Do identificar quarto e estadia pelo número primeiro (\"Quarto 2\", \"#00101\").",
+      "Do mostrar situação com etiqueta de quadradinho + palavra, usando o trio texto/fundo/borda da situação.",
+      "Do reservar o magenta para ação e para o \"agora\": botão principal, pedido novo, linha do horário atual, marcador de hoje, foco.",
+      "Do dar a cada botão um rótulo em palavras (\"Registrar saída\", \"Pedir reserva\"); ícone sozinho só em ações repetidas por linha, com `aria-label`.",
+      "Do respeitar `prefers-reduced-motion`: animações de entrada usam `cubic-bezier(.16, 1, .3, 1)` entre 280 e 450ms e somem com a preferência reduzida."
+    ],
+    "donts": [
+      "Don't resumir o dia em blocos de KPI com número grande, caixa e sombra sobre um gráfico de barras; as leituras vão numa régua de fios e a ocupação vai como curva de maré.",
+      "Don't pintar o chão de creme ou de branco puro.",
+      "Don't usar magenta como decoração, cor de marca ou fundo de seção.",
+      "Don't passar de 6px de canto nem fazer botões, etiquetas ou abas em pílula.",
+      "Don't pôr sombra em módulo parado; sombra é para o que flutua ou pede ação, sempre tingida de mar ou magenta.",
+      "Don't comunicar situação só por cor.",
+      "Don't usar caixa alta em rótulos nem títulos."
+    ]
+  }
+}
