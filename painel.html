@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel da pousada</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#13294b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+/* Estrutura da referência: menu lateral cinza-claro com a marca no topo; área principal branca, com borda fina e
+   cantos arredondados, que tem a barra de busca/usuário em cima e o conteúdo embaixo. */
+.casca { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
+.lateral { position: sticky; top: 0; height: 100vh; padding: 18px 14px; display: flex; flex-direction: column; gap: 2px; background: var(--menu); color: var(--c30-tinta); }
+.marca { display: flex; align-items: center; gap: 9px; padding: 2px 6px 22px; text-decoration: none; }
+.marca i { width: 28px; height: 28px; border-radius: 7px; background: var(--c10); color: var(--c10-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; flex: none; }
+.lateral .marca b, .entrar .marca b { color: inherit; }
+.marca b { font-size: 14px; font-weight: 700; letter-spacing: -.02em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-item { display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border-radius: 8px; border: 0; background: none; color: var(--c30-tinta); font-weight: 500; font-size: 13.5px; text-decoration: none; cursor: pointer; width: 100%; text-align: left; opacity: .88; }
+.nav-item svg.i { width: 17px; height: 17px; color: var(--c30-suave); }
+.nav-item:hover { background: var(--c30-hover); opacity: 1; }
+.nav-item[aria-current="page"] { background: var(--c10); color: var(--c10-tinta); font-weight: 700; opacity: 1; }
+.nav-item[aria-current="page"] svg.i { color: var(--c10-tinta); }
+.nav-item .n { margin-left: auto; min-width: 20px; height: 20px; border-radius: 6px; background: var(--vermelho); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; padding: 0 5px; }
+.lateral .grupo { margin: 22px 0 6px; padding: 0 12px; font-size: 11px; letter-spacing: .06em; color: var(--c30-suave); font-weight: 600; text-transform: uppercase; }
+.lateral .fim { margin-top: auto; }
+
+.area { min-width: 0; background: var(--c60); display: flex; flex-direction: column; min-height: 100vh; }
+.topo { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 12px; padding: 12px 22px; border-bottom: 1px solid var(--c60-linha); background: var(--c60); }
+.busca { position: relative; width: min(280px, 100%); }
+.busca svg.i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--c60-suave); }
+.busca #busca::placeholder { color: var(--c60-suave); }
+.busca #busca { height: 34px; padding-left: 34px; background: #ffffff; border-color: var(--borda); color: var(--tinta); font-size: 13px; }
+.topo .direita { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.usuario { display: flex; align-items: center; gap: 9px; padding: 3px 8px 3px 3px; border-radius: 999px; text-decoration: none; }
+.usuario .av { background: var(--azul) !important; color: var(--nevoa) !important; }
+.usuario:hover { background: var(--c60-funda); }
+.usuario b { display: block; font-size: 12.5px; font-weight: 700; line-height: 1.2; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.usuario small { display: block; font-size: 11px; color: var(--c60-suave); line-height: 1.2; }
+.sino { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--c60-linha); background: #ffffff; color: var(--marinho); cursor: pointer; text-decoration: none; }
+.sino .ponto { position: absolute; top: 6px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--vermelho); box-shadow: 0 0 0 2px var(--c60-funda); }
+.abre-menu { display: none; }
+#vista { padding: 22px 24px 40px; flex: 1; }
+@media (max-width: 899px) {
+  .casca { grid-template-columns: 1fr; }
+  .lateral { position: fixed; z-index: 75; left: 0; top: 0; bottom: 0; width: 260px; transform: translateX(-100%); transition: transform .2s ease; padding-top: calc(18px + env(safe-area-inset-top, 0px)); box-shadow: 20px 0 40px -20px rgba(0, 0, 0, .3); }
+  .menu-aberto .lateral { transform: none; }
+  .topo { border-radius: 0; padding: calc(10px + env(safe-area-inset-top, 0px)) 14px 10px; }
+  .abre-menu { display: grid; }
+  .usuario div { display: none; }
+  #vista { padding: 18px 16px calc(40px + env(safe-area-inset-bottom, 0px)); }
+}
+
+/* cabeçalho da página */
+.cab { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+.cab h1 { font-size: 22px; line-height: 1.25; }
+.cab p { color: var(--c60-suave); font-size: 12.5px; margin-top: 3px; }
+.cab .acoes-cab { display: flex; gap: 8px; flex-wrap: wrap; }
+.trilha { display: flex; align-items: center; gap: 4px; color: var(--c60-suave); font-size: 12.5px; margin-top: 3px; }
+.trilha a { color: var(--c60-suave); text-decoration: none; }
+.trilha a:hover { color: var(--azul); }
+.trilha svg.i { width: 13px; height: 13px; }
+
+/* números do dia */
+.numeros { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+@media (max-width: 1100px) { .numeros { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.num { padding: 14px 14px 10px; }
+.num .rot { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 500; color: var(--tinta); }
+.num .rot span.q { width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: var(--salvia); color: var(--salvia-tinta); flex: none; }
+.num .rot svg.i { width: 15px; height: 15px; }
+.num b { display: block; margin: 10px 0 10px; font-size: 22px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.num small { display: block; border-top: 1px solid var(--linha); padding-top: 8px; color: var(--fraco); font-size: 11px; }
+.num.alerta .rot span.q { background: var(--vermelho); color: #fff; }
+.num.alerta b { color: var(--atraso); }
+
+.duas { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; }
+@media (max-width: 1100px) { .duas { grid-template-columns: 1fr; } }
+.bloco { padding: 16px; min-width: 0; }
+.bloco-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; min-height: 30px; }
+.bloco-cab h2 { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+.bloco-cab select { width: auto; height: 30px; padding: 0 28px 0 10px; font-size: 12px; font-weight: 500; }
+.pilula { height: 22px; padding: 0 9px; border-radius: 6px; background: var(--c30); color: var(--salvia-tinta); font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; }
+.link { color: var(--tinta); font-weight: 600; font-size: 12px; text-decoration: none; background: none; border: 0; cursor: pointer; padding: 0; }
+.link:hover { color: var(--c10-texto); }
+
+/* gráfico de barras arredondadas */
+.grafico { position: relative; }
+.grafico svg { display: block; width: 100%; height: 220px; overflow: visible; }
+.grafico .grade line { stroke: var(--linha); stroke-width: 1; stroke-dasharray: 3 4; }
+.grafico text { fill: var(--suave); font-size: 11px; font-family: var(--f); }
+.grafico text.hj { fill: var(--tinta); font-weight: 700; }
+.grafico rect.barra-g { fill: var(--salvia); }
+.grafico rect.barra-g.hj { fill: var(--c10); }
+.grafico rect.zero { fill: var(--linha); }
+.grafico rect.alvo { fill: transparent; cursor: pointer; }
+.grafico rect.alvo:focus { outline: none; }
+.dica { position: absolute; pointer-events: none; background: var(--cartao); border: 1px solid var(--borda); box-shadow: 0 6px 16px -6px rgba(0, 0, 0, .18); padding: 5px 9px; border-radius: 7px; white-space: nowrap; transform: translate(-50%, calc(-100% - 8px)); text-align: center; }
+.dica small { display: block; font-size: 10px; color: var(--suave); line-height: 1.3; }
+.dica b { display: block; font-size: 12px; line-height: 1.3; }
+details.tabela-alt { margin-top: 6px; font-size: 12px; color: var(--suave); }
+details.tabela-alt summary { cursor: pointer; }
+details.tabela-alt table { margin-top: 6px; border-collapse: collapse; }
+details.tabela-alt td, details.tabela-alt th { padding: 3px 12px 3px 0; text-align: left; font-variant-numeric: tabular-nums; }
+
+/* lista de saídas e chegadas */
+.mini-lista { display: grid; }
+.mini-lista h3 { font-size: 11.5px; font-weight: 600; color: var(--suave); margin: 4px 0 4px; }
+.mini-lista h3:not(:first-child) { margin-top: 14px; }
+.pessoa-l { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--linha); }
+.pessoa-l:last-of-type { border-bottom: 0; }
+.pessoa-l b { display: block; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pessoa-l div > span { display: block; color: var(--suave); font-size: 11.5px; }
+.pessoa-l div > span.tarde { color: var(--atraso); font-weight: 600; }
+.pessoa-l .btn { height: 30px; padding: 0 10px; font-size: 12px; }
+.pedidos { margin-bottom: 14px; border-color: var(--c10); box-shadow: 0 0 0 1px var(--c10); }
+.pedido { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--linha); }
+.pedido:last-child { border-bottom: 0; padding-bottom: 0; }
+.pedido .av { width: 36px; height: 36px; }
+.pedido b { font-size: 14px; font-weight: 700; }
+.pedido p { color: var(--suave); font-size: 12.5px; margin-top: 1px; }
+.pedido p a { color: var(--c10-texto); font-weight: 600; text-decoration: none; }
+.pedido .bts { display: flex; gap: 6px; }
+.pedido .bts .btn { height: 32px; padding: 0 12px; font-size: 12.5px; }
+@media (max-width: 640px) { .pedido { grid-template-columns: 36px minmax(0, 1fr); } .pedido .bts { grid-column: 1 / -1; } .pedido .bts .btn { flex: 1; } }
+.nav-item .n.v { background: var(--dourado); color: var(--azul); }
+.site-link { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.site-link input { flex: 1 1 260px; font-size: 13px !important; }
+.qr { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; margin-top: 4px; }
+.qr .img { width: 150px; height: 150px; background: #fff; border: 1px solid var(--borda); border-radius: 12px; padding: 8px; }
+.qr .img svg { width: 100%; height: 100%; display: block; }
+@media (max-width: 520px) { .qr { grid-template-columns: 1fr; } }
+.termos-aviso { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 14px; border-color: var(--c10); border-left: 4px solid var(--c10); }
+.termos-aviso h2 { font-size: 15px; }
+.termos-aviso p { color: var(--suave); font-size: 13px; margin-top: 2px; max-width: 60ch; }
+.termos-aviso .bts { display: flex; gap: 8px; flex-wrap: wrap; }
+.galeria-ed { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.galeria-ed:empty { display: none; }
+.galeria-ed figure { margin: 0; position: relative; border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; background: var(--campo); }
+.galeria-ed img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.galeria-ed .capa { position: absolute; left: 6px; top: 6px; height: 20px; padding: 0 7px; border-radius: 5px; background: var(--c10); color: var(--c10-tinta); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; }
+.galeria-ed figcaption { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 6px; }
+.galeria-ed figcaption .btn { height: 28px; padding: 0 8px; font-size: 11.5px; }
+.galeria-ed figcaption .ic { margin-left: auto; }
+.vazio { padding: 18px; text-align: center; color: var(--suave); font-size: 13px; background: var(--campo); border-radius: 10px; }
+
+.av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11.5px; flex: none; background: var(--av-bg, var(--salvia-clara)); color: var(--av-t, var(--salvia-esc)); }
+
+/* tabela */
+.tabela-caixa { overflow-x: auto; margin: 0 -16px -16px; }
+table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
+.tab th { text-align: left; font-size: 11.5px; color: var(--suave); font-weight: 500; padding: 9px 16px; border-bottom: 1px solid var(--linha); white-space: nowrap; }
+.tab td { padding: 10px 16px; border-bottom: 1px solid var(--linha); font-size: 12.5px; vertical-align: middle; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tab tr:last-child td { border-bottom: 0; }
+.tab .cod { color: var(--suave); }
+.tab .pessoa { display: flex; align-items: center; gap: 9px; font-weight: 500; }
+.tab .pessoa .av { width: 26px; height: 26px; font-size: 10px; }
+.tab .acoes { display: flex; gap: 2px; }
+.ic { width: 28px; height: 28px; display: inline-grid; place-items: center; border-radius: 7px; border: 0; background: none; color: var(--tinta); cursor: pointer; text-decoration: none; }
+.ic:hover { background: var(--campo); }
+.ic svg.i { width: 16px; height: 16px; }
+
+/* abas e filtro */
+.abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 10px; background: #ffffff; border: 1px solid var(--borda); margin-bottom: 14px; flex-wrap: wrap; }
+.abas button { height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: none; font-size: 12.5px; font-weight: 600; color: var(--c60-suave); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.abas button b { font-weight: 700; font-size: 11px; color: var(--c60-suave); font-variant-numeric: tabular-nums; }
+.abas button[aria-pressed="true"] { background: var(--azul); color: var(--nevoa); }
+.abas button[aria-pressed="true"] b { color: var(--dourado); }
+.filtro-caixa { position: relative; }
+.menu-filtro { color: var(--tinta); position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: 220px; padding: 6px; background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .25); }
+.menu-filtro button { width: 100%; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; border: 0; border-radius: 7px; background: none; cursor: pointer; font-size: 13px; color: var(--tinta); }
+.menu-filtro button:hover { background: var(--campo); }
+.menu-filtro button[aria-checked="true"] { background: var(--c10-clara); font-weight: 600; }
+.menu-filtro button span { color: var(--suave); font-variant-numeric: tabular-nums; }
+.filtro-ativo { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 7px; color: var(--nevoa); background: var(--azul); font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+.filtro-ativo button { width: 20px; height: 20px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; color: var(--suave); border-radius: 5px; }
+.filtro-ativo button svg.i { width: 13px; height: 13px; }
+
+/* grade de quartos: foto com margem dentro do cartão, como na referência */
+.quartos { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+.quarto { padding: 8px; display: flex; flex-direction: column; }
+.foto { position: relative; aspect-ratio: 16 / 11; border-radius: 9px; overflow: hidden; background: var(--salvia-clara); }
+.foto img { width: 100%; height: 100%; object-fit: cover; }
+.foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; color: var(--marinho); font-size: 11.5px; font-weight: 600; }
+.foto .sem svg.i { width: 30px; height: 30px; stroke-width: 1.4; opacity: .8; }
+.foto .etiqueta { position: absolute; left: 8px; top: 8px; }
+.foto .editar { position: absolute; right: 8px; top: 8px; height: 24px; padding: 0 9px; border-radius: 999px; border: 0; background: rgba(255, 255, 255, .95); color: #1b1d1a; font-weight: 600; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.foto .editar svg.i { width: 12px; height: 12px; }
+.quarto .corpo { padding: 10px 4px 2px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.quarto h3 { font-size: 14.5px; font-weight: 700; }
+.quarto .linha-i { display: flex; align-items: center; gap: 5px; color: var(--suave); font-size: 12px; min-width: 0; }
+.quarto .linha-i svg.i { width: 14px; height: 14px; }
+.quarto .linha-i span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.quarto .linha-i b { color: var(--tinta); font-weight: 600; }
+.quarto .rodape { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 8px; }
+.preco { font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; }
+.preco small { color: var(--suave); font-weight: 500; font-size: 11px; }
+.quarto .rodape .btn { height: 30px; padding: 0 12px; font-size: 12px; }
+
+/* barra da estadia */
+.estadia { display: grid; gap: 4px; }
+.estadia .trilho { height: 5px; border-radius: 999px; background: var(--linha); overflow: hidden; }
+.estadia .trilho span { display: block; height: 100%; border-radius: 999px; background: var(--salvia); }
+.estadia.sai .trilho span { background: var(--sai); }
+.estadia.atrasado .trilho span { background: var(--vermelho); }
+.estadia .txt span:first-child { white-space: nowrap; }
+.estadia .txt { display: flex; justify-content: space-between; gap: 8px; font-size: 11px; color: var(--suave); font-variant-numeric: tabular-nums; }
+.estadia.sai .txt .falta { color: var(--sai); font-weight: 600; }
+.estadia.atrasado .txt .falta { color: var(--atraso); font-weight: 600; }
+
+/* página do quarto */
+.q-topo { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 14px; margin-bottom: 14px; align-items: stretch; }
+@media (max-width: 1000px) { .q-topo { grid-template-columns: 1fr; } }
+.q-foto { position: relative; border-radius: var(--r); overflow: hidden; background: var(--salvia-clara); min-height: 300px; }
+.q-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.q-foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--marinho); font-weight: 600; font-size: 13px; }
+.q-foto .sem svg.i { width: 40px; height: 40px; stroke-width: 1.3; }
+.q-foto label { position: absolute; right: 10px; bottom: 10px; cursor: pointer; background: rgba(255, 255, 255, .95); color: #1b1d1a; border-color: transparent; }
+.agora { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.agora .topo-a { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.agora .quem { display: flex; gap: 10px; align-items: center; }
+.agora .quem .av { width: 40px; height: 40px; font-size: 13px; }
+.agora .nome { font-size: 17px; font-weight: 700; letter-spacing: -.01em; overflow-wrap: anywhere; }
+.agora .tel { color: var(--c10-texto); font-weight: 600; font-size: 12.5px; text-decoration: none; }
+.dados { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; padding: 12px; border-radius: 10px; background: var(--campo); }
+.dados div span { display: block; color: var(--suave); font-size: 11px; }
+.dados div b { font-weight: 600; font-size: 12.5px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.obs { padding: 10px 12px; border-radius: 10px; border: 1px dashed var(--borda); font-size: 12.5px; color: var(--suave); }
+.agora .acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
+.agora .acoes .btn { flex: 1; }
+.linha-lista { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--linha); }
+.linha-lista:last-child { border-bottom: 0; }
+.linha-lista b { font-weight: 600; font-size: 13px; }
+.linha-lista span.d { display: block; color: var(--suave); font-size: 11.5px; }
+.duas-iguais { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 800px) { .duas-iguais { grid-template-columns: 1fr; } }
+
+/* gaveta de formulário */
+.veu { position: fixed; inset: 0; z-index: 70; background: rgba(15, 18, 14, .35); }
+.gaveta { color: var(--tinta); position: fixed; z-index: 71; top: 0; right: 0; bottom: 0; width: min(440px, 100%); background: var(--area); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; box-shadow: -20px 0 50px -20px rgba(0, 0, 0, .3); padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.gaveta header { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--linha); }
+.gaveta header h2 { font-size: 16px; }
+.gaveta .meio { overflow-y: auto; padding: 16px 18px; display: grid; gap: 14px; align-content: start; }
+.gaveta footer { display: flex; gap: 8px; padding: 12px 18px; border-top: 1px solid var(--linha); }
+@media (prefers-reduced-motion: no-preference) { .gaveta { animation: entra .2s ease-out; } @keyframes entra { from { transform: translateX(30px); opacity: 0; } } }
+
+.entrar { min-height: 100vh; display: grid; place-items: center; padding: 20px; background: var(--c60); }
+.entrar .cartao { width: min(400px, 100%); padding: 26px; display: grid; gap: 16px; }
+.entrar h1 { font-size: 20px; }
+.entrar .marca { padding: 0; }
+</style>
+</head>
+<body>
+<div id="tela-entrar" class="entrar" hidden>
+  <form class="cartao" id="f-entrar" novalidate>
+    <span class="marca"><i>Q</i><b>Painel de quartos</b></span>
+    <div><h1>Entrar no painel</h1><p class="suave" style="margin-top:4px;font-size:13px">Veja quem está em cada quarto e quem precisa sair.</p></div>
+    <div class="campos"><label class="todo">Email<input id="e-email" type="email" autocomplete="email" inputmode="email"></label><label class="todo">Senha<input id="e-senha" type="password" autocomplete="current-password"></label></div>
+    <p class="erro" id="e-erro" role="alert" hidden></p>
+    <button class="btn btn--cheio btn--grande btn--largo" type="submit" id="e-btn">Entrar</button>
+    <p class="suave" style="font-size:13px">Primeira vez? <a href="comecar.html" style="color:var(--tinta);font-weight:700;text-decoration-color:var(--c10);text-decoration-thickness:2px;text-underline-offset:3px">Cadastre a pousada e os quartos</a></p>
+  </form>
+</div>
+
+<div id="app" class="casca" hidden>
+  <aside class="lateral" id="lateral" aria-label="Menu">
+    <a class="marca" href="#geral"><i id="m-ini"></i><b id="m-nome"></b></a>
+    <a class="nav-item" href="#geral" data-v="geral" data-ic="grade">Visão geral<span class="n" data-atrasos hidden></span></a>
+    <a class="nav-item" href="#quartos" data-v="quartos" data-ic="cama">Quartos</a>
+    <a class="nav-item" href="#estadias" data-v="estadias" data-ic="calendario">Estadias<span class="n v" data-pedidos hidden></span></a>
+    <a class="nav-item" href="#hospedes" data-v="hospedes" data-ic="pessoas">Hóspedes</a>
+    <p class="grupo">Ajustes</p>
+    <a class="nav-item" href="#config" data-v="config" data-ic="engrenagem">Configurações</a>
+    <button class="nav-item fim" type="button" data-sair data-ic="sair">Sair</button>
+  </aside>
+  <div class="area">
+    <header class="topo">
+      <button class="sino abre-menu" type="button" id="abre-menu" aria-label="Abrir menu" aria-expanded="false" data-ic="menu"></button>
+      <label class="busca"><span data-ic="busca"></span><input id="busca" type="search" placeholder="Buscar quarto ou hóspede" aria-label="Buscar quarto ou hóspede"></label>
+      <div class="direita">
+        <a class="usuario" href="#config" aria-label="Sua conta"><span class="av" id="u-av"></span><div><b id="u-nome"></b><small id="u-papel"></small></div></a>
+        <a class="sino" href="#geral" id="sino" aria-label="Avisos"><span data-ic="sino"></span><span class="ponto" id="sino-ponto" hidden></span></a>
+      </div>
+    </header>
+    <main id="vista"></main>
+  </div>
+</div>
+<div class="veu" id="veu" hidden></div>
+<aside class="gaveta" id="gaveta" role="dialog" aria-modal="true" aria-labelledby="g-titulo" hidden></aside>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(async () => {
+  const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
+  const $ = id => document.getElementById(id);
+  const S = { pousada: null, papel: "dono", quartos: [], est: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos";
+  const TERMOS = "2026-11-16";
+
+  /* ---------- ícones (traço fino, como na referência) ---------- */
+  const P = {
+    grade: '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+    cama: '<path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M3 18v2M21 18v2M6 10V7a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v3"/>',
+    calendario: '<rect x="3.5" y="4.5" width="17" height="16" rx="2"/><path d="M8 2.5v4M16 2.5v4M3.5 10h17"/>',
+    pessoas: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5.5 6.5-5.5s5.7 2.1 6.5 5.5"/><path d="M16 4.7a3.5 3.5 0 0 1 0 6.6M18 14.8c1.8.8 3 2.6 3.5 5.2"/>',
+    engrenagem: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    sair: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>',
+    busca: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    sino: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0"/>',
+    menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    olho: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+    lapis: '<path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    lixo: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
+    mais: '<path d="M12 5v14M5 12h14"/>',
+    baixar: '<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',
+    filtro: '<path d="M3 5h18l-7 8.5V19l-4 2v-7.5z"/>',
+    x: '<path d="M6 6l12 12M18 6 6 18"/>',
+    usuario: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.2-6 8-6s7 2 8 6"/>',
+    relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    porta: '<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18M15 12h.01"/>',
+    saida: '<path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5M10 17l-5-5 5-5M5 12h11"/>',
+    camera: '<path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="3.5"/>',
+    imagem: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
+    chevron: '<path d="m9 6 6 6-6 6"/>',
+    telefone: '<path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2"/>',
+  };
+  const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n]}</svg>`;
+  document.querySelectorAll("[data-ic]").forEach(el => el.insertAdjacentHTML("afterbegin", ic(el.dataset.ic)));
+
+  /* ---------- utilidades ---------- */
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const iniciais = s => String(s || "?").replace(/[^\p{L}\p{N}\s]/gu, "").trim().split(/\s+/).slice(0, 2).map(x => x[0] || "").join("").toUpperCase() || "?";
+  const AVS = [["#e4e9f1", "#13294b"], ["#ffe9d8", "#b84d05"]];
+  const av = (nome, cls = "av") => { let h = 0; for (const c of String(nome)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [b, t] = AVS[h % AVS.length]; return `<span class="${cls}" style="--av-bg:${b};--av-t:${t}">${esc(iniciais(nome))}</span>`; };
+  const minutosBR = () => { const p = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()); return Number(p.find(x => x.type === "hour").value) % 24 * 60 + Number(p.find(x => x.type === "minute").value); };
+  const agoraTxt = () => { const m = minutosBR(); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
+  const hm = s => { const [h, m] = String(s || "12:00").split(":").map(Number); return h * 60 + (m || 0); };
+  const dur = min => min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min} min`;
+  const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+  const semana = d => SEM[new Date(d + "T12:00:00Z").getUTCDay()];
+  const ROT = { pedido: "Pedido do site", ocupado: "Ocupado", sai: "Sai hoje", atrasado: "Saída atrasada", chega: "Chega hoje", livre: "Livre", fora: "Fora de uso", proxima: "Vai chegar" };
+  const FIM = { finalizada: ["Saiu", "encerrada"], cancelada: ["Cancelada", "cancelada"], no_show: ["Não veio", "cancelada"], solicitada: ["Pedido", "encerrada"] };
+  const cod = r => "#" + String(r.codigo || "").padStart(5, "0");
+  const nomeQ = id => (S.quartos.find(x => x.id === id) || {}).nome || "?";
+
+  /* ---------- situação ---------- */
+  function situacaoEstadia(r) {
+    const h = hoje(), agora = minutosBR(), saidaMin = hm(S.pousada.checkout_hora);
+    if (r.status === "hospedado") {
+      if (r.saida < h || (r.saida === h && agora > saidaMin)) return "atrasado";
+      return r.saida === h ? "sai" : "ocupado";
+    }
+    if (r.status === "confirmada") return r.entrada <= h ? "chega" : "proxima";
+    if (r.status === "solicitada") return "pedido";
+    return "encerrada";
+  }
+  function situacaoQuarto(q) {
+    const h = hoje(), da = S.est.filter(r => r.quarto_id === q.id);
+    const hosp = da.find(r => r.status === "hospedado");
+    if (hosp) return { k: situacaoEstadia(hosp), r: hosp };
+    const chega = da.find(r => r.status === "confirmada" && r.entrada <= h && r.saida > h);
+    if (chega) return { k: "chega", r: chega };
+    if (!q.ativo) return { k: "fora" };
+    const prox = da.filter(r => r.status === "confirmada" && r.entrada > h).sort((a, b) => a.entrada.localeCompare(b.entrada))[0];
+    return { k: "livre", prox };
+  }
+  function textoSaida(r, k, curto) {
+    const h = hoje(), agora = minutosBR(), saidaMin = hm(S.pousada.checkout_hora);
+    if (curto) { if (k === "atrasado") return r.saida < h ? `Atrasada ${plural(noites(r.saida, h), "dia", "dias")}` : `Atrasada ${dur(agora - saidaMin)}`; if (k === "sai") return `Sai até ${S.pousada.checkout_hora}`; return `Sai ${semana(r.saida)} ${dm(r.saida)}`; }
+    if (k === "atrasado") return r.saida < h ? `Saída era ${dm(r.saida)}, atrasada ${plural(noites(r.saida, h), "dia", "dias")}` : `Saída era às ${S.pousada.checkout_hora}, atrasada ${dur(agora - saidaMin)}`;
+    if (k === "sai") return `Sai hoje até ${S.pousada.checkout_hora}, falta ${dur(Math.max(0, saidaMin - agora))}`;
+    const d = noites(h, r.saida); return `Sai ${semana(r.saida)} ${dm(r.saida)}, em ${plural(d, "dia", "dias")}`;
+  }
+  function barraEstadia(r, k, curto) {
+    const h = hoje(), tot = Math.max(1, noites(r.entrada, r.saida)), passou = Math.min(tot, Math.max(0, noites(r.entrada, h)));
+    const pct = k === "atrasado" ? 100 : Math.round((passou + (k === "sai" ? 1 : 0.5)) / tot * 100), noite = Math.min(tot, passou + 1);
+    return `<div class="estadia ${k}"><div class="trilho" role="img" aria-label="Noite ${noite} de ${tot}"><span style="width:${Math.min(100, pct)}%"></span></div>
+      <div class="txt"><span>Noite ${noite} de ${tot}</span><span class="falta">${textoSaida(r, k, curto)}</span></div></div>`;
+  }
+  const etiqueta = k => `<span class="etiqueta e-${k}">${ROT[k]}</span>`;
+  const etiquetaEstadia = r => { const k = situacaoEstadia(r); if (k !== "encerrada") return etiqueta(k); const [t, c] = FIM[r.status] || ["Encerrada", "encerrada"]; return `<span class="etiqueta e-${c}">${t}</span>`; };
+
+  /* ---------- entrar ---------- */
+  $("f-entrar").addEventListener("submit", async e => {
+    e.preventDefault(); const err = $("e-erro"); err.hidden = true;
+    const email = $("e-email").value.trim(), password = $("e-senha").value;
+    if (!email || !password) { err.textContent = "Coloque o email e a senha."; err.hidden = false; return; }
+    $("e-btn").disabled = true; const r = await sb.auth.signInWithPassword({ email, password }); $("e-btn").disabled = false;
+    if (r.error) { err.textContent = errText(r.error); err.hidden = false; return; }
+    iniciar();
+  });
+
+  async function iniciar() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { $("tela-entrar").hidden = false; $("app").hidden = true; document.title = "Entrar · Painel de quartos"; return; }
+    S.email = session.user.email || "";
+    const { data: m } = await sb.from("membros").select(`papel, pousada:pousadas(${COLS})`).limit(1);
+    if (!m || !m.length) { location.replace("comecar.html"); return; }
+    S.pousada = m[0].pousada; S.papel = m[0].papel;
+    marca();
+    const nomeU = S.email.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\p{L}/gu, c => c.toUpperCase());
+    $("u-nome").textContent = nomeU; $("u-papel").textContent = S.papel === "dono" ? "Dono" : "Recepção"; $("u-av").outerHTML = av(nomeU).replace('class="av"', 'class="av" id="u-av"');
+    $("tela-entrar").hidden = true; $("app").hidden = false;
+    await carregar(); assinar(); rota();
+    setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
+  }
+  function marca() { $("m-nome").textContent = S.pousada.nome; $("m-ini").textContent = iniciais(S.pousada.nome); document.title = `${S.pousada.nome} · Painel`; }
+  async function carregar() {
+    const Pid = S.pousada.id;
+    const [q, r] = await Promise.all([
+      sb.from("quartos").select("*").eq("pousada_id", Pid),
+      sb.from("reservas").select("*").eq("pousada_id", Pid).or(`saida.gte.${addDias(hoje(), -180)},status.in.(hospedado,confirmada)`).order("entrada").limit(2000),
+    ]);
+    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); S.est = r.data || [];
+    if (q.error || r.error) toast(errText(q.error || r.error));
+  }
+  function assinar() {
+    sb.channel("est-" + S.pousada.id).on("postgres_changes", { event: "*", schema: "public", table: "reservas", filter: `pousada_id=eq.${S.pousada.id}` }, p => {
+      const n = p.new, i = n && n.id ? S.est.findIndex(x => x.id === n.id) : -1;
+      if (p.eventType === "DELETE") S.est = S.est.filter(x => x.id !== (p.old || {}).id); else if (i >= 0) S.est[i] = n; else if (n && n.id) S.est.push(n);
+      if (p.eventType === "INSERT" && n && n.status === "solicitada") { PG.ding(); toast(`Pedido novo do site: ${n.nome}.`); }
+      if (!S.gaveta) desenha();
+    }).subscribe();
+  }
+
+  /* ---------- rotas ---------- */
+  const VISTAS = ["geral", "quartos", "estadias", "hospedes", "config"];
+  function rota() {
+    const h = location.hash.replace("#", "") || "geral";
+    if (h.startsWith("quarto-")) { S.v = "quarto"; S.qid = h.slice(7); } else S.v = VISTAS.includes(h) ? h : "geral";
+    S.menuFiltro = false; fechaMenu(); desenha(); scrollTo(0, 0);
+  }
+  addEventListener("hashchange", rota);
+
+  function desenha() {
+    const atual = S.v === "quarto" ? "quartos" : S.v;
+    document.querySelectorAll("[data-v]").forEach(a => a.dataset.v === atual ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+    const atrasos = S.quartos.filter(q => situacaoQuarto(q).k === "atrasado").length;
+    document.querySelectorAll("[data-atrasos]").forEach(n => { n.textContent = atrasos; n.hidden = !atrasos; });
+    const pedidos = S.est.filter(r => r.status === "solicitada").length;
+    document.querySelectorAll("[data-pedidos]").forEach(n => { n.textContent = pedidos; n.hidden = !pedidos; });
+    $("sino-ponto").hidden = !(atrasos || pedidos);
+    $("sino").setAttribute("aria-label", [pedidos && plural(pedidos, "pedido do site", "pedidos do site"), atrasos && plural(atrasos, "saída atrasada", "saídas atrasadas")].filter(Boolean).join(" e ") || "Nenhum aviso");
+    const avisoTermos = S.papel === "dono" && S.pousada.termos_versao !== TERMOS ? `<section class="cartao bloco termos-aviso" role="region" aria-label="Termos de Uso"><div><h2>Aceite os Termos de Uso</h2><p>Eles explicam como o sistema funciona e como os dados dos seus hóspedes são protegidos, conforme a LGPD. Leia antes de aceitar.</p></div><div class="bts"><a class="btn btn--borda" href="termos.html" target="_blank" rel="noopener">Ler os termos</a><button class="btn btn--cheio" data-acao="aceitar-termos">Li e aceito</button></div></section>` : "";
+    $("vista").innerHTML = avisoTermos + { geral: vGeral, quartos: vQuartos, quarto: vQuarto, estadias: vEstadias, hospedes: vHospedes, config: vConfig }[S.v]();
+    if (S.v === "geral") desenhaGrafico();
+    if (S.v === "config") desenhaQR();
+  }
+  const urlSite = () => new URL(`site.html?p=${S.pousada.slug}`, location.href).href;
+  function svgQR(cel) { if (!window.qrcode) return ""; const q = qrcode(0, "M"); q.addData(urlSite()); q.make(); return q.createSvgTag({ cellSize: cel, margin: 2, scalable: true }); }
+  function desenhaQR() { const b = $("qr"); if (b) b.innerHTML = svgQR(4) || '<span class="suave" style="font-size:12px">QR code indisponível sem internet.</span>'; }
+
+  /* ---------- visão geral ---------- */
+  function vGeral() {
+    const h = hoje(), sits = S.quartos.map(q => ({ q, ...situacaoQuarto(q) }));
+    const hosp = S.est.filter(r => r.status === "hospedado"), pessoas = hosp.reduce((s, r) => s + r.adultos + r.criancas, 0);
+    const atras = sits.filter(s => s.k === "atrasado"), saem = sits.filter(s => s.k === "sai"), chegam = sits.filter(s => s.k === "chega");
+    const livres = sits.filter(s => s.k === "livre").length, ativos = S.quartos.filter(q => q.ativo).length;
+    const hora = Math.floor(minutosBR() / 60), oi = hora < 5 ? "Boa noite" : hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+    const at = `Atualizado às ${agoraTxt()}`;
+    const andamento = S.est.filter(r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h && r.saida > h))
+      .sort((a, b) => ({ atrasado: 0, sai: 1, chega: 2 }[situacaoEstadia(a)] ?? 3) - ({ atrasado: 0, sai: 1, chega: 2 }[situacaoEstadia(b)] ?? 3) || a.saida.localeCompare(b.saida));
+    const num = (icone, rot, val, rod, alerta) => `<div class="cartao num ${alerta ? "alerta" : ""}"><div class="rot"><span class="q">${ic(icone)}</span>${rot}</div><b>${val}</b><small>${rod}</small></div>`;
+    const linhaP = (s, botao) => `<div class="pessoa-l">${av(s.r.nome)}<div><b>${esc(s.r.nome)}</b><span class="${s.k === "atrasado" ? "tarde" : ""}">${esc(s.q.nome)} · ${s.k === "atrasado" ? textoSaida(s.r, "atrasado").replace(/^Saída era /, "era ") : s.k === "sai" ? `até ${esc(S.pousada.checkout_hora)}` : `a partir das ${esc(S.pousada.checkin_hora)}`}</span></div>${botao}</div>`;
+    const sair = [...atras, ...saem], resumo = sair.length ? `${plural(sair.length, "quarto precisa", "quartos precisam")} ser liberado${sair.length > 1 ? "s" : ""} hoje${atras.length ? `, ${atras.length} com saída atrasada` : ""}.` : "Nenhuma saída marcada para hoje. Veja quem está em cada quarto.";
+    const peds = S.est.filter(r => r.status === "solicitada").sort((a, b) => a.entrada.localeCompare(b.entrada));
+    return `<div class="cab"><div><h1>${oi}</h1><p>${resumo}</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
+      ${peds.length ? blocoPedidos(peds) : ""}
+      <section class="numeros">
+        ${num("cama", "Hospedados agora", hosp.length, `${plural(pessoas, "pessoa", "pessoas")} na pousada`)}
+        ${num("saida", "Saem hoje", saem.length, `Até as ${esc(S.pousada.checkout_hora)} · ${at.toLowerCase()}`)}
+        ${num("relogio", "Saídas atrasadas", atras.length, atras.length ? "Passaram do horário de saída" : `Ninguém atrasado · ${at.toLowerCase()}`, atras.length)}
+        ${num("porta", "Quartos livres", livres, `De ${plural(ativos, "quarto em uso", "quartos em uso")}`)}
+      </section>
+      <section class="duas">
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Ocupação dos quartos</h2><select id="periodo" aria-label="Período do gráfico">${[[7, "Próximos 7 dias"], [14, "Próximos 14 dias"], [30, "Próximos 30 dias"]].map(([v, t]) => `<option value="${v}" ${S.periodo === v ? "selected" : ""}>${t}</option>`).join("")}</select></div><div class="grafico" id="grafico"></div></div>
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Saídas e chegadas</h2><span class="pilula">Hoje</span></div>
+          <div class="mini-lista"><h3>Precisam sair</h3>${sair.length ? sair.map(s => linhaP(s, `<button class="btn btn--borda" data-acao="saida" data-id="${esc(s.r.id)}">Registrar saída</button>`)).join("") : `<div class="vazio">Ninguém precisa sair hoje.</div>`}
+          <h3>Chegam hoje</h3>${chegam.length ? chegam.map(s => linhaP(s, `<button class="btn btn--borda" data-acao="entrada" data-id="${esc(s.r.id)}">Registrar entrada</button>`)).join("") : `<div class="vazio">Nenhuma chegada marcada para hoje.</div>`}</div></div>
+      </section>
+      <section class="cartao bloco"><div class="bloco-cab"><h2>Estadias em andamento</h2><a class="link" href="#estadias">Ver todas</a></div>${tabela(andamento, "Nenhum hóspede na pousada agora. Use Registrar estadia quando alguém chegar.")}</section>`;
+  }
+
+  function blocoPedidos(peds) {
+    return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">Confirme ou recuse</span></div>
+      ${peds.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}, ${brl(r.valor_total)}${r.telefone ? ` · <a href="https://wa.me/${esc(zapDe(r.telefone))}" target="_blank" rel="noopener">${esc(r.telefone)}</a>` : ""}${r.observacoes ? `<br>Recado: ${esc(r.observacoes)}` : ""}</p></div>
+        <div class="bts"><button class="btn btn--cheio" data-acao="confirmar" data-id="${esc(r.id)}">Confirmar</button><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Ver ou trocar o quarto" aria-label="Ver pedido de ${esc(r.nome)}">${ic("lapis")}</button><button class="btn btn--perigo" data-acao="recusar" data-id="${esc(r.id)}">Recusar</button></div></div>`).join("")}</section>`;
+  }
+  const zapDe = t => { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d; };
+
+  function tabela(lista, vazio) {
+    if (!lista.length) return `<div class="vazio">${vazio}</div>`;
+    return `<div class="tabela-caixa"><table class="tab"><thead><tr><th>Código</th><th>Hóspede</th><th>Entrada</th><th>Saída</th><th>Quarto</th><th>Valor</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
+      ${lista.map(r => `<tr><td class="cod">${cod(r)}</td><td><span class="pessoa">${av(r.nome)}${esc(r.nome)}</span></td><td>${semana(r.entrada)}, ${dmy(r.entrada)}</td><td>${semana(r.saida)}, ${dmy(r.saida)}</td><td>${esc(nomeQ(r.quarto_id))}</td><td>${brl(r.valor_total)}</td><td>${etiquetaEstadia(r)}</td>
+        <td><div class="acoes"><a class="ic" href="#quarto-${esc(r.quarto_id)}" title="Ver o quarto" aria-label="Ver o quarto de ${esc(r.nome)}">${ic("olho")}</a><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Editar estadia" aria-label="Editar estadia de ${esc(r.nome)}">${ic("lapis")}</button></div></td></tr>`).join("")}</tbody></table></div>`;
+  }
+
+  /* ---------- gráfico: quartos ocupados por noite (barras arredondadas, uma série) ---------- */
+  function desenhaGrafico() {
+    const box = $("grafico"); if (!box) return;
+    const h = hoje(), n = S.periodo, dias = Array.from({ length: n }, (_, i) => addDias(h, i)), ativos = S.quartos.filter(q => q.ativo).length;
+    const val = dias.map(d => new Set(S.est.filter(r => ["hospedado", "confirmada"].includes(r.status) && r.entrada <= d && d < r.saida).map(r => r.quarto_id)).size);
+    const W = Math.max(280, box.clientWidth), H = 220, pe = 30, pt = 30, pb = 26;
+    const max = Math.max(1, ativos, ...val), passo = max <= 6 ? 1 : Math.ceil(max / 5);
+    const y = v => pt + (H - pt - pb) * (1 - v / max), banda = (W - pe) / n, larg = Math.max(5, Math.min(22, banda * 0.42));
+    const cada = Math.ceil(36 / banda);
+    let grade = ""; for (let v = 0; v <= max; v += passo) grade += `<line x1="${pe}" x2="${W}" y1="${y(v)}" y2="${y(v)}"/><text x="${pe - 10}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    const cols = dias.map((d, i) => { const cx = pe + banda * i + banda / 2, top = y(val[i]), alt = Math.max(0, H - pb - top);
+      const barra = val[i] ? `<rect class="barra-g ${d === h ? "hj" : ""}" x="${cx - larg / 2}" y="${top}" width="${larg}" height="${alt}" rx="${larg / 2}"/>` : `<rect class="zero" x="${cx - larg / 2}" y="${H - pb - 4}" width="${larg}" height="4" rx="2"/>`;
+      const rot = i % cada === 0 ? `<text x="${cx}" y="${H - pb + 17}" text-anchor="middle" class="${d === h ? "hj" : ""}">${d === h ? "Hoje" : `${semana(d)} ${dm(d).slice(0, 2)}`}</text>` : "";
+      return `<g>${barra}<rect class="alvo" x="${pe + banda * i}" y="${pt - 20}" width="${banda}" height="${H - pt - pb + 20}" tabindex="0" data-i="${i}" aria-label="${semana(d)} ${dm(d)}: ${val[i]} de ${ativos} quartos ocupados"/></g>${rot}`; }).join("");
+    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Quartos ocupados por noite"><g class="grade">${grade}</g>${cols}</svg><div class="dica" id="dica"></div>
+      <details class="tabela-alt"><summary>Ver em tabela</summary><table><tr><th>Noite</th><th>Quartos ocupados</th></tr>${dias.map((d, i) => `<tr><td>${semana(d)} ${dm(d)}</td><td>${val[i]} de ${ativos}</td></tr>`).join("")}</table></details>`;
+    const dica = $("dica"), esc_ = box.getBoundingClientRect().width / W;
+    const mostra = i => { dica.innerHTML = `<small>${i === 0 ? "Hoje" : semana(dias[i])}, ${dm(dias[i])}</small><b>${val[i]} de ${ativos} ocupados</b>`; dica.style.left = `${(pe + banda * i + banda / 2) * esc_}px`; dica.style.top = `${(val[i] ? y(val[i]) : H - pb - 4) * esc_}px`; };
+    mostra(0);
+    box.querySelectorAll("rect.alvo").forEach(el => { const i = Number(el.dataset.i); el.addEventListener("mouseenter", () => mostra(i)); el.addEventListener("focus", () => mostra(i)); });
+    box.querySelector("svg").addEventListener("mouseleave", () => mostra(0));
+  }
+  let rz; addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (S.v === "geral") desenhaGrafico(); }, 150); });
+
+  /* ---------- quartos ---------- */
+  const fotoOuVazio = (q, grande) => q.foto_url ? `<img src="${esc(q.foto_url)}" alt="Foto do ${esc(q.nome)}" ${grande ? "" : 'loading="lazy"'}>` : `<span class="sem">${ic("imagem")}Sem foto</span>`;
+  function cartaoQuarto(q) {
+    const s = situacaoQuarto(q), r = s.r;
+    const linha = r && ["ocupado", "sai", "atrasado"].includes(s.k) ? `<p class="linha-i">${ic("usuario")}<span><b>${esc(r.nome)}</b> · ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}</span></p>${barraEstadia(r, s.k, true)}`
+      : s.k === "chega" ? `<p class="linha-i">${ic("usuario")}<span>Chega hoje: <b>${esc(r.nome)}</b></span></p>`
+      : `<p class="linha-i">${ic("calendario")}<span>${s.k === "fora" ? "Fora de uso" : s.prox ? `Próxima chegada ${semana(s.prox.entrada)} ${dm(s.prox.entrada)}` : "Sem chegadas marcadas"}</span></p>`;
+    return `<article class="cartao quarto"><div class="foto">${fotoOuVazio(q)}${etiqueta(s.k)}<button class="editar" data-acao="editar-quarto" data-id="${esc(q.id)}">${ic("lapis")}Editar</button></div>
+      <div class="corpo"><h3>${esc(q.nome)}</h3><p class="linha-i">${ic("cama")}<span>${esc(q.tipo || "Quarto")} · até ${plural(q.capacidade, "pessoa", "pessoas")}</span></p>${linha}
+      <div class="rodape"><span class="preco">${brl(q.diaria)} <small>/noite</small></span><a class="btn btn--sec" href="#quarto-${esc(q.id)}">Ver detalhes</a></div></div></article>`;
+  }
+  const FILTROS = [["todos", "Todos os quartos"], ["ocupado", "Ocupados"], ["sai", "Saem hoje"], ["atrasado", "Saída atrasada"], ["chega", "Chegam hoje"], ["livre", "Livres"], ["fora", "Fora de uso"]];
+  const casa = (k, f) => f === "todos" || k === f || (f === "ocupado" && ["ocupado", "sai", "atrasado"].includes(k));
+  function vQuartos() {
+    const sits = S.quartos.map(q => ({ q, k: situacaoQuarto(q).k })), b = S.busca.toLowerCase();
+    const lista = sits.filter(s => casa(s.k, S.filtro)).filter(s => !b || s.q.nome.toLowerCase().includes(b) || S.est.some(r => r.quarto_id === s.q.id && ["hospedado", "confirmada"].includes(r.status) && r.nome.toLowerCase().includes(b)));
+    const rotF = (FILTROS.find(f => f[0] === S.filtro) || FILTROS[0])[1];
+    return `<div class="cab"><div><h1>Quartos</h1><p>${plural(S.quartos.length, "quarto cadastrado", "quartos cadastrados")}${b ? `, buscando "${esc(S.busca)}"` : ""}</p></div>
+      <div class="acoes-cab"><div class="filtro-caixa"><button class="btn btn--borda" data-acao="filtro" aria-expanded="${S.menuFiltro}" aria-haspopup="true">${ic("filtro")}Filtro</button>
+        ${S.menuFiltro ? `<div class="menu-filtro" role="menu">${FILTROS.map(([k, t]) => `<button role="menuitemradio" aria-checked="${S.filtro === k}" data-filtro="${k}">${t}<span>${sits.filter(s => casa(s.k, k)).length}</span></button>`).join("")}</div>` : ""}</div>
+        <button class="btn btn--cheio" data-acao="novo-quarto">${ic("mais")}Adicionar quarto</button></div></div>
+      ${S.filtro !== "todos" ? `<span class="filtro-ativo">${rotF}: ${lista.length}<button data-filtro="todos" aria-label="Tirar filtro">${ic("x")}</button></span>` : ""}
+      <div class="quartos">${lista.map(s => cartaoQuarto(s.q)).join("") || `<div class="vazio" style="grid-column:1/-1">Nenhum quarto encontrado.</div>`}</div>`;
+  }
+
+  /* ---------- um quarto ---------- */
+  function vQuarto() {
+    const q = S.quartos.find(x => x.id === S.qid);
+    if (!q) return `<div class="cab"><div><h1>Quarto não encontrado</h1><p><a class="link" href="#quartos">Voltar aos quartos</a></p></div></div>`;
+    const s = situacaoQuarto(q), r = s.r, h = hoje();
+    const prox = S.est.filter(x => x.quarto_id === q.id && x.status === "confirmada" && x.id !== (r || {}).id && x.entrada >= h).sort((a, b) => a.entrada.localeCompare(b.entrada));
+    const hist = S.est.filter(x => x.quarto_id === q.id && ["finalizada", "cancelada", "no_show"].includes(x.status)).sort((a, b) => b.saida.localeCompare(a.saida)).slice(0, 8);
+    const dado = (k, v) => `<div><span>${k}</span><b>${v}</b></div>`;
+    let agora;
+    if (r) {
+      const ac = r.status === "hospedado" ? `<button class="btn btn--cheio btn--grande" data-acao="saida" data-id="${esc(r.id)}">Registrar saída</button><button class="btn btn--borda btn--grande" data-acao="mais-noite" data-id="${esc(r.id)}">Mais 1 noite</button>`
+        : `<button class="btn btn--cheio btn--grande" data-acao="entrada" data-id="${esc(r.id)}">Registrar entrada</button><button class="btn btn--perigo btn--grande" data-acao="nao-veio" data-id="${esc(r.id)}">Não veio</button>`;
+      agora = `<div class="cartao agora"><div class="topo-a">${etiqueta(s.k)}<button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Editar estadia" aria-label="Editar estadia">${ic("lapis")}</button></div>
+        <div class="quem">${av(r.nome)}<div><p class="nome">${esc(r.nome)}</p>${r.telefone ? `<a class="tel" href="tel:${esc(r.telefone.replace(/[^\d+]/g, ""))}">${esc(r.telefone)}</a>` : `<span class="suave" style="font-size:12px">${cod(r)}</span>`}</div></div>
+        ${r.status === "hospedado" ? barraEstadia(r, s.k) : ""}
+        <div class="dados">${dado("Entrada", `${semana(r.entrada)}, ${dmy(r.entrada)}`)}${dado("Saída", `${semana(r.saida)}, ${dmy(r.saida)} até ${esc(S.pousada.checkout_hora)}`)}${dado("Pessoas", `${r.adultos} ${r.adultos > 1 ? "adultos" : "adulto"}${r.criancas ? ` e ${r.criancas} ${r.criancas > 1 ? "crianças" : "criança"}` : ""}`)}${dado("Valor", `${brl(r.valor_total)}${r.sinal_pago > 0 ? `, pago ${brl(r.sinal_pago)}` : ""}`)}${r.documento ? dado("Documento", esc(r.documento)) : ""}</div>
+        ${r.observacoes ? `<p class="obs">${esc(r.observacoes)}</p>` : ""}
+        <div class="acoes">${ac}</div></div>`;
+    } else {
+      agora = `<div class="cartao agora"><div class="topo-a">${etiqueta(s.k)}</div><div><p class="nome">${s.k === "fora" ? "Quarto fora de uso" : "Quarto livre"}</p><p class="suave" style="font-size:13px;margin-top:2px">${s.prox ? `Próxima chegada: ${esc(s.prox.nome)}, ${semana(s.prox.entrada)} ${dm(s.prox.entrada)}.` : "Nenhuma chegada marcada."}</p></div>
+        <div class="dados">${dado("Tipo", esc(q.tipo || "Quarto"))}${dado("Cabem", plural(q.capacidade, "pessoa", "pessoas"))}${dado("Diária", brl(q.diaria))}${dado("Entrada / saída", `${esc(S.pousada.checkin_hora)} / ${esc(S.pousada.checkout_hora)}`)}</div>
+        ${q.ativo ? `<div class="acoes"><button class="btn btn--cheio btn--grande" data-nova-estadia data-quarto="${esc(q.id)}">${ic("mais")}Registrar estadia neste quarto</button></div>` : ""}</div>`;
+    }
+    return `<div class="cab"><div><h1>${esc(q.nome)}</h1><p class="trilha"><a href="#quartos">Quartos</a>${ic("chevron")}<span>${esc(q.nome)}</span></p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="editar-quarto" data-id="${esc(q.id)}">${ic("lapis")}Editar quarto</button></div></div>
+      <div class="q-topo"><div class="q-foto">${fotoOuVazio(q, true)}<label class="btn btn--borda">${ic("camera")}<input type="file" accept="image/*" data-foto="${esc(q.id)}" hidden><span>${q.foto_url ? "Trocar foto" : "Enviar foto"}</span></label></div>${agora}</div>
+      <div class="duas-iguais">
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Próximas chegadas</h2></div>${prox.length ? prox.map(x => `<div class="linha-lista"><div><b>${esc(x.nome)}</b><span class="d">${semana(x.entrada)} ${dm(x.entrada)} a ${semana(x.saida)} ${dm(x.saida)}, ${plural(noites(x.entrada, x.saida), "noite", "noites")}</span></div><button class="ic" data-acao="editar" data-id="${esc(x.id)}" aria-label="Editar estadia de ${esc(x.nome)}">${ic("lapis")}</button></div>`).join("") : `<div class="vazio">Nenhuma chegada marcada.</div>`}</div>
+        <div class="cartao bloco"><div class="bloco-cab"><h2>Últimas estadias</h2></div>${hist.length ? hist.map(x => `<div class="linha-lista"><div><b>${esc(x.nome)}</b><span class="d">${dm(x.entrada)} a ${dm(x.saida)} · ${brl(x.valor_total)}</span></div>${etiquetaEstadia(x)}</div>`).join("") : `<div class="vazio">Nada por aqui ainda.</div>`}</div>
+      </div>`;
+  }
+
+  /* ---------- estadias ---------- */
+  const ABAS = () => { const h = hoje(); return { pedidos: r => r.status === "solicitada", andamento: r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h), proximas: r => r.status === "confirmada" && r.entrada > h, encerradas: r => ["finalizada", "cancelada", "no_show"].includes(r.status) }; };
+  function vEstadias() {
+    const b = S.busca.toLowerCase(), A = ABAS();
+    let l = S.est.filter(A[S.aba]).filter(r => !b || r.nome.toLowerCase().includes(b) || nomeQ(r.quarto_id).toLowerCase().includes(b) || cod(r).includes(b));
+    l = S.aba === "encerradas" ? l.sort((x, y) => y.saida.localeCompare(x.saida)).slice(0, 150) : l.sort((x, y) => (S.aba === "andamento" ? x.saida.localeCompare(y.saida) : x.entrada.localeCompare(y.entrada)));
+    return `<div class="cab"><div><h1>Estadias</h1><p>Quem está na pousada, quem vai chegar e quem já saiu.</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
+      <div class="abas" role="group" aria-label="Escolher estadias">${[["pedidos", "Pedidos do site"], ["andamento", "Em andamento"], ["proximas", "Próximas"], ["encerradas", "Encerradas"]].map(([k, t]) => `<button data-aba="${k}" aria-pressed="${S.aba === k}">${t}<b>${S.est.filter(A[k]).length}</b></button>`).join("")}</div>
+      <section class="cartao bloco">${tabela(l, { pedidos: "Nenhum pedido esperando. Os pedidos feitos no site da pousada aparecem aqui.", andamento: "Ninguém hospedado agora.", proximas: "Nenhuma chegada marcada. Use Registrar estadia para anotar uma reserva.", encerradas: "Nenhuma estadia encerrada ainda." }[S.aba])}</section>`;
+  }
+
+  /* ---------- hóspedes (montado a partir das estadias) ---------- */
+  function vHospedes() {
+    const b = S.busca.toLowerCase(), G = new Map();
+    for (const r of S.est) {
+      const k = (r.telefone || "").replace(/\D/g, "") || r.nome.trim().toLowerCase();
+      const g = G.get(k) || { nome: r.nome, tel: r.telefone, n: 0, ultima: null, total: 0 };
+      if (!["cancelada", "no_show"].includes(r.status)) { g.n++; g.total += Number(r.valor_total || 0); }
+      if (!g.ultima || r.entrada > g.ultima.entrada) { g.ultima = r; g.nome = r.nome; }
+      G.set(k, g);
+    }
+    const lista = [...G.values()].filter(g => !b || g.nome.toLowerCase().includes(b) || (g.tel || "").includes(b)).sort((a, c) => c.ultima.entrada.localeCompare(a.ultima.entrada));
+    return `<div class="cab"><div><h1>Hóspedes</h1><p>${plural(G.size, "pessoa que já ficou ou vai ficar", "pessoas que já ficaram ou vão ficar")} na pousada (últimos 6 meses).</p></div></div>
+      <section class="cartao bloco">${lista.length ? `<div class="tabela-caixa"><table class="tab"><thead><tr><th>Hóspede</th><th>Telefone</th><th>Estadias</th><th>Gasto total</th><th>Última estadia</th><th>Quarto</th><th>Situação</th></tr></thead><tbody>
+        ${lista.map(g => `<tr><td><span class="pessoa">${av(g.nome)}${esc(g.nome)}</span></td><td>${g.tel ? `<a class="link" href="tel:${esc(g.tel.replace(/[^\d+]/g, ""))}">${esc(g.tel)}</a>` : '<span class="suave">—</span>'}</td><td>${g.n}</td><td>${brl(g.total)}</td><td>${dmy(g.ultima.entrada)} a ${dmy(g.ultima.saida)}</td><td>${esc(nomeQ(g.ultima.quarto_id))}</td><td>${etiquetaEstadia(g.ultima)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="vazio">Os hóspedes aparecem aqui quando você registrar estadias.</div>`}</section>`;
+  }
+
+  /* ---------- configurações ---------- */
+  function vConfig() {
+    const p = S.pousada;
+    return `<div class="cab"><div><h1>Configurações</h1><p>O horário de saída define quando uma estadia fica atrasada.</p></div></div>
+      <form class="cartao bloco" id="f-config" novalidate style="max-width:620px;display:grid;gap:16px"><div class="campos">
+        <label class="todo">Nome da pousada<input id="c-nome" maxlength="80" value="${esc(p.nome)}"></label>
+        <label class="todo">Cidade<input id="c-cid" maxlength="80" value="${esc(p.cidade)}"></label>
+        <label class="todo">Apresentação no site <small>opcional, aparece embaixo do nome</small><textarea id="c-desc" maxlength="600">${esc(p.descricao || "")}</textarea></label>
+        <label class="todo">WhatsApp da pousada <small>com DDD, para os hóspedes falarem com você</small><input id="c-zap" type="tel" maxlength="20" value="${esc(p.whatsapp || "")}" placeholder="(41) 99999-0000"></label>
+        <label>Entrada a partir das<input id="c-ci" type="time" value="${esc(p.checkin_hora)}"></label>
+        <label>Saída até as<input id="c-co" type="time" value="${esc(p.checkout_hora)}"></label></div>
+        <p class="erro" id="c-err" role="alert" hidden></p>
+        <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
+        <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}. ${p.termos_aceitos_em ? `Termos de Uso (versão ${esc(p.termos_versao)}) aceitos em ${dmy(String(p.termos_aceitos_em).slice(0, 10))}.` : "Termos de Uso ainda não aceitos."} <a class="link" href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> · <a class="link" href="privacidade.html?p=${esc(p.slug)}" target="_blank" rel="noopener">Aviso de Privacidade dos hóspedes</a></p></form>
+      <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Site da pousada</h2><a class="link" href="${esc(urlSite())}" target="_blank" rel="noopener">Abrir o site</a></div>
+        <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
+        <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
+        <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>
+      <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Fotos da pousada</h2><span class="suave" style="font-size:12px">${(p.fotos || []).length} de 12</span></div>
+        <p class="suave" style="font-size:13px">Fachada, varanda, vista, café da manhã. Aparecem no site logo abaixo do nome. A primeira é a capa.</p>
+        ${S.papel === "dono" ? `<div class="galeria-ed">${(p.fotos || []).map((u, i) => `<figure><img src="${esc(u)}" alt="Foto ${i + 1} da pousada" loading="lazy">${i === 0 ? '<span class="capa">Capa</span>' : ""}<figcaption>${i ? `<button class="btn btn--borda" type="button" data-acao="foto-capa" data-i="${i}">Usar como capa</button>` : ""}<button class="ic" type="button" data-acao="foto-remover" data-i="${i}" aria-label="Remover foto ${i + 1}" title="Remover">${ic("lixo")}</button></figcaption></figure>`).join("")}</div>
+        ${(p.fotos || []).length < 12 ? `<label class="btn btn--cheio" style="justify-self:start;cursor:pointer">${ic("camera")}<input type="file" accept="image/*" multiple id="fotos-pousada" hidden><span>Adicionar fotos</span></label>` : ""}` : `<p class="suave" style="font-size:13px">Só o dono da pousada muda as fotos.</p>`}</section>`;
+  }
+
+  /* ---------- gaveta: estadia e quarto ---------- */
+  function abreGaveta(html) { S.gaveta = true; const g = $("gaveta"); g.innerHTML = html; g.hidden = false; $("veu").hidden = false; document.body.style.overflow = "hidden"; const f = g.querySelector("input, select, textarea"); if (f) f.focus(); }
+  function fechaGaveta() { S.gaveta = null; $("gaveta").hidden = true; $("veu").hidden = true; document.body.style.overflow = ""; desenha(); }
+  function fechaMenu() { document.body.classList.remove("menu-aberto"); $("abre-menu").setAttribute("aria-expanded", "false"); if (!S.gaveta) $("veu").hidden = true; }
+  $("veu").onclick = () => { if (S.gaveta) fechaGaveta(); else fechaMenu(); };
+  $("abre-menu").onclick = () => { document.body.classList.add("menu-aberto"); $("abre-menu").setAttribute("aria-expanded", "true"); $("veu").hidden = false; };
+  document.addEventListener("keydown", e => { if (e.key !== "Escape") return; if (S.gaveta) fechaGaveta(); else if (S.menuFiltro) { S.menuFiltro = false; desenha(); } else fechaMenu(); });
+  const cabGaveta = t => `<header><h2 id="g-titulo">${t}</h2><button class="ic" type="button" data-fecha aria-label="Fechar">${ic("x")}</button></header>`;
+
+  function gavetaEstadia(r, quartoId) {
+    const h = hoje(), q0 = quartoId || (r && r.quarto_id) || (S.quartos.find(q => q.ativo && situacaoQuarto(q).k === "livre") || S.quartos.find(q => q.ativo) || {}).id;
+    const f = r || { nome: "", telefone: "", documento: "", adultos: 2, criancas: 0, entrada: h, saida: addDias(h, 1), status: "hospedado", valor_total: "", sinal_pago: 0, observacoes: "" };
+    const opQ = S.quartos.filter(q => q.ativo || q.id === q0);
+    abreGaveta(`${cabGaveta(r ? "Editar estadia" : "Registrar estadia")}
+      <form class="meio" id="f-est" novalidate><div class="campos">
+        <label class="todo">Quarto<select id="g-q">${opQ.map(q => `<option value="${esc(q.id)}" ${q.id === q0 ? "selected" : ""}>${esc(q.nome)}: ${ROT[situacaoQuarto(q).k].toLowerCase()}, até ${q.capacidade}</option>`).join("")}</select></label>
+        <label class="todo">Nome do hóspede<input id="g-nome" maxlength="100" value="${esc(f.nome)}" autocomplete="off"></label>
+        <label>Telefone<input id="g-tel" type="tel" maxlength="20" value="${esc(f.telefone)}"></label><label>Documento <small>opcional</small><input id="g-doc" maxlength="30" value="${esc(f.documento)}"></label>
+        <label>Entrada<input id="g-in" type="date" value="${esc(f.entrada)}"></label><label>Saída<input id="g-out" type="date" value="${esc(f.saida)}"></label>
+        <label>Adultos<input id="g-ad" type="number" min="1" max="20" value="${f.adultos}"></label><label>Crianças<input id="g-cr" type="number" min="0" max="20" value="${f.criancas}"></label>
+        <label class="todo">Situação<select id="g-st">${[...(f.status === "solicitada" ? [["solicitada", "Pedido do site, ainda não confirmado"]] : []), ["hospedado", "Já está hospedado"], ["confirmada", "Ainda vai chegar"], ["finalizada", "Já saiu"], ["cancelada", "Cancelada"], ["no_show", "Não veio"]].map(([k, t]) => `<option value="${k}" ${f.status === k ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label>Valor total (R$) <small>em branco: diárias</small><input id="g-val" type="number" min="0" step="0.01" value="${f.valor_total === "" ? "" : esc(f.valor_total)}"></label><label>Já pago (R$)<input id="g-pago" type="number" min="0" step="0.01" value="${esc(f.sinal_pago)}"></label>
+        <label class="todo">Observações<textarea id="g-obs" maxlength="500">${esc(f.observacoes)}</textarea></label></div>
+        <p class="erro" id="g-err" role="alert" hidden></p></form>
+      <footer><button class="btn btn--cheio btn--grande" type="submit" form="f-est" style="flex:1">${r ? "Salvar estadia" : "Registrar estadia"}</button>${r ? `<button class="btn btn--perigo btn--grande" type="button" data-acao="apagar" data-id="${esc(r.id)}">${ic("lixo")}Apagar</button>` : ""}</footer>`);
+    $("g-in").addEventListener("change", () => { if (!$("g-out").value || $("g-out").value <= $("g-in").value) $("g-out").value = addDias($("g-in").value, 1); if ($("g-in").value > hoje() && $("g-st").value === "hospedado") $("g-st").value = "confirmada"; });
+    $("f-est").addEventListener("submit", async e => {
+      e.preventDefault(); const err = $("g-err"); err.hidden = true;
+      const q = S.quartos.find(x => x.id === $("g-q").value);
+      const d = { quarto_id: $("g-q").value, nome: $("g-nome").value.trim(), telefone: $("g-tel").value.trim(), documento: $("g-doc").value.trim(), entrada: $("g-in").value, saida: $("g-out").value, adultos: Number($("g-ad").value), criancas: Number($("g-cr").value || 0), status: $("g-st").value, sinal_pago: Number($("g-pago").value || 0), observacoes: $("g-obs").value.trim() };
+      const v = $("g-val").value; d.valor_total = v === "" ? (q ? q.diaria * Math.max(1, noites(d.entrada, d.saida)) : 0) : Number(v);
+      const falta = !d.nome ? "o nome do hóspede" : !d.entrada || !d.saida ? "as datas" : d.saida <= d.entrada ? "uma saída depois da entrada" : d.adultos < 1 ? "pelo menos 1 adulto" : q && d.adultos + d.criancas > q.capacidade ? `no máximo ${q.capacidade} pessoas neste quarto` : "";
+      if (falta) { err.textContent = `Confira: ${falta}.`; err.hidden = false; return; }
+      const btn = document.querySelector('#gaveta [type="submit"]'); btn.disabled = true;
+      const res = r ? await sb.from("reservas").update(d).eq("id", r.id).select().single() : await sb.from("reservas").insert({ ...d, pousada_id: S.pousada.id, origem: "balcao" }).select().single();
+      btn.disabled = false;
+      if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+      const i = S.est.findIndex(x => x.id === res.data.id); if (i >= 0) S.est[i] = res.data; else S.est.push(res.data);
+      toast(r ? "Estadia salva." : "Estadia registrada."); fechaGaveta();
+    });
+  }
+  function gavetaQuarto(q) {
+    const f = q || { nome: `Quarto ${S.quartos.length + 1}`, tipo: "Casal", capacidade: 2, diaria: "", ativo: true };
+    abreGaveta(`${cabGaveta(q ? "Editar quarto" : "Adicionar quarto")}
+      <form class="meio" id="f-q" novalidate><div class="campos">
+        <label class="todo">Nome ou número<input id="q-nome" maxlength="60" value="${esc(f.nome)}"></label>
+        <label>Tipo<input id="q-tipo" maxlength="40" value="${esc(f.tipo)}" list="tipos"><datalist id="tipos"><option>Casal</option><option>Solteiro</option><option>Duplo</option><option>Triplo</option><option>Família</option><option>Suíte</option><option>Chalé</option></datalist></label>
+        <label>Cabem<input id="q-cap" type="number" min="1" max="20" value="${f.capacidade}"></label>
+        <label class="todo">Diária (R$)<input id="q-dia" type="number" min="0" step="0.01" value="${esc(f.diaria)}"></label>
+        <label class="todo" style="display:flex;gap:10px;align-items:center"><input id="q-ativo" type="checkbox" style="width:18px;height:18px;accent-color:var(--salvia)" ${f.ativo ? "checked" : ""}> Quarto em uso</label></div>
+        <p class="erro" id="q-err" role="alert" hidden></p></form>
+      <footer><button class="btn btn--cheio btn--grande" type="submit" form="f-q" style="flex:1">${q ? "Salvar quarto" : "Adicionar quarto"}</button></footer>`);
+    $("f-q").addEventListener("submit", async e => {
+      e.preventDefault(); const err = $("q-err"); err.hidden = true;
+      const d = { nome: $("q-nome").value.trim(), tipo: $("q-tipo").value.trim(), capacidade: Number($("q-cap").value), diaria: Number($("q-dia").value || 0), ativo: $("q-ativo").checked };
+      if (!d.nome) { err.textContent = "Dê um nome ou número ao quarto."; err.hidden = false; return; }
+      if (!(d.capacidade >= 1 && d.capacidade <= 20)) { err.textContent = "Coloque de 1 a 20 pessoas."; err.hidden = false; return; }
+      const res = q ? await sb.from("quartos").update(d).eq("id", q.id).select().single() : await sb.from("quartos").insert({ ...d, pousada_id: S.pousada.id }).select().single();
+      if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+      const i = S.quartos.findIndex(x => x.id === res.data.id); if (i >= 0) S.quartos[i] = res.data; else S.quartos.push(res.data);
+      S.quartos.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); toast(q ? "Quarto salvo." : "Quarto adicionado."); fechaGaveta();
+    });
+  }
+
+  /* ---------- planilha (CSV que abre no Excel) ---------- */
+  function baixar() {
+    const linhas = [["Código", "Hóspede", "Telefone", "Documento", "Quarto", "Entrada", "Saída", "Noites", "Adultos", "Crianças", "Valor", "Pago", "Situação", "Observações"]];
+    const sit = r => { const k = situacaoEstadia(r); return k === "encerrada" ? (FIM[r.status] || ["Encerrada"])[0] : ROT[k]; };
+    [...S.est].sort((a, b) => b.entrada.localeCompare(a.entrada)).forEach(r => linhas.push([cod(r), r.nome, r.telefone, r.documento, nomeQ(r.quarto_id), dmy(r.entrada), dmy(r.saida), noites(r.entrada, r.saida), r.adultos, r.criancas, String(Number(r.valor_total).toFixed(2)).replace(".", ","), String(Number(r.sinal_pago).toFixed(2)).replace(".", ","), sit(r), r.observacoes]));
+    const csv = "﻿" + linhas.map(l => l.map(c => { const s = String(c ?? ""); return /[;"\n]/.test(s) || /^[=+\-@]/.test(s) ? `"${s.replace(/^([=+\-@])/, "'$1").replace(/"/g, '""')}"` : s; }).join(";")).join("\r\n");
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" })); a.download = `estadias-${hoje()}.csv`; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    toast(`Planilha com ${plural(S.est.length, "estadia", "estadias")} baixada.`);
+  }
+
+  /* ---------- ações ---------- */
+  async function muda(id, d, msg) {
+    const { data, error } = await sb.from("reservas").update(d).eq("id", id).select().single();
+    if (error) { toast(errText(error)); desenha(); return; }
+    S.est[S.est.findIndex(x => x.id === id)] = data; toast(msg(data)); desenha();
+  }
+  document.addEventListener("click", async e => {
+    if (e.target.closest("[data-sair]")) { await sb.auth.signOut(); location.replace("painel.html"); return; }
+    if (S.menuFiltro && !e.target.closest(".filtro-caixa")) { S.menuFiltro = false; desenha(); }
+    const t = e.target.closest("button, a"); if (!t) return; const d = t.dataset;
+    if (d.fecha !== undefined) return fechaGaveta();
+    if (d.novaEstadia !== undefined) { if (!S.quartos.some(q => q.ativo)) { toast("Cadastre um quarto primeiro."); return; } return gavetaEstadia(null, d.quarto); }
+    if (d.filtro) { S.filtro = d.filtro; S.menuFiltro = false; return desenha(); }
+    if (d.aba) { S.aba = d.aba; return desenha(); }
+    const r = d.id && S.est.find(x => x.id === d.id);
+    switch (d.acao) {
+      case "filtro": S.menuFiltro = !S.menuFiltro; return desenha();
+      case "baixar": return baixar();
+      case "foto-capa": { const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); f.unshift(x); return salvaFotos(f, "Capa trocada."); }
+      case "foto-remover": { if (d.certeza !== "1") { d.certeza = "1"; t.title = "Toque de novo para remover"; t.style.color = "var(--atraso)"; toast("Toque de novo na lixeira para remover a foto."); return; } const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); await salvaFotos(f, "Foto removida."); const k = String(x).split("/object/public/fotos/")[1]; if (k) sb.storage.from("fotos").remove([k]); return; }
+      case "aceitar-termos": { t.disabled = true; const { error } = await sb.rpc("aceitar_termos", { p_versao: TERMOS }); if (error) { t.disabled = false; toast(errText(error)); return; } const r2 = await sb.from("pousadas").select(COLS).eq("id", S.pousada.id).single(); if (r2.data) S.pousada = r2.data; toast("Termos aceitos. Obrigado."); return desenha(); }
+      case "copiar-link": try { await navigator.clipboard.writeText(urlSite()); toast("Link copiado."); } catch (er) { $("c-link").select(); toast("Selecione e copie o link."); } return;
+      case "imprimir-qr": { const w = open("", "_blank"); if (!w) { toast("Permita janelas novas para imprimir."); return; } w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>QR code ${esc(S.pousada.nome)}</title><body style="font-family:system-ui,sans-serif;text-align:center;padding:40px"><h1 style="font-size:34px;margin:0 0 6px">${esc(S.pousada.nome)}</h1><p style="font-size:20px;margin:0 0 24px">Aponte a câmera para ver os quartos e fazer sua ficha</p><div style="width:360px;margin:0 auto">${svgQR(8)}</div><p style="font-size:14px;color:#555;margin-top:18px">${esc(urlSite())}</p><script>onload=()=>print()<\/script></body></html>`); w.document.close(); return; }
+      case "confirmar": t.disabled = true; return muda(d.id, { status: "confirmada" }, x => `Reserva de ${x.nome} confirmada. Avise pelo WhatsApp.`);
+      case "recusar": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } return muda(d.id, { status: "cancelada" }, x => `Pedido de ${x.nome} recusado.`);
+      case "saida": t.disabled = true; return muda(d.id, { status: "finalizada" }, x => `Saída de ${x.nome} registrada. Quarto livre.`);
+      case "entrada": t.disabled = true; return muda(d.id, { status: "hospedado" }, x => `Entrada de ${x.nome} registrada.`);
+      case "nao-veio": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo para confirmar"; return; } return muda(d.id, { status: "no_show" }, x => `${x.nome} marcado como não veio.`);
+      case "mais-noite": t.disabled = true; return muda(d.id, { saida: addDias(r.saida, 1), valor_total: Number(r.valor_total) + Number((S.quartos.find(q => q.id === r.quarto_id) || {}).diaria || 0) }, x => `${x.nome} fica até ${dm(x.saida)}.`);
+      case "editar": return gavetaEstadia(r);
+      case "novo-quarto": return gavetaQuarto(null);
+      case "editar-quarto": return gavetaQuarto(S.quartos.find(q => q.id === d.id));
+      case "apagar": { if (d.certeza !== "1") { d.certeza = "1"; t.lastChild.textContent = "Toque de novo"; return; } const { error } = await sb.from("reservas").delete().eq("id", d.id); if (error) { toast(errText(error)); return; } S.est = S.est.filter(x => x.id !== d.id); toast("Estadia apagada."); return fechaGaveta(); }
+    }
+  });
+  document.addEventListener("change", e => { if (e.target.id === "periodo") { S.periodo = Number(e.target.value); desenhaGrafico(); } });
+  $("busca").addEventListener("input", e => { S.busca = e.target.value.trim(); if (!["quartos", "estadias", "hospedes"].includes(S.v)) { location.hash = "quartos"; return; } desenha(); });
+
+  async function salvaFotos(lista, msg) {
+    const r = await sb.from("pousadas").update({ fotos: lista }).eq("id", S.pousada.id).select(COLS).single();
+    if (r.error) { toast(errText(r.error)); return false; }
+    S.pousada = r.data; toast(msg); desenha(); return true;
+  }
+  async function reduzJPG(arq) {
+    const img = await createImageBitmap(arq); const k = Math.min(1, 1800 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return new Promise(res => c.toBlob(res, "image/jpeg", 0.84));
+  }
+  document.addEventListener("change", async e => {
+    if (e.target.id !== "fotos-pousada" || !e.target.files.length) return;
+    const atuais = [...(S.pousada.fotos || [])], arqs = [...e.target.files].slice(0, 12 - atuais.length), txt = e.target.parentElement.querySelector("span");
+    const novas = [];
+    for (const [i, arq] of arqs.entries()) {
+      txt.textContent = `Enviando ${i + 1} de ${arqs.length}...`;
+      try {
+        const blob = await reduzJPG(arq), path = `${S.pousada.id}/pousada-${Date.now()}-${i}.jpg`;
+        const up = await sb.storage.from("fotos").upload(path, blob, { contentType: "image/jpeg" }); if (up.error) throw up.error;
+        novas.push(`${PG_CONFIG.supabaseUrl}/storage/v1/object/public/fotos/${path}`);
+      } catch (er) { toast(`Não deu para usar "${arq.name}". Tente uma foto JPG ou PNG.`); }
+    }
+    if (novas.length) await salvaFotos([...atuais, ...novas], novas.length === 1 ? "Foto adicionada." : `${novas.length} fotos adicionadas.`); else desenha();
+  });
+
+  // foto do quarto: reduz no aparelho e envia
+  document.addEventListener("change", async e => {
+    const inp = e.target.closest("[data-foto]"); if (!inp || !inp.files[0]) return;
+    const q = S.quartos.find(x => x.id === inp.dataset.foto), txt = inp.parentElement.querySelector("span"); txt.textContent = "Enviando...";
+    try {
+      const img = await createImageBitmap(inp.files[0]); const k = Math.min(1, 1600 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      const blob = await new Promise(res => c.toBlob(res, "image/jpeg", 0.82));
+      const path = `${S.pousada.id}/${q.id}-${Date.now()}.jpg`;
+      const up = await sb.storage.from("fotos").upload(path, blob, { contentType: "image/jpeg" }); if (up.error) throw up.error;
+      const url = `${PG_CONFIG.supabaseUrl}/storage/v1/object/public/fotos/${path}`;
+      const antiga = q.foto_url && q.foto_url.includes("/object/public/fotos/") ? q.foto_url.split("/object/public/fotos/")[1] : null;
+      const res = await sb.from("quartos").update({ foto_url: url }).eq("id", q.id).select().single(); if (res.error) throw res.error;
+      if (antiga) sb.storage.from("fotos").remove([antiga]);
+      S.quartos[S.quartos.findIndex(x => x.id === q.id)] = res.data; toast("Foto salva."); desenha();
+    } catch (err) { toast(err && err.message ? errText(err) : "Não deu para usar essa imagem. Tente uma foto JPG ou PNG."); desenha(); }
+  });
+  document.addEventListener("submit", async e => {
+    if (e.target.id !== "f-config") return; e.preventDefault(); const err = $("c-err"); err.hidden = true;
+    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), descricao: $("c-desc").value.trim(), whatsapp: $("c-zap").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00" };
+    if (d.nome.length < 2) { err.textContent = "Coloque o nome da pousada."; err.hidden = false; return; }
+    const zd = d.whatsapp.replace(/\D/g, ""); if (zd && (zd.length < 10 || zd.length > 13)) { err.textContent = "O WhatsApp precisa ter DDD e número, por exemplo (41) 99999-0000."; err.hidden = false; return; }
+    const res = await sb.from("pousadas").update(d).eq("id", S.pousada.id).select(COLS).single();
+    if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+    S.pousada = res.data; marca(); toast("Configurações salvas."); desenha();
+  });
+  document.addEventListener("visibilitychange", async () => { if (!document.hidden && S.pousada && !S.gaveta) { await carregar(); desenha(); } });
+  iniciar();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cadastrar pousada · Painel de quartos</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f7f5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+/* Mesmo estilo do painel (referência EliteVillas): fundo cinza-claro, cartões brancos de borda fina, tudo compacto.
+   A pergunta fica à esquerda e, à direita, os quartos como vão aparecer no painel. */
+body { background: var(--c60); }
+.topo { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--c60); color: var(--c60-texto); border-bottom: 1px solid var(--c60-linha); }
+.topo .dentro { max-width: 1140px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.marca { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; letter-spacing: -.02em; }
+.marca i { width: 28px; height: 28px; border-radius: 7px; background: var(--c10); color: var(--c10-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; }
+.topo .ja { color: var(--c60-suave); font-size: 13px; }
+.topo .ja a { color: var(--azul); text-decoration: underline !important; font-weight: 700; text-decoration: none; }
+@media (max-width: 560px) { .topo .ja span { display: none; } }
+.progresso { height: 3px; background: var(--c60-funda); }
+.progresso span { display: block; height: 100%; background: var(--azul); transition: width .3s ease; }
+
+.pagina { max-width: 1140px; margin: 0 auto; padding: 26px 24px 110px; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+@media (max-width: 960px) { .pagina { grid-template-columns: 1fr; padding: 16px 14px 130px; gap: 14px; } }
+
+.pergunta { padding: 24px; display: grid; gap: 18px; }
+@media (max-width: 560px) { .pergunta { padding: 18px 16px; } }
+.passo-n { display: inline-flex; justify-self: start; align-items: center; height: 22px; padding: 0 9px; border-radius: 6px; background: var(--salvia); color: var(--salvia-tinta); font-size: 11px; font-weight: 600; }
+.pergunta h1 { font-size: 22px; line-height: 1.25; margin-top: -4px; }
+.pergunta h1:focus { outline: none; }
+.pergunta .ajuda { color: var(--suave); font-size: 13px; margin-top: -12px; max-width: 40em; }
+.navega { display: flex; gap: 8px; align-items: center; padding-top: 14px; border-top: 1px solid var(--linha); }
+.navega .btn--cheio { min-width: 160px; margin-left: auto; }
+@media (max-width: 960px) {
+  .navega { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); background: var(--c60); border-top: 1px solid var(--c60-linha); }
+  .navega .btn--cheio { flex: 1; min-width: 0; }
+}
+
+/* gerar quartos numerados */
+.gerar { display: grid; grid-template-columns: 90px minmax(0, 1fr) 90px 120px auto; gap: 10px; align-items: end; padding: 14px; border-radius: 10px; background: var(--campo); border: 1px solid var(--linha); }
+.gerar label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 600; min-width: 0; }
+.gerar p { grid-column: 1 / -1; font-weight: 700; font-size: 13px; }
+@media (max-width: 720px) { .gerar { grid-template-columns: 1fr 1fr; } .gerar .btn { grid-column: 1 / -1; } }
+
+.lista-q { display: grid; gap: 6px; }
+.lista-q .cab-l { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 76px 110px 34px; gap: 8px; font-size: 11.5px; color: var(--suave); font-weight: 500; padding: 0 2px 2px; }
+.linha-q { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 76px 110px 34px; gap: 8px; align-items: center; }
+.linha-q input { height: 34px !important; font-size: 13px !important; }
+.linha-q .tira { width: 34px; height: 34px; border-radius: 8px; border: 0; background: none; color: var(--suave); cursor: pointer; display: grid; place-items: center; }
+.linha-q .tira:hover { color: var(--atraso); background: var(--atraso-bg); }
+.linha-q .tira svg { width: 15px; height: 15px; }
+.linha-q .rot { display: none; }
+@media (max-width: 720px) {
+  .lista-q .cab-l { display: none; }
+  .linha-q { grid-template-columns: 1fr 1fr; padding: 10px; border: 1px solid var(--borda); border-radius: 10px; gap: 8px; }
+  .linha-q label { display: grid; gap: 4px; font-size: 11.5px; font-weight: 600; color: var(--suave); min-width: 0; }
+  .linha-q .rot { display: block; }
+  .linha-q label:first-child { grid-column: 1 / -1; }
+  .linha-q .tira { grid-column: 2; justify-self: end; }
+}
+.mais-q { justify-self: start; }
+.aceite { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13.5px; line-height: 1.5; color: var(--tinta); cursor: pointer; }
+.aceite input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--laranja); }
+.aceite a { color: var(--marinho); font-weight: 700; text-decoration-color: var(--laranja); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.conta-q { color: var(--suave); font-size: 12.5px; }
+
+.abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 9px; background: var(--campo); border: 1px solid var(--linha); justify-self: start; }
+.abas button { height: 30px; padding: 0 14px; border: 0; border-radius: 7px; background: transparent; font-weight: 600; font-size: 12.5px; color: var(--suave); cursor: pointer; }
+.abas button[aria-selected="true"] { background: var(--cartao); color: var(--tinta); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+
+/* prévia: os quartos como cartões do painel */
+.previa { position: sticky; top: 76px; }
+@media (max-width: 960px) { .previa { position: static; } }
+.previa .caixa { padding: 14px; display: grid; gap: 12px; }
+.previa .legenda { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.previa .legenda h2 { font-size: 14px; }
+.previa .legenda span { height: 22px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--borda); font-size: 11px; font-weight: 600; color: var(--suave); display: inline-flex; align-items: center; }
+.previa .cabeca { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: 10px; background: var(--campo); }
+.previa .cabeca i { width: 30px; height: 30px; border-radius: 7px; background: var(--salvia); color: var(--salvia-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; flex: none; }
+.previa .cabeca b { display: block; font-size: 13px; line-height: 1.25; overflow-wrap: anywhere; }
+.previa .cabeca span { color: var(--suave); font-size: 11.5px; }
+.mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 470px; overflow-y: auto; }
+@media (max-width: 960px) { .mini { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); max-height: none; } }
+.mq { border: 1px solid var(--borda); border-radius: 10px; padding: 5px; background: var(--cartao); }
+.mq .f { position: relative; aspect-ratio: 16 / 11; border-radius: 7px; background: var(--salvia-clara); display: grid; place-content: center; justify-items: center; gap: 2px; color: var(--marinho); font-size: 10px; font-weight: 600; }
+.mq .f svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+.mq .f .etiqueta { position: absolute; left: 5px; top: 5px; height: 18px; font-size: 10px; padding: 0 6px; border-radius: 5px; }
+.mq .c { padding: 6px 3px 2px; }
+.mq b { display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mq small { color: var(--suave); font-size: 10.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mq .pr { display: block; font-size: 12px; font-weight: 700; margin-top: 3px; }
+.mq .pr em { font-style: normal; font-weight: 500; color: var(--suave); font-size: 10px; }
+.horas { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--suave); border-top: 1px solid var(--linha); padding-top: 10px; }
+.horas b { color: var(--tinta); }
+.vazio-p { padding: 18px; text-align: center; color: var(--suave); background: var(--campo); border-radius: 10px; font-size: 12.5px; grid-column: 1 / -1; }
+</style>
+</head>
+<body>
+<header class="topo">
+  <div class="dentro"><span class="marca"><i>Q</i>Painel de quartos</span><p class="ja"><span>Já cadastrou? </span><a href="painel.html">Entrar</a></p></div>
+  <div class="progresso" aria-hidden="true"><span id="progresso" style="width:0"></span></div>
+</header>
+
+<main class="pagina">
+  <section class="cartao pergunta" id="pergunta" aria-live="polite"></section>
+  <aside class="previa" aria-label="Prévia dos quartos">
+    <div class="cartao caixa"><div class="legenda"><h2>Prévia do painel</h2><span>Ao vivo</span></div><div id="previa" style="display:grid;gap:12px"></div></div>
+  </aside>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(async () => {
+  const { sb, esc, brl, errText } = PG;
+  const $ = id => document.getElementById(id);
+  const CHAVE = "quartos-cadastro";
+  const TIPOS = ["Casal", "Solteiro", "Duplo", "Triplo", "Família", "Suíte", "Chalé"];
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const iniciais = s => String(s || "?").trim().split(/\s+/).slice(0, 2).map(x => x[0]).join("").toUpperCase();
+
+  // já tem pousada? vai direto para o painel
+  let { data: { session } } = await sb.auth.getSession();
+  if (session) { const { data: m } = await sb.from("membros").select("pousada_id").limit(1); if (m && m.length) { location.replace("painel.html#quartos"); return; } }
+
+  const vazio = () => ({ i: 0, nome: "", cidade: "", quartos: [], ger: { n: 6, tipo: "Casal", cap: 2, diaria: "" }, checkin_hora: "14:00", checkout_hora: "12:00" });
+  let R; try { R = { ...vazio(), ...(JSON.parse(localStorage.getItem(CHAVE) || "null") || {}) }; } catch (e) { R = vazio(); }
+  const salva = () => { try { localStorage.setItem(CHAVE, JSON.stringify(R)); } catch (e) {} };
+  const x = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
+
+  function linhas() {
+    return R.quartos.map((q, i) => `<div class="linha-q">
+      <label><span class="rot">Nome ou número</span><input data-q="${i}" data-k="nome" maxlength="60" value="${esc(q.nome)}" aria-label="Nome do quarto ${i + 1}"></label>
+      <label><span class="rot">Tipo</span><input data-q="${i}" data-k="tipo" maxlength="40" list="tipos" value="${esc(q.tipo)}" aria-label="Tipo do quarto ${i + 1}"></label>
+      <label><span class="rot">Pessoas</span><input data-q="${i}" data-k="capacidade" type="number" min="1" max="20" inputmode="numeric" value="${esc(q.capacidade)}" aria-label="Pessoas no quarto ${i + 1}"></label>
+      <label><span class="rot">Diária (R$)</span><input data-q="${i}" data-k="diaria" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(q.diaria)}" placeholder="0,00" aria-label="Diária do quarto ${i + 1}"></label>
+      <button type="button" class="tira" data-tira="${i}" aria-label="Tirar ${esc(q.nome || "quarto " + (i + 1))}">${x}</button></div>`).join("");
+  }
+
+  /* ---------- as perguntas ---------- */
+  const P = [
+    { t: "Qual é o nome da pousada?", a: "Ele aparece no topo do painel. A cidade ajuda se um dia você tiver mais de uma.",
+      h: () => `<div class="campos"><label class="todo">Nome da pousada<input id="q-nome" maxlength="80" autocomplete="organization" value="${esc(R.nome)}" placeholder="Ex.: Pousada Recanto da Baía"></label>
+        <label class="todo">Cidade <small>opcional</small><input id="q-cid" maxlength="80" value="${esc(R.cidade)}" placeholder="Ex.: Guaraqueçaba, PR"></label></div>`,
+      l: () => { R.nome = $("q-nome").value.trim(); R.cidade = $("q-cid").value.trim(); },
+      v: () => R.nome.length < 2 ? "Escreva o nome da pousada." : "" },
+    { t: "Quais quartos a pousada tem?", a: "Gere os quartos numerados de uma vez e depois ajuste o que for diferente. Dá para mudar tudo depois no painel.",
+      h: () => `<div class="gerar"><p>Gerar quartos numerados</p>
+          <label>Quantos<input id="g-n" type="number" min="1" max="30" inputmode="numeric" value="${esc(R.ger.n)}"></label>
+          <label>Tipo<input id="g-tipo" maxlength="40" list="tipos" value="${esc(R.ger.tipo)}"></label>
+          <label>Pessoas<input id="g-cap" type="number" min="1" max="20" inputmode="numeric" value="${esc(R.ger.cap)}"></label>
+          <label>Diária (R$)<input id="g-dia" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(R.ger.diaria)}" placeholder="opcional"></label>
+          <button type="button" class="btn btn--borda" id="g-gerar">${R.quartos.length ? "Gerar de novo" : "Gerar quartos"}</button></div>
+        <datalist id="tipos">${TIPOS.map(t => `<option>${t}</option>`).join("")}</datalist>
+        <div class="lista-q" id="lista-q">${R.quartos.length ? `<div class="cab-l"><span>Nome ou número</span><span>Tipo</span><span>Pessoas</span><span>Diária (R$)</span><span></span></div>${linhas()}` : ""}</div>
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><button type="button" class="btn btn--borda mais-q" id="q-mais" ${R.quartos.length >= 30 ? "disabled" : ""}>Adicionar um quarto</button><span class="conta-q">${R.quartos.length ? plural(R.quartos.length, "quarto", "quartos") + (R.quartos.length >= 30 ? " (o máximo)" : "") : "Nenhum quarto ainda"}</span></div>`,
+      l: () => {},
+      v: () => { if (!R.quartos.length) return "Gere ou adicione pelo menos um quarto.";
+        const nomes = new Set();
+        for (const [i, q] of R.quartos.entries()) {
+          const n = String(q.nome).trim(); if (!n) return `Dê um nome ou número ao quarto da linha ${i + 1}.`;
+          if (nomes.has(n.toLowerCase())) return `Tem dois quartos chamados "${n}". Mude um deles.`; nomes.add(n.toLowerCase());
+          if (!(Number(q.capacidade) >= 1 && Number(q.capacidade) <= 20)) return `Coloque de 1 a 20 pessoas em ${n}.`;
+          if (q.diaria !== "" && !(Number(q.diaria) >= 0 && Number(q.diaria) < 100000)) return `Confira a diária de ${n}.`;
+        } return ""; } },
+    { t: "Quais são os horários de entrada e saída?", a: "Depois do horário de saída, o quarto aparece no painel como saída atrasada.",
+      h: () => `<div class="campos"><label>Entrada a partir das<input id="q-ci" type="time" value="${esc(R.checkin_hora)}"></label><label>Saída até as<input id="q-co" type="time" value="${esc(R.checkout_hora)}"></label></div>`,
+      l: () => { R.checkin_hora = $("q-ci").value || "14:00"; R.checkout_hora = $("q-co").value || "12:00"; }, v: () => "" },
+  ];
+  const TOTAL = P.length;
+
+  /* ---------- prévia ---------- */
+  let ultimo = "";
+  function previa() {
+    const qs = R.quartos.filter(q => String(q.nome).trim());
+    const html = `<div class="cabeca"><i>${esc(iniciais(R.nome || "P"))}</i><div><b>${R.nome ? esc(R.nome) : '<span class="suave">Nome da pousada</span>'}</b><span>${R.cidade ? esc(R.cidade) + " · " : ""}${plural(qs.length, "quarto", "quartos")}</span></div></div>
+      <div class="mini">${qs.length ? qs.map(q => `<div class="mq"><div class="f"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>Sem foto<span class="etiqueta e-livre">Livre</span></div><div class="c"><b>${esc(q.nome)}</b><small>${esc(q.tipo || "Quarto")} · até ${esc(q.capacidade)}</small><span class="pr">${brl(q.diaria)} <em>/noite</em></span></div></div>`).join("") : `<p class="vazio-p">Os quartos aparecem aqui quando você gerar.</p>`}</div>
+      <div class="horas"><span>Entrada a partir das <b>${esc(R.checkin_hora)}</b></span><span>·</span><span>Saída até as <b>${esc(R.checkout_hora)}</b></span></div>`;
+    if (html === ultimo) return; ultimo = html; $("previa").innerHTML = html;
+  }
+
+  /* ---------- aceite dos termos ---------- */
+  const TERMOS = "2026-11-16";
+  const caixaTermos = () => `<label class="aceite"><input type="checkbox" id="c-termos"><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a>, inclusive as regras de proteção de dados dos hóspedes (LGPD).</span></label>`;
+  const aceitou = () => { const c = $("c-termos"); if (c && c.checked) return true; const err = $("erro"); err.textContent = "Para criar a pousada, marque que leu e aceita os Termos de Uso."; err.hidden = false; return false; };
+
+  /* ---------- desenho do passo ---------- */
+  function desenha() {
+    const total = TOTAL + (session ? 0 : 1);
+    $("progresso").style.width = `${Math.round((R.i + 1) / total * 100)}%`;
+    const box = $("pergunta");
+    if (R.i >= TOTAL) return desenhaConta(total);
+    const p = P[R.i], ultimoPasso = R.i === TOTAL - 1;
+    box.innerHTML = `<p class="passo-n">Passo ${R.i + 1} de ${total}</p><h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}${ultimoPasso && session ? caixaTermos() : ""}
+      <p class="erro" id="erro" role="alert" hidden></p>
+      <div class="navega">${R.i > 0 ? `<button type="button" class="btn btn--borda" id="voltar">Voltar</button>` : ""}<button type="button" class="btn btn--cheio" id="seguir">${ultimoPasso && session ? "Criar minha pousada" : "Continuar"}</button></div>`;
+    if ($("voltar")) $("voltar").onclick = () => { p.l(); R.i--; salva(); desenha(); };
+    $("seguir").onclick = seguir;
+    box.querySelector("h1").focus({ preventScroll: true }); scrollTo({ top: 0 });
+    previa();
+  }
+  function desenhaConta(total) {
+    const box = $("pergunta");
+    box.innerHTML = `<p class="passo-n">Passo ${total} de ${total}</p><h1 tabindex="-1">Crie o seu acesso ao painel</h1><p class="ajuda">É com esse email e senha que você e a recepção vão entrar para ver os quartos.</p>
+      <div class="abas" role="tablist"><button type="button" role="tab" id="a-nova" aria-selected="true">Criar conta</button><button type="button" role="tab" id="a-tenho" aria-selected="false">Já tenho conta</button></div>
+      <div class="campos"><label class="todo">Email<input id="c-email" type="email" inputmode="email" autocomplete="email"></label><label class="todo">Senha <small id="c-dica">pelo menos 8 caracteres</small><input id="c-senha" type="password" autocomplete="new-password" minlength="8"></label></div>
+      ${caixaTermos()}
+      <p class="erro" id="erro" role="alert" hidden></p>
+      <div class="navega"><button type="button" class="btn btn--borda" id="voltar">Voltar</button><button type="button" class="btn btn--cheio" id="seguir">Criar minha pousada</button></div>`;
+    let jaTenho = false;
+    const aba = t => { jaTenho = t; $("a-nova").setAttribute("aria-selected", String(!t)); $("a-tenho").setAttribute("aria-selected", String(t)); $("c-senha").autocomplete = t ? "current-password" : "new-password"; $("c-dica").hidden = t; };
+    $("a-nova").onclick = () => aba(false); $("a-tenho").onclick = () => aba(true);
+    $("voltar").onclick = () => { R.i = TOTAL - 1; salva(); desenha(); };
+    $("seguir").onclick = async () => {
+      const err = $("erro"), btn = $("seguir"); err.hidden = true;
+      const email = $("c-email").value.trim(), password = $("c-senha").value;
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = "Coloque um email completo."; err.hidden = false; return; }
+      if (password.length < 8) { err.textContent = "A senha precisa ter pelo menos 8 caracteres."; err.hidden = false; return; }
+      if (!aceitou()) return;
+      btn.disabled = true; btn.textContent = jaTenho ? "Entrando..." : "Criando a conta...";
+      const r = jaTenho ? await sb.auth.signInWithPassword({ email, password }) : await sb.auth.signUp({ email, password });
+      if (r.error || !r.data.session) {
+        err.textContent = r.error ? errText(r.error) : "Conta criada. Confirme pelo link que chegou no email e depois entre com a senha.";
+        err.hidden = false; btn.disabled = false; btn.textContent = "Criar minha pousada"; return;
+      }
+      session = r.data.session;
+      const { data: m } = await sb.from("membros").select("pousada_id").limit(1);
+      if (m && m.length) { try { localStorage.removeItem(CHAVE); } catch (e) {} location.replace("painel.html#quartos"); return; }
+      cria();
+    };
+    box.querySelector("h1").focus({ preventScroll: true }); scrollTo({ top: 0 });
+    previa();
+  }
+  function seguir() {
+    const p = P[R.i]; p.l(); const e = p.v(), err = $("erro");
+    if (e) { err.textContent = e; err.hidden = false; return; }
+    if (R.i === TOTAL - 1 && session) { if (aceitou()) cria(); return; }
+    R.i++; salva(); desenha();
+  }
+  async function cria() {
+    const btn = $("seguir"); if (btn) { btn.disabled = true; btn.textContent = "Criando a pousada..."; }
+    const payload = { nome: R.nome, cidade: R.cidade, checkin_hora: R.checkin_hora, checkout_hora: R.checkout_hora,
+      quartos: R.quartos.map(q => ({ nome: String(q.nome).trim(), tipo: String(q.tipo || "").trim(), capacidade: Number(q.capacidade), diaria: Number(q.diaria || 0) })) };
+    const { error } = await sb.rpc("criar_minha_pousada", { p: payload });
+    if (error) { const err = $("erro"); err.textContent = errText(error); err.hidden = false; if (btn) { btn.disabled = false; btn.textContent = "Criar minha pousada"; } return; }
+    await sb.rpc("aceitar_termos", { p_versao: TERMOS }); // se falhar, o painel pede o aceite de novo
+    try { localStorage.removeItem(CHAVE); } catch (e) {}
+    location.replace("painel.html#quartos");
+  }
+
+  /* ---------- gerar e editar quartos ---------- */
+  function lerGerador() { R.ger = { n: $("g-n").value, tipo: $("g-tipo").value.trim(), cap: $("g-cap").value, diaria: $("g-dia").value }; }
+  function gerar() {
+    lerGerador(); const err = $("erro"); err.hidden = true;
+    const n = Math.round(Number(R.ger.n)), cap = Math.round(Number(R.ger.cap));
+    if (!(n >= 1 && n <= 30)) { err.textContent = "Coloque de 1 a 30 quartos."; err.hidden = false; return; }
+    if (!(cap >= 1 && cap <= 20)) { err.textContent = "Coloque de 1 a 20 pessoas por quarto."; err.hidden = false; return; }
+    R.quartos = Array.from({ length: n }, (_, i) => ({ nome: `Quarto ${i + 1}`, tipo: R.ger.tipo, capacidade: cap, diaria: R.ger.diaria }));
+    salva(); desenha();
+  }
+  document.addEventListener("input", e => {
+    const t = e.target;
+    if (t.dataset.q !== undefined) { R.quartos[Number(t.dataset.q)][t.dataset.k] = t.value; salva(); previa(); return; }
+    if (t.closest(".gerar")) { lerGerador(); salva(); return; }
+    if (R.i < TOTAL && R.i !== 1) { P[R.i].l(); salva(); previa(); }
+  });
+  document.addEventListener("click", e => {
+    const t = e.target.closest("button"); if (!t) return;
+    if (t.id === "g-gerar") return gerar();
+    if (t.id === "q-mais") {
+      if (R.quartos.length >= 30) return;
+      const ult = R.quartos[R.quartos.length - 1] || { tipo: R.ger.tipo, capacidade: R.ger.cap || 2, diaria: R.ger.diaria };
+      const usados = new Set(R.quartos.map(q => String(q.nome).trim().toLowerCase())); let k = R.quartos.length + 1; while (usados.has(`quarto ${k}`)) k++;
+      R.quartos.push({ nome: `Quarto ${k}`, tipo: ult.tipo, capacidade: ult.capacidade, diaria: ult.diaria }); salva(); desenha();
+      const novo = document.querySelector(`[data-q="${R.quartos.length - 1}"][data-k="nome"]`); if (novo) { novo.focus({ preventScroll: false }); novo.select(); }
+      return;
+    }
+    if (t.dataset.tira !== undefined) { R.quartos.splice(Number(t.dataset.tira), 1); salva(); desenha(); }
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.target.tagName !== "INPUT") return;
+    e.preventDefault();
+    if (e.target.closest(".gerar")) return gerar();
+    if (e.target.dataset.q !== undefined) return;
+    const s = $("seguir"); if (s && !s.disabled) s.click();
+  });
+
+  if (R.i > TOTAL || (R.i === TOTAL && session)) R.i = TOTAL - 1;
+  if (R.i < 0) R.i = 0;
+  desenha();
+})();
+</script>
+</body>
+</html>

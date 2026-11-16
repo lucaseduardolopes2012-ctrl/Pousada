@@ -1,0 +1,78 @@
+/* Paleta 60-30-10 "Marinho e laranja" (cores complementares, escolhida pelo dono):
+   60% #F7F7F5 branco-gelo: fundo da tela.
+   30% #13294B azul-marinho: menu lateral, barra e bilhete do site, faixa da ficha, ícones dos números, barras do gráfico, textos.
+   10% #FF7A1A laranja: só o que pede ação ou destaca: botão principal, item ativo do menu, barra de hoje.
+   Cartões do painel são brancos. Cores de situação (ocupado, sai hoje, atrasado, chega) são avisos e ficam fora da paleta. */
+:root {
+  --gelo: #f7f7f5; --marinho: #13294b; --laranja: #ff7a1a;
+  --azul: var(--marinho); --nevoa: #ffffff; --dourado: var(--laranja); --branco: #ffffff; --preto: var(--marinho); --violeta: var(--laranja);
+  --c60: var(--gelo); --c60-funda: #ecece8; --c60-linha: rgba(19, 41, 75, .12); --c60-texto: var(--marinho); --c60-suave: rgba(19, 41, 75, .68);
+  --c30: var(--marinho); --c30-esc: #0c1c35; --c30-tinta: #ffffff; --c30-suave: rgba(255, 255, 255, .68); --c30-hover: rgba(255, 255, 255, .08); --c30-clara: #e4e9f1;
+  --c10: var(--laranja); --c10-esc: #ec6a0c; --c10-tinta: var(--marinho); --c10-clara: #ffe9d8; --c10-texto: #b84d05;
+  --area: var(--c60); --menu: var(--c30); --moldura: var(--c60);
+  --cartao: #ffffff; --borda: #e3e4e0; --linha: #efefec; --campo: #f7f7f5;
+  --tinta: #101f38; --suave: #5d6675; --fraco: #9aa1ab;
+  --salvia: var(--marinho); --salvia-esc: #0c1c35; --salvia-clara: #e4e9f1; --salvia-tinta: #ffffff;
+  --vermelho: #e5383b;
+  --ok: #1f7a46; --ok-bg: #eaf7ef; --ok-borda: #c4e8d1;
+  --sai: #a8520a; --sai-bg: #fff3e6; --sai-borda: #f8d6b3;
+  --atraso: #c81e1e; --atraso-bg: #fdecec; --atraso-borda: #f6c6c6;
+  --chega: var(--marinho); --chega-bg: #e8edf5; --chega-borda: #c9d3e4;
+  --livre: #5d6675; --livre-bg: #f2f3f2; --livre-borda: #e1e3e0;
+  --sombra: 0 1px 2px rgba(19, 41, 75, .05);
+  --f: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r: 14px; --r-p: 9px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--c60); color: var(--c60-texto); font: 400 14px/1.5 var(--f); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: inherit; }
+h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -.02em; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--c10); outline-offset: 2px; border-radius: 6px; }
+.suave { color: var(--suave); }
+svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: var(--r-p); border: 1px solid transparent; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn svg { width: 15px; height: 15px; flex: none; }
+.btn--cheio { background: var(--c10); color: var(--c10-tinta); font-weight: 700; box-shadow: 0 6px 16px -10px rgba(255, 122, 26, .9); }
+.btn--cheio:hover { background: var(--c10-esc); }
+.btn--sec { background: var(--marinho); color: #ffffff; }
+.btn--sec:hover { background: #0c1c35; }
+.btn--borda { background: var(--cartao); border-color: var(--borda); color: var(--tinta); }
+.btn--borda:hover { border-color: var(--fraco); }
+.btn--perigo { background: var(--cartao); border-color: var(--atraso-borda); color: var(--atraso); }
+.btn--perigo:hover { background: var(--atraso-bg); }
+.btn--grande { height: 42px; padding: 0 18px; font-size: 14px; }
+.btn--largo { width: 100%; }
+.btn[disabled] { opacity: .5; cursor: progress; }
+
+.cartao { color: var(--tinta); background: var(--cartao); border: 1px solid var(--borda); border-radius: var(--r); box-shadow: var(--sombra); }
+
+.campos { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.campos .todo { grid-column: 1 / -1; }
+.campos label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--tinta); min-width: 0; align-content: start; }
+.campos label small { font-weight: 400; color: var(--suave); }
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), select, textarea { width: 100%; height: 38px; padding: 0 12px; border-radius: var(--r-p); border: 1px solid var(--borda); background: var(--cartao); font-size: 14px; color: var(--tinta); }
+input::placeholder, textarea::placeholder { color: var(--fraco); }
+textarea { height: auto; min-height: 80px; padding: 9px 12px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c10); box-shadow: 0 0 0 3px var(--c10-clara); }
+@media (max-width: 560px) { .campos { grid-template-columns: 1fr; } }
+.erro { padding: 9px 12px; border-radius: var(--r-p); background: var(--atraso-bg); border: 1px solid var(--atraso-borda); color: var(--atraso); font-weight: 600; font-size: 13px; }
+
+/* etiqueta de situação: pequena, com borda, como "Completed" / "Cancelled" na referência */
+.etiqueta { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 6px; border: 1px solid; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
+.e-ocupado { background: var(--ok-bg); border-color: var(--ok-borda); color: var(--ok); }
+.e-sai { background: var(--sai-bg); border-color: var(--sai-borda); color: var(--sai); }
+.e-atrasado, .e-cancelada { background: var(--atraso-bg); border-color: var(--atraso-borda); color: var(--atraso); }
+.e-pedido { background: var(--c10); border-color: var(--c10); color: var(--c10-tinta); }
+.e-chega, .e-proxima { background: var(--chega-bg); border-color: var(--chega-borda); color: var(--chega); }
+.e-livre, .e-fora, .e-encerrada { background: var(--livre-bg); border-color: var(--livre-borda); color: var(--livre); }
+
+.recado { position: fixed; z-index: 80; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--azul); color: var(--nevoa); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 13.5px; box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .45); }
+@media (min-width: 900px) { .recado { bottom: 24px; } }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
