@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cadastrar pousada · Painel de quartos</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#f7f7f5">
+<meta name="theme-color" content="#e9f2f3">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..600&family=Libre+Franklin:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="app.css">
 <style>
 /* Mesmo estilo do painel (referência EliteVillas): fundo cinza-claro, cartões brancos de borda fina, tudo compacto.
@@ -16,23 +16,23 @@
 body { background: var(--c60); }
 .topo { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--c60); color: var(--c60-texto); border-bottom: 1px solid var(--c60-linha); }
 .topo .dentro { max-width: 1140px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.marca { display: flex; align-items: center; gap: 10px; font: 400 20px/1 var(--num); }
-.marca i { width: 32px; height: 32px; border-radius: 3px; background: var(--terra); color: var(--mar); display: grid; place-items: center; font: 400 14px/1 var(--num); font-style: normal; }
+.marca { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; letter-spacing: -.02em; }
+.marca i { width: 28px; height: 28px; border-radius: 7px; background: var(--c10); color: var(--c10-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; }
 .topo .ja { color: var(--c60-suave); font-size: 13px; }
 .topo .ja a { color: var(--azul); text-decoration: underline !important; font-weight: 700; text-decoration: none; }
 @media (max-width: 560px) { .topo .ja span { display: none; } }
 .progresso { height: 3px; background: var(--c60-funda); }
-.progresso span { display: block; height: 100%; background: var(--magenta); transition: width .4s cubic-bezier(.16, 1, .3, 1); }
+.progresso span { display: block; height: 100%; background: var(--azul); transition: width .3s ease; }
 
 .pagina { max-width: 1140px; margin: 0 auto; padding: 26px 24px 110px; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
 @media (max-width: 960px) { .pagina { grid-template-columns: 1fr; padding: 16px 14px 130px; gap: 14px; } }
 
 .pergunta { padding: 24px; display: grid; gap: 18px; }
 @media (max-width: 560px) { .pergunta { padding: 18px 16px; } }
-.passo-n { justify-self: start; font: 500 17px/1 var(--num); color: var(--magenta); }
-.pergunta h1 { font: 400 clamp(32px, 4vw, 42px)/1 var(--num); margin-top: -6px; }
+.passo-n { display: inline-flex; justify-self: start; align-items: center; height: 22px; padding: 0 9px; border-radius: 6px; background: var(--salvia); color: var(--salvia-tinta); font-size: 11px; font-weight: 600; }
+.pergunta h1 { font-size: 22px; line-height: 1.25; margin-top: -4px; }
 .pergunta h1:focus { outline: none; }
-.pergunta .ajuda { color: var(--suave); font-size: 15px; margin-top: -12px; max-width: 40em; }
+.pergunta .ajuda { color: var(--suave); font-size: 13px; margin-top: -12px; max-width: 40em; }
 .navega { display: flex; gap: 8px; align-items: center; padding-top: 14px; border-top: 1px solid var(--linha); }
 .navega .btn--cheio { min-width: 160px; margin-left: auto; }
 @media (max-width: 960px) {
@@ -101,7 +101,7 @@ body { background: var(--c60); }
 </head>
 <body>
 <header class="topo">
-  <div class="dentro"><span class="marca"><i>PQ</i>Painel de quartos</span><p class="ja"><span>Já cadastrou? </span><a href="painel.html">Entrar</a></p></div>
+  <div class="dentro"><span class="marca"><i>Q</i>Painel de quartos</span><p class="ja"><span>Já cadastrou? </span><a href="painel.html">Entrar</a></p></div>
   <div class="progresso" aria-hidden="true"><span id="progresso" style="width:0"></span></div>
 </header>
 
@@ -196,7 +196,7 @@ body { background: var(--c60); }
     const box = $("pergunta");
     if (R.i >= TOTAL) return desenhaConta(total);
     const p = P[R.i], ultimoPasso = R.i === TOTAL - 1;
-    box.innerHTML = `<h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}${ultimoPasso && session ? caixaTermos() : ""}
+    box.innerHTML = `<p class="passo-n">Passo ${R.i + 1} de ${total}</p><h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}${ultimoPasso && session ? caixaTermos() : ""}
       <p class="erro" id="erro" role="alert" hidden></p>
       <div class="navega">${R.i > 0 ? `<button type="button" class="btn btn--borda" id="voltar">Voltar</button>` : ""}<button type="button" class="btn btn--cheio" id="seguir">${ultimoPasso && session ? "Criar minha pousada" : "Continuar"}</button></div>`;
     if ($("voltar")) $("voltar").onclick = () => { p.l(); R.i--; salva(); desenha(); };
@@ -206,7 +206,7 @@ body { background: var(--c60); }
   }
   function desenhaConta(total) {
     const box = $("pergunta");
-    box.innerHTML = `<h1 tabindex="-1">Crie o seu acesso ao painel</h1><p class="ajuda">É com esse email e senha que você e a recepção vão entrar para ver os quartos.</p>
+    box.innerHTML = `<p class="passo-n">Passo ${total} de ${total}</p><h1 tabindex="-1">Crie o seu acesso ao painel</h1><p class="ajuda">É com esse email e senha que você e a recepção vão entrar para ver os quartos.</p>
       <div class="abas" role="tablist"><button type="button" role="tab" id="a-nova" aria-selected="true">Criar conta</button><button type="button" role="tab" id="a-tenho" aria-selected="false">Já tenho conta</button></div>
       <div class="campos"><label class="todo">Email<input id="c-email" type="email" inputmode="email" autocomplete="email"></label><label class="todo">Senha <small id="c-dica">pelo menos 8 caracteres</small><input id="c-senha" type="password" autocomplete="new-password" minlength="8"></label></div>
       ${caixaTermos()}

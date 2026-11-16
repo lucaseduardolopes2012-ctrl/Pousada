@@ -1,32 +1,35 @@
-/* Mundo visual: a tábua do dia num papel quente de pousada (paleta "papel e nogueira").
+/* Mundo visual: tábua de marés e carta náutica.
    Menu em azul de carta (mar fundo), chão em água rasa clara, terra em ocre claro para o que está livre ou quieto,
    magenta de carta só para o que pede ação (pedido novo, botão principal). Linhas finas em vez de cartões estufados.
-   Palavras em Libre Franklin; títulos, horários, datas e preços em Source Serif 4, com algarismos em coluna. */
+   Palavras em Atkinson Hyperlegible (feita para ler fácil); horários, datas, números e títulos em Barlow Condensed, sempre em coluna. */
+/* algarismos sem zero cortado: os dígitos do texto corrido vêm da Barlow, o resto da Atkinson */
+@font-face { font-family: "Digitos"; font-weight: 400; font-display: swap; src: url(https://fonts.gstatic.com/s/barlow/v13/7cHpv4kjgoGqM7E_DMs5.woff2) format("woff2"); unicode-range: U+0030-0039; }
+@font-face { font-family: "Digitos"; font-weight: 700; font-display: swap; src: url(https://fonts.gstatic.com/s/barlow/v13/7cHqv4kjgoGqM7E3t-4s51os.woff2) format("woff2"); unicode-range: U+0030-0039; }
 :root {
-  --mar: #2a2622; --mar-2: #36322e; --mar-3: #4a443e; --mar-tinta: #ffffff; --mar-suave: #b3aca3;
-  --agua: #f7f3ec; --agua-2: #ede6da; --raso: #e4d9c8; --papel: #fffdf9;
-  --terra: #e2cfae; --terra-clara: #f3ead9; --terra-tinta: #5a4630;
-  --magenta: #7a4a2c; --magenta-esc: #5f3820; --magenta-clara: #f1e3d6;
-  --tinta: #2a2622; --suave: #665e55; --fraco: #857c72;
-  --fio: #e0d6c7; --fio-forte: #c6b8a4;
-  --ok: #2c5877; --ok-bg: #e4ecf1; --ok-borda: #bccfdc;
+  --mar: #0c3452; --mar-2: #164a6e; --mar-3: #23618c; --mar-tinta: #ffffff; --mar-suave: #a9c4d6;
+  --agua: #e9f2f3; --agua-2: #dcebee; --raso: #c7e0e6; --papel: #ffffff;
+  --terra: #ead6a0; --terra-clara: #f6eccd; --terra-tinta: #5e4a14;
+  --magenta: #a8135f; --magenta-esc: #8a0d4d; --magenta-clara: #f7e1ec;
+  --tinta: #0b2233; --suave: #48616f; --fraco: #6f8692;
+  --fio: #c3d6dc; --fio-forte: #9fbac3;
+  --ok: #0f5f8a; --ok-bg: #deedf5; --ok-borda: #b5d3e4;
   --sai: #845300; --sai-bg: #fbefd3; --sai-borda: #ecd29a;
   --atraso: #b0261a; --atraso-bg: #fde9e6; --atraso-borda: #f3bdb5;
-  --chega: #456f3a; --chega-bg: #e6eedf; --chega-borda: #c3d6b8;
-  --livre: var(--terra-tinta); --livre-bg: var(--terra-clara); --livre-borda: #e0cfae;
-  --f: "Libre Franklin", "Segoe UI", system-ui, sans-serif;
-  --num: "Source Serif 4", Georgia, serif;
+  --chega: #0e6a55; --chega-bg: #dcf0e8; --chega-borda: #acd9c7;
+  --livre: var(--terra-tinta); --livre-bg: var(--terra-clara); --livre-borda: #e2cd8f;
+  --f: "Digitos", "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --num: "Barlow Condensed", "Arial Narrow", sans-serif;
   --r: 6px; --r-p: 5px;
-  --sombra: 0 1px 2px rgba(42, 38, 34, .06), 0 8px 24px -16px rgba(42, 38, 34, .25);
+  --sombra: 0 1px 2px rgba(12, 52, 82, .06), 0 8px 24px -16px rgba(12, 52, 82, .25);
   color-scheme: light;
 
   /* nomes antigos ainda usados por páginas e pelo código */
   --azul: var(--mar); --marinho: var(--mar); --nevoa: #ffffff; --laranja: var(--magenta); --dourado: var(--terra); --violeta: var(--magenta);
   --c60: var(--agua); --c60-funda: var(--agua-2); --c60-linha: var(--fio); --c60-texto: var(--tinta); --c60-suave: var(--suave);
-  --c30: var(--mar); --c30-esc: #1c1916; --c30-tinta: #ffffff; --c30-suave: var(--mar-suave); --c30-hover: rgba(255, 255, 255, .08); --c30-clara: var(--raso);
+  --c30: var(--mar); --c30-esc: #08263c; --c30-tinta: #ffffff; --c30-suave: var(--mar-suave); --c30-hover: rgba(255, 255, 255, .08); --c30-clara: var(--raso);
   --c10: var(--magenta); --c10-esc: var(--magenta-esc); --c10-tinta: #ffffff; --c10-clara: var(--magenta-clara); --c10-texto: var(--magenta);
   --area: var(--agua); --menu: var(--mar); --moldura: var(--agua);
-  --cartao: var(--papel); --borda: var(--fio); --linha: #e9e1d4; --campo: #faf6ef; --branco: #ffffff; --preto: var(--tinta); --vermelho: var(--atraso);
+  --cartao: var(--papel); --borda: var(--fio); --linha: #dbe7ea; --campo: #f3f8f9; --branco: #ffffff; --preto: var(--tinta); --vermelho: var(--atraso);
   --salvia: var(--mar); --salvia-esc: var(--mar); --salvia-clara: var(--raso); --salvia-tinta: #ffffff;
 }
 * { box-sizing: border-box; }
@@ -42,14 +45,13 @@ p { margin: 0; }
 :focus-visible { outline: 2px solid var(--magenta); outline-offset: 2px; }
 .suave { color: var(--suave); }
 .num, time, .tnum { font-variant-numeric: tabular-nums lining-nums; }
-h1, h2, h3 { font-feature-settings: "lnum"; }
 svg.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 * { scrollbar-color: var(--fio-forte) transparent; scrollbar-width: thin; }
 
 /* botões: retos como etiqueta de carta, nada de pílula */
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 40px; padding: 0 16px; border-radius: var(--r-p); border: 1px solid transparent; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none; white-space: nowrap; transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
 .btn svg { width: 17px; height: 17px; flex: none; }
-.btn--cheio { background: var(--magenta); color: #ffffff; box-shadow: 0 1px 0 rgba(0, 0, 0, .12), 0 6px 14px -10px rgba(122, 74, 44, .9); }
+.btn--cheio { background: var(--magenta); color: #ffffff; box-shadow: 0 1px 0 rgba(0, 0, 0, .12), 0 6px 14px -10px rgba(168, 19, 95, .9); }
 .btn--cheio:hover { background: var(--magenta-esc); }
 .btn--sec { background: var(--mar); color: #ffffff; }
 .btn--sec:hover { background: var(--mar-2); }
@@ -68,7 +70,7 @@ svg.i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor;
 .campos label { display: grid; gap: 6px; font-size: 13.5px; font-weight: 700; color: var(--tinta); min-width: 0; align-content: start; }
 .campos label small { font-weight: 400; color: var(--suave); }
 input:where(:not([type="checkbox"]):not([type="radio"]):not([type="file"])), select, textarea { width: 100%; height: 44px; padding: 0 12px; border-radius: var(--r-p); border: 1px solid var(--fio-forte); background: var(--papel); font-size: 15px; color: var(--tinta); caret-color: var(--magenta); }
-input[type="date"], input[type="time"], input[type="number"] { font-family: var(--num); font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums lining-nums; }
+input[type="date"], input[type="time"], input[type="number"] { font-family: var(--num); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
 input::placeholder, textarea::placeholder { color: var(--fraco); }
 textarea { height: auto; min-height: 88px; padding: 10px 12px; resize: vertical; }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--mar); box-shadow: 0 0 0 3px var(--raso); }
@@ -89,6 +91,6 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--magenta); }
 .e-fora, .e-encerrada { background: #eef2f3; border-color: #d5dee1; color: var(--suave); }
 .e-fora::before, .e-encerrada::before { background: transparent; border: 1px solid currentColor; }
 
-.recado { position: fixed; z-index: 80; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--mar); color: #ffffff; padding: 12px 18px; border-radius: var(--r); font-weight: 700; font-size: 14.5px; box-shadow: 0 14px 32px -14px rgba(28, 25, 22, .6); }
+.recado { position: fixed; z-index: 80; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--mar); color: #ffffff; padding: 12px 18px; border-radius: var(--r); font-weight: 700; font-size: 14.5px; box-shadow: 0 14px 32px -14px rgba(8, 38, 60, .6); }
 @media (prefers-reduced-motion: no-preference) { .recado:not([hidden]) { animation: recado .32s cubic-bezier(.16, 1, .3, 1); } @keyframes recado { from { opacity: 0; transform: translate(-50%, 10px); } } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
