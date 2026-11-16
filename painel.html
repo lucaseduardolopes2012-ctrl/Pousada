@@ -136,6 +136,14 @@ details.tabela-alt td, details.tabela-alt th { padding: 3px 12px 3px 0; text-ali
 .termos-aviso h2 { font-size: 15px; }
 .termos-aviso p { color: var(--suave); font-size: 13px; margin-top: 2px; max-width: 60ch; }
 .termos-aviso .bts { display: flex; gap: 8px; flex-wrap: wrap; }
+.galeria-ed { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.galeria-ed:empty { display: none; }
+.galeria-ed figure { margin: 0; position: relative; border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; background: var(--campo); }
+.galeria-ed img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.galeria-ed .capa { position: absolute; left: 6px; top: 6px; height: 20px; padding: 0 7px; border-radius: 5px; background: var(--c10); color: var(--c10-tinta); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; }
+.galeria-ed figcaption { display: flex; justify-content: space-between; align-items: center; gap: 4px; padding: 6px; }
+.galeria-ed figcaption .btn { height: 28px; padding: 0 8px; font-size: 11.5px; }
+.galeria-ed figcaption .ic { margin-left: auto; }
 .vazio { padding: 18px; text-align: center; color: var(--suave); font-size: 13px; background: var(--campo); border-radius: 10px; }
 
 .av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11.5px; flex: none; background: var(--av-bg, var(--salvia-clara)); color: var(--av-t, var(--salvia-esc)); }
@@ -291,7 +299,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
   const S = { pousada: null, papel: "dono", quartos: [], est: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em";
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos";
   const TERMOS = "2026-11-16";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
@@ -616,7 +624,11 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Site da pousada</h2><a class="link" href="${esc(urlSite())}" target="_blank" rel="noopener">Abrir o site</a></div>
         <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
         <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
-        <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>`;
+        <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>
+      <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Fotos da pousada</h2><span class="suave" style="font-size:12px">${(p.fotos || []).length} de 12</span></div>
+        <p class="suave" style="font-size:13px">Fachada, varanda, vista, café da manhã. Aparecem no site logo abaixo do nome. A primeira é a capa.</p>
+        ${S.papel === "dono" ? `<div class="galeria-ed">${(p.fotos || []).map((u, i) => `<figure><img src="${esc(u)}" alt="Foto ${i + 1} da pousada" loading="lazy">${i === 0 ? '<span class="capa">Capa</span>' : ""}<figcaption>${i ? `<button class="btn btn--borda" type="button" data-acao="foto-capa" data-i="${i}">Usar como capa</button>` : ""}<button class="ic" type="button" data-acao="foto-remover" data-i="${i}" aria-label="Remover foto ${i + 1}" title="Remover">${ic("lixo")}</button></figcaption></figure>`).join("")}</div>
+        ${(p.fotos || []).length < 12 ? `<label class="btn btn--cheio" style="justify-self:start;cursor:pointer">${ic("camera")}<input type="file" accept="image/*" multiple id="fotos-pousada" hidden><span>Adicionar fotos</span></label>` : ""}` : `<p class="suave" style="font-size:13px">Só o dono da pousada muda as fotos.</p>`}</section>`;
   }
 
   /* ---------- gaveta: estadia e quarto ---------- */
@@ -711,6 +723,8 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     switch (d.acao) {
       case "filtro": S.menuFiltro = !S.menuFiltro; return desenha();
       case "baixar": return baixar();
+      case "foto-capa": { const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); f.unshift(x); return salvaFotos(f, "Capa trocada."); }
+      case "foto-remover": { if (d.certeza !== "1") { d.certeza = "1"; t.title = "Toque de novo para remover"; t.style.color = "var(--atraso)"; toast("Toque de novo na lixeira para remover a foto."); return; } const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); await salvaFotos(f, "Foto removida."); const k = String(x).split("/object/public/fotos/")[1]; if (k) sb.storage.from("fotos").remove([k]); return; }
       case "aceitar-termos": { t.disabled = true; const { error } = await sb.rpc("aceitar_termos", { p_versao: TERMOS }); if (error) { t.disabled = false; toast(errText(error)); return; } const r2 = await sb.from("pousadas").select(COLS).eq("id", S.pousada.id).single(); if (r2.data) S.pousada = r2.data; toast("Termos aceitos. Obrigado."); return desenha(); }
       case "copiar-link": try { await navigator.clipboard.writeText(urlSite()); toast("Link copiado."); } catch (er) { $("c-link").select(); toast("Selecione e copie o link."); } return;
       case "imprimir-qr": { const w = open("", "_blank"); if (!w) { toast("Permita janelas novas para imprimir."); return; } w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>QR code ${esc(S.pousada.nome)}</title><body style="font-family:system-ui,sans-serif;text-align:center;padding:40px"><h1 style="font-size:34px;margin:0 0 6px">${esc(S.pousada.nome)}</h1><p style="font-size:20px;margin:0 0 24px">Aponte a câmera para ver os quartos e fazer sua ficha</p><div style="width:360px;margin:0 auto">${svgQR(8)}</div><p style="font-size:14px;color:#555;margin-top:18px">${esc(urlSite())}</p><script>onload=()=>print()<\/script></body></html>`); w.document.close(); return; }
@@ -728,6 +742,31 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   });
   document.addEventListener("change", e => { if (e.target.id === "periodo") { S.periodo = Number(e.target.value); desenhaGrafico(); } });
   $("busca").addEventListener("input", e => { S.busca = e.target.value.trim(); if (!["quartos", "estadias", "hospedes"].includes(S.v)) { location.hash = "quartos"; return; } desenha(); });
+
+  async function salvaFotos(lista, msg) {
+    const r = await sb.from("pousadas").update({ fotos: lista }).eq("id", S.pousada.id).select(COLS).single();
+    if (r.error) { toast(errText(r.error)); return false; }
+    S.pousada = r.data; toast(msg); desenha(); return true;
+  }
+  async function reduzJPG(arq) {
+    const img = await createImageBitmap(arq); const k = Math.min(1, 1800 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return new Promise(res => c.toBlob(res, "image/jpeg", 0.84));
+  }
+  document.addEventListener("change", async e => {
+    if (e.target.id !== "fotos-pousada" || !e.target.files.length) return;
+    const atuais = [...(S.pousada.fotos || [])], arqs = [...e.target.files].slice(0, 12 - atuais.length), txt = e.target.parentElement.querySelector("span");
+    const novas = [];
+    for (const [i, arq] of arqs.entries()) {
+      txt.textContent = `Enviando ${i + 1} de ${arqs.length}...`;
+      try {
+        const blob = await reduzJPG(arq), path = `${S.pousada.id}/pousada-${Date.now()}-${i}.jpg`;
+        const up = await sb.storage.from("fotos").upload(path, blob, { contentType: "image/jpeg" }); if (up.error) throw up.error;
+        novas.push(`${PG_CONFIG.supabaseUrl}/storage/v1/object/public/fotos/${path}`);
+      } catch (er) { toast(`Não deu para usar "${arq.name}". Tente uma foto JPG ou PNG.`); }
+    }
+    if (novas.length) await salvaFotos([...atuais, ...novas], novas.length === 1 ? "Foto adicionada." : `${novas.length} fotos adicionadas.`); else desenha();
+  });
 
   // foto do quarto: reduz no aparelho e envia
   document.addEventListener("change", async e => {
