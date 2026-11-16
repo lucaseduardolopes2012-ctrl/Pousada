@@ -1,5 +1,5 @@
 import base64, json, subprocess, sys
-files = ["vercel.json", "404.html", "index.html", "comecar.html", "painel.html", "site.html", "app.js", "app.css", "config.js"]
+files = ["vercel.json", "404.html", "index.html", "comecar.html", "painel.html", "site.html", "termos.html", "privacidade.html", "app.js", "app.css", "config.js"]
 body = {"name": "pousada-gestao", "target": "production",
         "files": [{"file": f, "data": base64.b64encode(open(f, "rb").read()).decode(), "encoding": "base64"} for f in files],
         "projectSettings": {"framework": None, "buildCommand": None, "outputDirectory": None, "installCommand": None}}

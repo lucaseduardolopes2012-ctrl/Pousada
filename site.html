@@ -117,6 +117,7 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
 .ficha textarea { height: auto; min-height: 90px; }
 .ficha .enviar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .ficha .enviar .btn--cheio { height: 50px; padding: 0 26px; font-size: 15.5px; }
+.ficha .enviar small a { color: #fff; text-decoration-color: var(--laranja); text-decoration-thickness: 2px; }
 .ficha .enviar small { color: var(--c30-suave); font-size: 13px; max-width: 30em; }
 .resumo { position: sticky; top: 84px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(255, 255, 255, .08); border-radius: 18px; padding: 20px; display: grid; gap: 14px; }
 @media (max-width: 900px) { .resumo { position: static; order: -1; } }
@@ -225,7 +226,7 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
 
     ${saber()}
   </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span>${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}</div></footer>`;
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
@@ -314,9 +315,9 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
         <label>WhatsApp com DDD<input id="f-tel" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="(41) 99999-0000" required></label>
         <label>CPF ou documento <small>opcional</small><input id="f-doc" maxlength="30" inputmode="numeric" autocomplete="off"></label>
         <label class="todo">Email <small>opcional</small><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></label>
-        <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco, pedidos especiais</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
+        <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco. Não coloque dados de saúde.</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
         <p class="erro" id="f-erro" role="alert" hidden></p>
-        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>Você ainda não paga nada. A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}.</small></div>
+        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>Você ainda não paga nada. A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
       </form>
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>

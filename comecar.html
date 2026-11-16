@@ -63,6 +63,9 @@ body { background: var(--c60); }
   .linha-q .tira { grid-column: 2; justify-self: end; }
 }
 .mais-q { justify-self: start; }
+.aceite { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 13.5px; line-height: 1.5; color: var(--tinta); cursor: pointer; }
+.aceite input { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--laranja); }
+.aceite a { color: var(--marinho); font-weight: 700; text-decoration-color: var(--laranja); text-decoration-thickness: 2px; text-underline-offset: 3px; }
 .conta-q { color: var(--suave); font-size: 12.5px; }
 
 .abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 9px; background: var(--campo); border: 1px solid var(--linha); justify-self: start; }
@@ -181,6 +184,11 @@ body { background: var(--c60); }
     if (html === ultimo) return; ultimo = html; $("previa").innerHTML = html;
   }
 
+  /* ---------- aceite dos termos ---------- */
+  const TERMOS = "2026-11-16";
+  const caixaTermos = () => `<label class="aceite"><input type="checkbox" id="c-termos"><span>Li e aceito os <a href="termos.html" target="_blank" rel="noopener">Termos de Uso</a>, inclusive as regras de proteção de dados dos hóspedes (LGPD).</span></label>`;
+  const aceitou = () => { const c = $("c-termos"); if (c && c.checked) return true; const err = $("erro"); err.textContent = "Para criar a pousada, marque que leu e aceita os Termos de Uso."; err.hidden = false; return false; };
+
   /* ---------- desenho do passo ---------- */
   function desenha() {
     const total = TOTAL + (session ? 0 : 1);
@@ -188,7 +196,7 @@ body { background: var(--c60); }
     const box = $("pergunta");
     if (R.i >= TOTAL) return desenhaConta(total);
     const p = P[R.i], ultimoPasso = R.i === TOTAL - 1;
-    box.innerHTML = `<p class="passo-n">Passo ${R.i + 1} de ${total}</p><h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}
+    box.innerHTML = `<p class="passo-n">Passo ${R.i + 1} de ${total}</p><h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}${ultimoPasso && session ? caixaTermos() : ""}
       <p class="erro" id="erro" role="alert" hidden></p>
       <div class="navega">${R.i > 0 ? `<button type="button" class="btn btn--borda" id="voltar">Voltar</button>` : ""}<button type="button" class="btn btn--cheio" id="seguir">${ultimoPasso && session ? "Criar minha pousada" : "Continuar"}</button></div>`;
     if ($("voltar")) $("voltar").onclick = () => { p.l(); R.i--; salva(); desenha(); };
@@ -201,6 +209,7 @@ body { background: var(--c60); }
     box.innerHTML = `<p class="passo-n">Passo ${total} de ${total}</p><h1 tabindex="-1">Crie o seu acesso ao painel</h1><p class="ajuda">É com esse email e senha que você e a recepção vão entrar para ver os quartos.</p>
       <div class="abas" role="tablist"><button type="button" role="tab" id="a-nova" aria-selected="true">Criar conta</button><button type="button" role="tab" id="a-tenho" aria-selected="false">Já tenho conta</button></div>
       <div class="campos"><label class="todo">Email<input id="c-email" type="email" inputmode="email" autocomplete="email"></label><label class="todo">Senha <small id="c-dica">pelo menos 8 caracteres</small><input id="c-senha" type="password" autocomplete="new-password" minlength="8"></label></div>
+      ${caixaTermos()}
       <p class="erro" id="erro" role="alert" hidden></p>
       <div class="navega"><button type="button" class="btn btn--borda" id="voltar">Voltar</button><button type="button" class="btn btn--cheio" id="seguir">Criar minha pousada</button></div>`;
     let jaTenho = false;
@@ -212,6 +221,7 @@ body { background: var(--c60); }
       const email = $("c-email").value.trim(), password = $("c-senha").value;
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = "Coloque um email completo."; err.hidden = false; return; }
       if (password.length < 8) { err.textContent = "A senha precisa ter pelo menos 8 caracteres."; err.hidden = false; return; }
+      if (!aceitou()) return;
       btn.disabled = true; btn.textContent = jaTenho ? "Entrando..." : "Criando a conta...";
       const r = jaTenho ? await sb.auth.signInWithPassword({ email, password }) : await sb.auth.signUp({ email, password });
       if (r.error || !r.data.session) {
@@ -229,7 +239,7 @@ body { background: var(--c60); }
   function seguir() {
     const p = P[R.i]; p.l(); const e = p.v(), err = $("erro");
     if (e) { err.textContent = e; err.hidden = false; return; }
-    if (R.i === TOTAL - 1 && session) { cria(); return; }
+    if (R.i === TOTAL - 1 && session) { if (aceitou()) cria(); return; }
     R.i++; salva(); desenha();
   }
   async function cria() {
@@ -238,6 +248,7 @@ body { background: var(--c60); }
       quartos: R.quartos.map(q => ({ nome: String(q.nome).trim(), tipo: String(q.tipo || "").trim(), capacidade: Number(q.capacidade), diaria: Number(q.diaria || 0) })) };
     const { error } = await sb.rpc("criar_minha_pousada", { p: payload });
     if (error) { const err = $("erro"); err.textContent = errText(error); err.hidden = false; if (btn) { btn.disabled = false; btn.textContent = "Criar minha pousada"; } return; }
+    await sb.rpc("aceitar_termos", { p_versao: TERMOS }); // se falhar, o painel pede o aceite de novo
     try { localStorage.removeItem(CHAVE); } catch (e) {}
     location.replace("painel.html#quartos");
   }
