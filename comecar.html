@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#f7f7f5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..600&family=Libre+Franklin:wght@400..700&display=swap">
 <link rel="stylesheet" href="app.css">
 <style>
 /* Mesmo estilo do painel (referência EliteVillas): fundo cinza-claro, cartões brancos de borda fina, tudo compacto.
@@ -16,8 +16,8 @@
 body { background: var(--c60); }
 .topo { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--c60); color: var(--c60-texto); border-bottom: 1px solid var(--c60-linha); }
 .topo .dentro { max-width: 1140px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.marca { display: flex; align-items: center; gap: 10px; font: 700 20px/1 var(--num); }
-.marca i { width: 32px; height: 32px; border-radius: 3px; background: var(--terra); color: var(--mar); display: grid; place-items: center; font: 700 14px/1 var(--num); font-style: normal; }
+.marca { display: flex; align-items: center; gap: 10px; font: 400 20px/1 var(--num); }
+.marca i { width: 32px; height: 32px; border-radius: 3px; background: var(--terra); color: var(--mar); display: grid; place-items: center; font: 400 14px/1 var(--num); font-style: normal; }
 .topo .ja { color: var(--c60-suave); font-size: 13px; }
 .topo .ja a { color: var(--azul); text-decoration: underline !important; font-weight: 700; text-decoration: none; }
 @media (max-width: 560px) { .topo .ja span { display: none; } }
@@ -29,8 +29,8 @@ body { background: var(--c60); }
 
 .pergunta { padding: 24px; display: grid; gap: 18px; }
 @media (max-width: 560px) { .pergunta { padding: 18px 16px; } }
-.passo-n { justify-self: start; font: 600 17px/1 var(--num); color: var(--magenta); }
-.pergunta h1 { font: 700 clamp(32px, 4vw, 42px)/1 var(--num); margin-top: -6px; }
+.passo-n { justify-self: start; font: 500 17px/1 var(--num); color: var(--magenta); }
+.pergunta h1 { font: 400 clamp(32px, 4vw, 42px)/1 var(--num); margin-top: -6px; }
 .pergunta h1:focus { outline: none; }
 .pergunta .ajuda { color: var(--suave); font-size: 15px; margin-top: -12px; max-width: 40em; }
 .navega { display: flex; gap: 8px; align-items: center; padding-top: 14px; border-top: 1px solid var(--linha); }
