@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Painel da pousada</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#020000">
+<meta name="theme-color" content="#0e3a47">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
@@ -14,7 +14,7 @@
 /* Estrutura da referência: menu lateral cinza-claro com a marca no topo; área principal branca, com borda fina e
    cantos arredondados, que tem a barra de busca/usuário em cima e o conteúdo embaixo. */
 .casca { display: grid; grid-template-columns: 236px minmax(0, 1fr); min-height: 100vh; }
-.lateral { position: sticky; top: 0; height: 100vh; padding: 18px 14px; display: flex; flex-direction: column; gap: 2px; background: var(--menu); border-right: 1px solid var(--c60-linha); }
+.lateral { position: sticky; top: 0; height: 100vh; padding: 18px 14px; display: flex; flex-direction: column; gap: 2px; background: var(--menu); color: var(--c30-tinta); }
 .marca { display: flex; align-items: center; gap: 9px; padding: 2px 6px 22px; text-decoration: none; }
 .marca i { width: 28px; height: 28px; border-radius: 7px; background: var(--c10); color: var(--c10-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; flex: none; }
 .lateral .marca b, .entrar .marca b { color: inherit; }
@@ -33,13 +33,14 @@
 .busca { position: relative; width: min(280px, 100%); }
 .busca svg.i { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--c60-suave); }
 .busca #busca::placeholder { color: var(--c60-suave); }
-.busca #busca { height: 34px; padding-left: 34px; background: var(--c60-funda); border-color: var(--c60-linha); color: var(--branco); font-size: 13px; }
+.busca #busca { height: 34px; padding-left: 34px; background: rgba(14, 58, 71, .1); border-color: var(--c60-linha); color: var(--azul); font-size: 13px; }
 .topo .direita { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 .usuario { display: flex; align-items: center; gap: 9px; padding: 3px 8px 3px 3px; border-radius: 999px; text-decoration: none; }
+.usuario .av { background: var(--azul) !important; color: var(--nevoa) !important; }
 .usuario:hover { background: var(--c60-funda); }
 .usuario b { display: block; font-size: 12.5px; font-weight: 700; line-height: 1.2; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .usuario small { display: block; font-size: 11px; color: var(--c60-suave); line-height: 1.2; }
-.sino { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--c60-linha); background: var(--c60-funda); color: var(--branco); cursor: pointer; text-decoration: none; }
+.sino { position: relative; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; border: 1px solid var(--c60-linha); background: transparent; color: var(--azul); cursor: pointer; text-decoration: none; }
 .sino .ponto { position: absolute; top: 6px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--vermelho); box-shadow: 0 0 0 2px var(--c60-funda); }
 .abre-menu { display: none; }
 #vista { padding: 22px 24px 40px; flex: 1; }
@@ -60,7 +61,7 @@
 .cab .acoes-cab { display: flex; gap: 8px; flex-wrap: wrap; }
 .trilha { display: flex; align-items: center; gap: 4px; color: var(--c60-suave); font-size: 12.5px; margin-top: 3px; }
 .trilha a { color: var(--c60-suave); text-decoration: none; }
-.trilha a:hover { color: var(--branco); }
+.trilha a:hover { color: var(--azul); }
 .trilha svg.i { width: 13px; height: 13px; }
 
 /* números do dia */
@@ -124,7 +125,7 @@ details.tabela-alt td, details.tabela-alt th { padding: 3px 12px 3px 0; text-ali
 .pedido .bts { display: flex; gap: 6px; }
 .pedido .bts .btn { height: 32px; padding: 0 12px; font-size: 12.5px; }
 @media (max-width: 640px) { .pedido { grid-template-columns: 36px minmax(0, 1fr); } .pedido .bts { grid-column: 1 / -1; } .pedido .bts .btn { flex: 1; } }
-.nav-item .n.v { background: var(--c10); }
+.nav-item .n.v { background: var(--dourado); color: var(--azul); }
 .site-link { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .site-link input { flex: 1 1 260px; font-size: 13px !important; }
 .qr { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; margin-top: 4px; }
@@ -150,18 +151,18 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 .ic svg.i { width: 16px; height: 16px; }
 
 /* abas e filtro */
-.abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 10px; background: var(--c60-funda); border: 1px solid var(--c60-linha); margin-bottom: 14px; flex-wrap: wrap; }
+.abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 10px; background: rgba(14, 58, 71, .1); border: 1px solid var(--c60-linha); margin-bottom: 14px; flex-wrap: wrap; }
 .abas button { height: 30px; padding: 0 12px; border: 0; border-radius: 7px; background: none; font-size: 12.5px; font-weight: 600; color: var(--c60-suave); cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
 .abas button b { font-weight: 700; font-size: 11px; color: var(--c60-suave); font-variant-numeric: tabular-nums; }
-.abas button[aria-pressed="true"] { background: var(--branco); color: var(--preto); }
-.abas button[aria-pressed="true"] b { color: var(--c10-texto); }
+.abas button[aria-pressed="true"] { background: var(--azul); color: var(--nevoa); }
+.abas button[aria-pressed="true"] b { color: var(--dourado); }
 .filtro-caixa { position: relative; }
 .menu-filtro { color: var(--tinta); position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; width: 220px; padding: 6px; background: var(--cartao); border: 1px solid var(--borda); border-radius: 10px; box-shadow: 0 14px 30px -12px rgba(0, 0, 0, .25); }
 .menu-filtro button { width: 100%; height: 34px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px; border: 0; border-radius: 7px; background: none; cursor: pointer; font-size: 13px; color: var(--tinta); }
 .menu-filtro button:hover { background: var(--campo); }
 .menu-filtro button[aria-checked="true"] { background: var(--c10-clara); font-weight: 600; }
 .menu-filtro button span { color: var(--suave); font-variant-numeric: tabular-nums; }
-.filtro-ativo { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 7px; color: var(--preto); background: var(--c10-clara); font-size: 12px; font-weight: 600; margin-bottom: 14px; }
+.filtro-ativo { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 7px; color: var(--nevoa); background: var(--azul); font-size: 12px; font-weight: 600; margin-bottom: 14px; }
 .filtro-ativo button { width: 20px; height: 20px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; color: var(--suave); border-radius: 5px; }
 .filtro-ativo button svg.i { width: 13px; height: 13px; }
 
@@ -170,7 +171,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 .quarto { padding: 8px; display: flex; flex-direction: column; }
 .foto { position: relative; aspect-ratio: 16 / 11; border-radius: 9px; overflow: hidden; background: var(--salvia-clara); }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
-.foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; color: var(--c10); font-size: 11.5px; font-weight: 600; }
+.foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 6px; color: var(--dourado); font-size: 11.5px; font-weight: 600; }
 .foto .sem svg.i { width: 30px; height: 30px; stroke-width: 1.4; opacity: .8; }
 .foto .etiqueta { position: absolute; left: 8px; top: 8px; }
 .foto .editar { position: absolute; right: 8px; top: 8px; height: 24px; padding: 0 9px; border-radius: 999px; border: 0; background: rgba(255, 255, 255, .95); color: #1b1d1a; font-weight: 600; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
@@ -202,7 +203,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 @media (max-width: 1000px) { .q-topo { grid-template-columns: 1fr; } }
 .q-foto { position: relative; border-radius: var(--r); overflow: hidden; background: var(--salvia-clara); min-height: 300px; }
 .q-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.q-foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--c10); font-weight: 600; font-size: 13px; }
+.q-foto .sem { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 8px; color: var(--dourado); font-weight: 600; font-size: 13px; }
 .q-foto .sem svg.i { width: 40px; height: 40px; stroke-width: 1.3; }
 .q-foto label { position: absolute; right: 10px; bottom: 10px; cursor: pointer; background: rgba(255, 255, 255, .95); color: #1b1d1a; border-color: transparent; }
 .agora { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
@@ -321,7 +322,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   /* ---------- utilidades ---------- */
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
   const iniciais = s => String(s || "?").replace(/[^\p{L}\p{N}\s]/gu, "").trim().split(/\s+/).slice(0, 2).map(x => x[0] || "").join("").toUpperCase() || "?";
-  const AVS = [["#ecedfe", "#4c52d6"], ["#f0f0f0", "#020000"]];
+  const AVS = [["#f0a631", "#0e3a47"], ["#eef3f3", "#0e3a47"]];
   const av = (nome, cls = "av") => { let h = 0; for (const c of String(nome)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [b, t] = AVS[h % AVS.length]; return `<span class="${cls}" style="--av-bg:${b};--av-t:${t}">${esc(iniciais(nome))}</span>`; };
   const minutosBR = () => { const p = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()); return Number(p.find(x => x.type === "hour").value) % 24 * 60 + Number(p.find(x => x.type === "minute").value); };
   const agoraTxt = () => { const m = minutosBR(); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };

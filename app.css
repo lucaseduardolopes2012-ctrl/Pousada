@@ -1,27 +1,28 @@
-/* Paleta 60-30-10 escolhida pelo dono:
-   60% #020000 (preto): fundo da tela, menu lateral, ícones dos números, barras do gráfico, botões secundários.
-   30% #FFFFFF (branco): cartões, onde ficam os dados; textos sobre o preto.
-   10% #6E74F7 (violeta): só o que pede ação ou destaca: botão principal, item ativo do menu, barra de hoje.
-   Cinzas são tons do preto e do branco. Verde/âmbar/vermelho/azul só aparecem nas etiquetas de situação (avisos). */
+/* Paleta 60-30-10 "Baía ao entardecer", na ordem escolhida pelo dono:
+   60% #F0A631 dourado: fundo da tela; também os ícones dos números e as barras do gráfico dentro dos cartões.
+   30% #0E3A47 azul-petróleo: menu lateral, cartões, textos sobre o dourado.
+   10% #EEF3F3 névoa: só o que pede ação ou destaca: botão principal, item ativo do menu, barra de hoje, foco.
+   Cores de situação (ocupado, sai hoje, atrasado, chega) são avisos e ficam fora da paleta. */
 :root {
-  --preto: #020000; --branco: #ffffff; --violeta: #6e74f7;
-  --c60: var(--preto); --c60-funda: #141313; --c60-linha: rgba(255, 255, 255, .1); --c60-texto: var(--branco); --c60-suave: rgba(255, 255, 255, .6);
-  --c30: var(--preto); --c30-esc: #1c1b1b; --c30-tinta: var(--branco); --c30-suave: rgba(255, 255, 255, .55); --c30-hover: rgba(255, 255, 255, .08); --c30-clara: #f0f1fe;
-  --c10: var(--violeta); --c10-esc: #585ef0; --c10-tinta: var(--branco); --c10-clara: #ecedfe; --c10-texto: #4c52d6;
-  --area: var(--c60); --menu: var(--c60); --moldura: var(--c60);
-  --cartao: var(--branco); --borda: #e7e7e7; --linha: #f0f0f0; --campo: #f7f7f7;
-  --tinta: var(--preto); --suave: #6f6f6f; --fraco: #a3a3a3;
-  --salvia: var(--preto); --salvia-esc: #1c1b1b; --salvia-clara: var(--c30-clara); --salvia-tinta: var(--branco);
-  --vermelho: #ef4444;
-  --ok: #217a45; --ok-bg: #eaf7ef; --ok-borda: #c6e9d3;
-  --sai: #b45309; --sai-bg: #fff4e5; --sai-borda: #f7d9ae;
-  --atraso: #d11f1f; --atraso-bg: #fdecec; --atraso-borda: #f7c8c8;
-  --chega: #4c52d6; --chega-bg: #ecedfe; --chega-borda: #d3d5fc;
-  --livre: #5f5f5f; --livre-bg: #f3f3f3; --livre-borda: #e2e2e2;
-  --sombra: none;
+  --dourado: #f0a631; --azul: #0e3a47; --nevoa: #eef3f3;
+  --branco: var(--nevoa); --preto: var(--azul); --violeta: var(--nevoa);
+  --c60: var(--dourado); --c60-funda: #e4981f; --c60-linha: rgba(14, 58, 71, .2); --c60-texto: var(--azul); --c60-suave: rgba(14, 58, 71, .74);
+  --c30: var(--azul); --c30-esc: #0a2d38; --c30-tinta: var(--nevoa); --c30-suave: rgba(238, 243, 243, .62); --c30-hover: rgba(238, 243, 243, .08); --c30-clara: #18495a;
+  --c10: var(--nevoa); --c10-esc: #d5e2e2; --c10-tinta: var(--azul); --c10-clara: rgba(238, 243, 243, .16); --c10-texto: var(--nevoa);
+  --area: var(--c60); --menu: var(--c30); --moldura: var(--c60);
+  --cartao: var(--azul); --borda: #1f5263; --linha: #174756; --campo: #0a2f3a;
+  --tinta: var(--nevoa); --suave: rgba(238, 243, 243, .7); --fraco: rgba(238, 243, 243, .45);
+  --salvia: var(--dourado); --salvia-esc: #e4981f; --salvia-clara: #18495a; --salvia-tinta: var(--azul);
+  --vermelho: #ff5a52;
+  --ok: #8be3a8; --ok-bg: rgba(139, 227, 168, .12); --ok-borda: rgba(139, 227, 168, .35);
+  --sai: #ffd27a; --sai-bg: rgba(255, 210, 122, .13); --sai-borda: rgba(255, 210, 122, .4);
+  --atraso: #ffa29c; --atraso-bg: rgba(255, 90, 82, .16); --atraso-borda: rgba(255, 120, 112, .45);
+  --chega: #9fdcf0; --chega-bg: rgba(159, 220, 240, .12); --chega-borda: rgba(159, 220, 240, .38);
+  --livre: #c9d6d8; --livre-bg: rgba(238, 243, 243, .08); --livre-borda: rgba(238, 243, 243, .22);
+  --sombra: 0 10px 24px -18px rgba(14, 58, 71, .7);
   --f: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --r: 14px; --r-p: 9px;
-  color-scheme: light;
+  color-scheme: dark;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -38,10 +39,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: var(--r-p); border: 1px solid transparent; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; white-space: nowrap; }
 .btn svg { width: 15px; height: 15px; flex: none; }
-.btn--cheio { background: var(--c10); color: var(--c10-tinta); font-weight: 700; box-shadow: 0 6px 16px -8px rgba(110, 116, 247, .8); }
+.btn--cheio { background: var(--c10); color: var(--c10-tinta); font-weight: 700; box-shadow: 0 6px 16px -10px rgba(0, 0, 0, .5); }
 .btn--cheio:hover { background: var(--c10-esc); }
-.btn--sec { background: var(--c30); color: var(--c30-tinta); }
-.btn--sec:hover { background: var(--c30-esc); }
+.btn--sec { background: var(--dourado); color: var(--azul); }
+.btn--sec:hover { background: #ffb84a; }
 .btn--borda { background: var(--cartao); border-color: var(--borda); color: var(--tinta); }
 .btn--borda:hover { border-color: var(--fraco); }
 .btn--perigo { background: var(--cartao); border-color: var(--atraso-borda); color: var(--atraso); }
@@ -72,6 +73,6 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
 .e-chega, .e-proxima { background: var(--chega-bg); border-color: var(--chega-borda); color: var(--chega); }
 .e-livre, .e-fora, .e-encerrada { background: var(--livre-bg); border-color: var(--livre-borda); color: var(--livre); }
 
-.recado { position: fixed; z-index: 80; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--branco); color: var(--preto); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 13.5px; box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .45); }
+.recado { position: fixed; z-index: 80; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--azul); color: var(--nevoa); padding: 10px 16px; border-radius: 10px; font-weight: 600; font-size: 13.5px; box-shadow: 0 12px 30px -12px rgba(0, 0, 0, .45); }
 @media (min-width: 900px) { .recado { bottom: 24px; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
