@@ -181,6 +181,137 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
 .nao-achei p { color: var(--sobre-preto); }
 .carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
 .ficha .erro, .bilhete .erro { margin: 0; }
+
+/* ---------- movimento ----------
+   Tudo tem tema de mar: o nome sobe da linha d'água letra por letra, um traço de onda laranja se desenha embaixo,
+   os números contam, o bilhete desliza para a mão e o barquinho navega entre as datas. As ondas do fundo correm sem parar.
+   Os estados escondidos só existem com a classe .anima, que o script só põe quando o sistema não pede menos movimento. */
+:root { --e-sai: cubic-bezier(.16, 1, .3, 1); --e-mola: cubic-bezier(.34, 1.56, .64, 1); }
+.topo::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--laranja); transform-origin: left; transform: scaleX(var(--rol, 0)); }
+.topo { transition: box-shadow .4s; }
+.topo.rolou { box-shadow: 0 10px 30px -18px rgba(19, 41, 75, .8); }
+.abertura { position: relative; overflow: hidden; padding-bottom: clamp(70px, 10vw, 130px); }
+.abertura .dentro { position: relative; z-index: 1; }
+.mar { position: absolute; left: 0; right: 0; bottom: 0; height: clamp(60px, 9vw, 120px); overflow: hidden; pointer-events: none; z-index: 0; }
+.mar svg, .ondas-topo svg { position: absolute; left: 0; top: 0; width: 200%; height: 100%; }
+.mar path { fill: none; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+.ficha-faixa { position: relative; }
+.ondas-topo { position: absolute; left: 0; right: 0; bottom: calc(100% - 1px); height: clamp(26px, 4vw, 46px); overflow: hidden; pointer-events: none; }
+.ondas-topo path { fill: var(--azul); }
+.ondas-topo svg + svg path { opacity: .3; }
+h1.nome .pal { display: inline-block; }
+h1.nome .le { display: inline-block; transform-origin: 0 100%; }
+.risco { display: block; width: min(340px, 62%); height: auto; margin: -8px 0 20px; color: var(--laranja); overflow: visible; }
+.risco path { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; }
+.fatos { position: relative; }
+.fatos dd { font-variant-numeric: tabular-nums; }
+.contador output { display: inline-block; }
+.bilhete .parte + .parte { position: relative; }
+.bilhete .rota .barco svg { transform-origin: 50% 80%; }
+.masc { display: inline-block; }
+.masc > span { display: inline-block; transform-origin: 0 100%; }
+.saber div { position: relative; }
+.q { position: relative; transition: transform .6s var(--e-sai), box-shadow .6s var(--e-sai); }
+.q::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), rgba(255, 255, 255, .16), transparent 50%); }
+.q .f img, .mosaico .tile img { transition: scale 1s var(--e-sai); }
+.feito-ok { scroll-margin-top: 90px; }
+.feito-ok .cod { justify-self: start; position: relative; display: inline-block; }
+.confete { position: absolute; left: 50%; top: 50%; pointer-events: none; }
+.confete i { position: absolute; width: 8px; height: 14px; border-radius: 2px; opacity: 0; }
+.btn--cheio { position: relative; overflow: hidden; isolation: isolate; }
+.btn--cheio::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 45%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .5), transparent); translate: -150% 0; pointer-events: none; }
+.btn { transition: translate .3s var(--e-sai), scale .2s, border-color .2s, background-color .2s; }
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes m-desce { from { translate: 0 -100%; } }
+  @keyframes m-sobe { from { opacity: 0; translate: 0 28px; } }
+  @keyframes m-sobe-p { from { opacity: 0; translate: 0 8px; } }
+  @keyframes m-esq { from { opacity: 0; translate: -16px 0; } }
+  @keyframes m-letra { from { opacity: 0; translate: 0 105%; rotate: 8deg; } }
+  @keyframes m-pino { 0% { opacity: 0; translate: 0 -18px; } 60% { opacity: 1; translate: 0 2px; } 100% { translate: 0 0; } }
+  @keyframes m-traco { from { stroke-dashoffset: 1; } }
+  @keyframes m-linha { from { scale: 0 1; } }
+  @keyframes m-picote { to { scale: 0 1; } }
+  @keyframes m-bilhete { from { opacity: 0; translate: 80px 24px; rotate: 6deg; } }
+  @keyframes m-barco-entra { from { opacity: 0; translate: -50px 0; } }
+  @keyframes m-boia { 0%, 100% { rotate: -6deg; translate: 0 1px; } 50% { rotate: 6deg; translate: 0 -2px; } }
+  @keyframes m-navega { 0% { translate: 0 0; } 35% { translate: 16px -3px; rotate: 10deg; opacity: 1; } 45% { translate: 24px -3px; opacity: 0; } 55% { translate: -24px 0; opacity: 0; rotate: 0deg; } 100% { translate: 0 0; opacity: 1; } }
+  @keyframes m-onda { to { translate: -50% 0; } }
+  @keyframes m-pula-c { from { opacity: 0; translate: 0 70%; } }
+  @keyframes m-pula-b { from { opacity: 0; translate: 0 -70%; } }
+  @keyframes m-pop { 0% { opacity: 0; scale: .3; } 70% { opacity: 1; scale: 1.12; } 100% { scale: 1; } }
+  @keyframes m-corte { from { clip-path: inset(0 100% 0 0); } }
+  @keyframes m-zoom { from { scale: 1.25; } }
+  @keyframes m-cartao { from { opacity: 0; translate: 0 56px; rotate: 2.5deg; scale: .96; } }
+  @keyframes m-pulso { 0% { box-shadow: 0 0 0 4px rgba(255, 122, 26, .9); } 100% { box-shadow: 0 0 0 26px rgba(255, 122, 26, 0); } }
+  @keyframes m-carimbo { 0% { opacity: 0; scale: 2.8; rotate: -16deg; filter: blur(6px); } 55% { opacity: 1; scale: .92; rotate: -3deg; filter: blur(0); } 75% { scale: 1.04; } 100% { scale: 1; rotate: -3deg; } }
+  @keyframes m-confete { 0% { opacity: 1; translate: 0 0; rotate: 0deg; } 55% { opacity: 1; translate: var(--x) var(--y); } 100% { opacity: 0; translate: calc(var(--x) * 1.25) calc(var(--y) + 120px); rotate: var(--r); } }
+  @keyframes m-brilho { to { translate: 260% 0; } }
+  @keyframes m-busca { to { background-position: 28.28px 0; } }
+  @keyframes m-respira { 50% { opacity: .45; } }
+
+  .carregando { animation: m-respira 1.4s ease-in-out infinite; }
+  .anima .mar svg { animation: m-onda 26s linear infinite; }
+  .anima .mar svg:nth-child(2) { animation-duration: 18s; animation-direction: reverse; }
+  .anima .mar svg:nth-child(3) { animation-duration: 34s; }
+  .anima .ondas-topo svg { animation: m-onda 16s linear infinite; }
+  .anima .ondas-topo svg + svg { animation-duration: 24s; animation-direction: reverse; }
+
+  /* abertura: uma sequência só, de cima para baixo */
+  .anima .topo { animation: m-desce .8s var(--e-sai) both; }
+  .anima .onde { animation: m-esq .8s var(--e-sai) .15s both; }
+  .anima .onde svg { animation: m-pino .8s var(--e-mola) .3s both; }
+  .anima h1.nome .pal { clip-path: inset(-.4em -.2em -.06em -.2em); }
+  .anima h1.nome.pronto .pal { clip-path: none; }
+  .anima h1.nome .le { animation: m-letra 1s var(--e-sai) calc(.3s + var(--i) * .04s) both; }
+  .anima .risco path { animation: m-traco 1.2s var(--e-sai) calc(.6s + var(--n, 10) * .04s) both; }
+  .anima .sobre { animation: m-sobe .9s var(--e-sai) calc(.5s + var(--n, 10) * .04s) both; }
+  .anima .fatos { border-top-color: transparent; }
+  .anima .fatos::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 1px; background: var(--fio); transform-origin: left; animation: m-linha 1.4s var(--e-sai) calc(.6s + var(--n, 10) * .04s) both; }
+  .anima .fatos div { animation: m-sobe .8s var(--e-sai) calc(.7s + var(--n, 10) * .04s + var(--k, 0) * .09s) both; }
+  .fatos div:nth-child(2) { --k: 1; } .fatos div:nth-child(3) { --k: 2; } .fatos div:nth-child(4) { --k: 3; }
+  .anima .contato { animation: m-sobe .8s var(--e-sai) calc(1s + var(--n, 10) * .04s) both; }
+  .anima .bilhete { animation: m-bilhete 1.2s var(--e-sai) .35s both; }
+  .anima .bilhete .parte + .parte::before { content: ""; position: absolute; left: 0; right: 0; top: -2px; height: 2px; background: var(--azul); transform-origin: right; animation: m-picote 1s var(--e-sai) 1.15s both; }
+  .anima .bilhete .rota .barco { animation: m-barco-entra 1.1s var(--e-sai) 1.25s both; }
+  .anima .bilhete .rota .barco svg { animation: m-boia 3.2s ease-in-out 2.3s infinite; }
+  .anima .bilhete .rota .barco.navega { animation: m-navega 1.1s var(--e-sai) both; }
+  .anima .contador output.pula-c { animation: m-pula-c .35s var(--e-sai); }
+  .anima .contador output.pula-b { animation: m-pula-b .35s var(--e-sai); }
+  .anima .bilhete .noites.troca { animation: m-sobe-p .5s var(--e-sai); }
+  .btn.procurando { background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .22) 0 10px, transparent 10px 20px); background-size: 28.28px 28.28px; animation: m-busca .6s linear infinite; opacity: 1 !important; }
+
+  /* o que aparece ao rolar */
+  .anima .rv:not(.rv-on) { opacity: 0; }
+  .anima .rv.rv-on { animation: m-sobe .9s var(--e-sai) var(--d, 0s) both; }
+  .anima .rv-corte.rv-on { animation: m-corte 1.2s var(--e-sai) var(--d, 0s) both; }
+  .anima .rv-corte.rv-on img { animation: m-zoom 1.8s var(--e-sai) var(--d, 0s) both; }
+  .anima .rv-cartao.rv-on { animation: m-cartao 1s var(--e-sai) var(--d, 0s) both; }
+  .anima .rv-cartao.rv-on .situ.livre { animation: m-pop .6s var(--e-mola) calc(var(--d, 0s) + .45s) both; }
+  .anima .rv-titulo.rv-on { animation: none; }
+  .anima .rv-titulo.rv-on:not(.rv-fim) .masc { clip-path: inset(-.4em -.2em -.04em -.2em); }
+  .anima .rv-titulo.rv-on .masc > span { animation: m-letra 1.1s var(--e-sai) var(--d, 0s) both; }
+  .anima .rv-fim, .anima .rv-fim.rv-corte img, .anima .rv-fim .masc > span { animation: none; }
+  .anima .saber div { border-bottom-color: transparent; }
+  .anima .saber div::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--fio); transform-origin: left; scale: 0 1; transition: scale 1.4s var(--e-sai) var(--d, 0s); }
+  .anima .saber div.rv-on::after { scale: 1 1; }
+  .anima .passos li.agora { animation: m-pop .6s var(--e-mola) .3s both; }
+  .anima .q.pulsa { animation: m-pulso .9s ease-out 2; }
+  .anima .feito-ok .cod { animation: m-carimbo .9s var(--e-sai) .25s both; }
+  .anima .confete i { animation: m-confete 1.6s cubic-bezier(.2, .7, .3, 1) calc(.5s + var(--t, 0s)) both; }
+
+  /* mão em cima */
+  .btn--cheio:hover::after { animation: m-brilho .9s var(--e-sai); }
+  .btn:hover { translate: 0 -1px; }
+  .btn:active { scale: .97; translate: 0 0; }
+  .mosaico .tile:hover img { scale: 1.05; }
+  @media (hover: hover) and (pointer: fine) {
+    .q:hover { transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(-6px); box-shadow: 0 30px 44px -26px rgba(19, 41, 75, .65); }
+    .q.escolhido:hover { box-shadow: 0 0 0 4px rgba(255, 122, 26, .45), 0 30px 44px -26px rgba(19, 41, 75, .65); }
+    .q:hover::after { opacity: 1; }
+    .q:hover .f img { scale: 1.06; }
+  }
+}
 </style>
 </head>
 <body>
@@ -215,7 +346,20 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
   document.title = `${P.nome}${P.cidade ? ", " + P.cidade : ""}`;
   document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
 
-  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null };
+  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
+
+  /* ---------- peças do movimento ---------- */
+  const MOV = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.documentElement.classList.toggle("anima", MOV);
+  // o nome vira letras soltas (para subirem uma a uma); o leitor de tela continua lendo o nome inteiro pelo aria-label
+  let nLetras = 0;
+  const letreiro = s => String(s).trim().split(/\s+/).map(w => `<span class="pal">${Array.from(w).map(c => `<span class="le" style="--i:${nLetras++}">${esc(c)}</span>`).join("")}</span>`).join(" ");
+  // onda que se repete a cada "per" unidades, num desenho de 2400 de largura (o dobro da tela), para correr em loop sem emenda
+  const onda = (y, amp, per) => { let d = `M0 ${y}`; for (let x = 0; x < 2400; x += per) d += ` Q${x + per / 4} ${y - amp} ${x + per / 2} ${y} T${x + per} ${y}`; return d; };
+  const svgOnda = (h, d, extra = "") => `<svg viewBox="0 0 2400 ${h}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="${d}" ${extra}/></svg>`;
+  const MAR = `<div class="mar" aria-hidden="true">${svgOnda(120, onda(40, 14, 400), 'stroke="rgba(19,41,75,.14)"')}${svgOnda(120, onda(64, 10, 300), 'stroke="rgba(19,41,75,.09)"')}${svgOnda(120, onda(86, 8, 600), 'stroke="rgba(255,122,26,.5)"')}</div>`;
+  const ONDAS_TOPO = `<div class="ondas-topo" aria-hidden="true">${svgOnda(50, onda(24, 12, 600) + " L2400 50 L0 50 Z")}${svgOnda(50, onda(18, 10, 400) + " L2400 50 L0 50 Z")}</div>`;
+  const RISCO = `<svg class="risco" viewBox="0 0 340 16" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 10 Q 23 2 44 9 T 86 9 T 128 9 T 170 9 T 212 9 T 254 9 T 296 9 T 338 8"/></svg>`;
   const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
   const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
 
@@ -224,12 +368,13 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
   <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
     <nav><a class="l" href="#quartos">Quartos</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
-    <section class="abertura"><div class="dentro">
+    <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
-        <h1 class="nome">${esc(P.nome)}</h1>
+        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${letreiro(P.nome)}</span></h1>
+        ${RISCO}
         <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma pelo WhatsApp.`)}</p>
-        <dl class="fatos"><div><dt>Entrada a partir das</dt><dd>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd>${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd>${brl(precoMin)}</dd></div>` : ""}</dl>
+        <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
         ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
       </div>
       <form class="bilhete" id="bilhete" novalidate aria-labelledby="b-titulo">
@@ -250,7 +395,7 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
       <div class="grade-q" id="grade-q"></div>
     </div></section>
 
-    <section class="ficha-faixa" id="ficha"><div class="dentro" id="ficha-dentro"></div></section>
+    <section class="ficha-faixa" id="ficha">${ONDAS_TOPO}<div class="dentro" id="ficha-dentro"></div></section>
 
     ${saber()}
   </main>
@@ -258,6 +403,47 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
+
+  /* ---------- movimento: rolagem, revelações e números ---------- */
+  const topo = document.querySelector(".topo"); let rolPedido = false;
+  const rola = () => { rolPedido = false; const h = document.documentElement.scrollHeight - innerHeight; topo.style.setProperty("--rol", h > 0 ? Math.min(1, scrollY / h).toFixed(4) : 0); topo.classList.toggle("rolou", scrollY > 8); };
+  addEventListener("scroll", () => { if (!rolPedido) { rolPedido = true; requestAnimationFrame(rola); } }, { passive: true }); rola();
+
+  const io = MOV && "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; const el = e.target; io.unobserve(el); el.classList.add("rv-on");
+    setTimeout(() => el.classList.add("rv-fim"), ((parseFloat(el.style.getPropertyValue("--d")) || 0) + 2) * 1000);
+  }), { rootMargin: "0px 0px -6% 0px", threshold: .1 }) : null;
+  // cada lista entra em cascata; o atraso para no 6º item para nada ficar esperando demais
+  const revela = (els, passo = .08, tipo = "") => { if (!io) return; [...els].forEach((el, i) => { el.classList.add("rv"); if (tipo) el.classList.add(tipo); el.style.setProperty("--d", `${(Math.min(i, 6) * passo).toFixed(2)}s`); io.observe(el); }); };
+  const mascara = h => { if (h && !h.querySelector(".masc")) h.innerHTML = `<span class="masc"><span>${h.innerHTML}</span></span>`; return h; };
+
+  if (MOV) {
+    // depois que as letras sobem, o recorte sai para não cortar acento nem perna de letra
+    setTimeout(() => $("nome").classList.add("pronto"), (0.3 + nLetras * 0.04 + 1.1) * 1000);
+    const conta = (el, ate, fmt, atraso) => {
+      el.style.minWidth = el.offsetWidth + "px"; el.textContent = fmt(0); const t0 = performance.now() + atraso, dur = 1500;
+      const passo = t => { const p = Math.min(1, Math.max(0, (t - t0) / dur)); el.textContent = fmt(ate * (1 - Math.pow(1 - p, 4))); if (p < 1) requestAnimationFrame(passo); else el.style.minWidth = ""; };
+      requestAnimationFrame(passo);
+    };
+    const base = 700 + Math.min(nLetras, 30) * 40;
+    document.querySelectorAll(".fatos dd").forEach((dd, i) => {
+      const atraso = base + i * 90;
+      if (dd.hasAttribute("data-hora")) { const m = dd.textContent.match(/^(\d{1,2})(:\d{2}.*)$/); if (m) conta(dd, Number(m[1]), v => String(Math.round(v)).padStart(2, "0") + m[2], atraso); }
+      else if (dd.dataset.num) { const n = Number(dd.dataset.num); conta(dd, n, dd.hasAttribute("data-reais") ? v => brl(Math.round(v)) : v => String(Math.round(v)), atraso); }
+    });
+    revela(document.querySelectorAll(".mosaico .tile"), .12, "rv-corte");
+    document.querySelectorAll("#quartos h2.titulo, #saber h2.titulo").forEach(h => revela([mascara(h)], 0, "rv-titulo"));
+    revela([$("q-legenda")]);
+    revela(document.querySelectorAll(".saber div"), .1);
+    // cartões inclinam na direção do ponteiro, com um brilho que acompanha
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      const grade = $("grade-q");
+      grade.addEventListener("pointermove", e => { const c = e.target.closest(".q"); if (!c) return; const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        c.style.setProperty("--ry", `${((x - .5) * 9).toFixed(2)}deg`); c.style.setProperty("--rx", `${((.5 - y) * 9).toFixed(2)}deg`); c.style.setProperty("--mx", `${(x * 100).toFixed(1)}%`); c.style.setProperty("--my", `${(y * 100).toFixed(1)}%`); });
+      grade.addEventListener("pointerout", e => { const c = e.target.closest(".q"); if (c && !c.contains(e.relatedTarget)) ["--rx", "--ry"].forEach(v => c.style.removeProperty(v)); });
+    }
+  }
+  const reanima = (el, cls, tira = cls) => { if (!MOV || !el) return; el.classList.remove(...tira.split(" ")); void el.offsetWidth; el.classList.add(cls); };
 
   function galeria() {
     const F = (P.fotos || []).filter(u => /^https:\/\//.test(u)); if (!F.length) return "";
@@ -288,25 +474,30 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
   }
   $("b-in").addEventListener("change", e => { S.entrada = e.target.value; if (!S.saida || S.saida <= S.entrada) { S.saida = addDias(S.entrada, 1); $("b-out").value = S.saida; } $("b-out").min = addDias(S.entrada, 1); limpaBusca(); });
   $("b-out").addEventListener("change", e => { S.saida = e.target.value; limpaBusca(); });
-  document.addEventListener("click", e => { const b = e.target.closest("[data-conta]"); if (!b) return; S[b.dataset.conta] = Math.max(0, S[b.dataset.conta] + Number(b.dataset.d)); limpaBusca(); });
+  // o barquinho atravessa de uma data à outra quando elas mudam
+  ["b-in", "b-out"].forEach(id => $(id).addEventListener("change", () => { reanima(document.querySelector(".bilhete .barco"), "navega"); reanima($("b-noites"), "troca"); }));
+  document.addEventListener("click", e => { const b = e.target.closest("[data-conta]"); if (!b) return; S[b.dataset.conta] = Math.max(0, S[b.dataset.conta] + Number(b.dataset.d)); limpaBusca();
+    reanima($("o-" + b.dataset.conta), Number(b.dataset.d) > 0 ? "pula-c" : "pula-b", "pula-c pula-b"); });
   function limpaBusca() { if (S.livres) { S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); } atualizaBilhete(); }
 
   $("bilhete").addEventListener("submit", async e => {
     e.preventDefault(); const err = $("b-erro"); err.hidden = true;
     const falha = !S.entrada || !S.saida ? "Escolha a data de entrada e a de saída." : S.entrada < hoje() ? "A entrada precisa ser a partir de hoje." : S.saida <= S.entrada ? "A saída precisa ser depois da entrada." : noites(S.entrada, S.saida) > 60 ? "Dá para pedir até 60 noites por vez." : "";
     if (falha) { err.textContent = falha; err.hidden = false; return; }
-    const btn = $("b-ver"); btn.disabled = true; btn.textContent = "Procurando quartos livres…";
+    const btn = $("b-ver"); btn.disabled = true; btn.textContent = "Procurando quartos livres…"; btn.classList.add("procurando");
     const { data, error } = await sb.rpc("quartos_disponiveis", { p_slug: slug, p_entrada: S.entrada, p_saida: S.saida });
-    btn.disabled = false; btn.textContent = "Ver quartos livres";
+    btn.disabled = false; btn.textContent = "Ver quartos livres"; btn.classList.remove("procurando");
     if (error) { err.textContent = errText(error); err.hidden = false; return; }
-    S.livres = new Map((data || []).map(r => [r.id, r])); S.quarto = null;
+    S.livres = new Map((data || []).map(r => [r.id, r])); S.quarto = null; S.buscaN++;
     desenhaQuartos(); desenhaFicha();
     $("quartos").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   });
 
   /* ---------- quartos ---------- */
+  let chaveQuartos = null, quartoAntes = null;
   function desenhaQuartos() {
     const n = noites(S.entrada, S.saida);
+    const chave = S.livres ? S.buscaN : 0, anima = chave !== chaveQuartos, pulsa = S.quarto && S.quarto !== quartoAntes; chaveQuartos = chave; quartoAntes = S.quarto;
     const leg = $("q-legenda");
     if (!Q.length) { leg.textContent = ""; $("grade-q").innerHTML = `<p class="espera" style="background:var(--azul);color:var(--nevoa)">A pousada ainda não cadastrou os quartos. ${zap ? "Fale com ela pelo WhatsApp." : ""}</p>`; return; }
     if (!S.livres) leg.textContent = "Escolha as datas no bilhete para ver o que está livre e quanto fica a estadia.";
@@ -317,10 +508,11 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
       const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${brl(q.diaria)} cada</span>` : `<b>${brl(q.diaria)}</b><span>por noite</span>`;
       const acao = !S.livres ? `<a class="btn btn--borda" href="#bilhete" data-datas>Escolher datas</a>` : pode ? `<button class="btn ${S.quarto === q.id ? "btn--cheio" : "btn--borda"}" data-escolher="${esc(q.id)}" aria-pressed="${S.quarto === q.id}">${S.quarto === q.id ? "Quarto escolhido" : "Escolher este quarto"}</button>` : "";
       const nomeCurto = q.nome.replace(/^quarto\s*/i, "") || q.nome;
-      return `<article class="q ${S.quarto === q.id ? "escolhido" : ""} ${S.livres && !pode ? "fora" : ""}"><div class="f">${q.foto_url ? `<img src="${esc(q.foto_url)}" alt="Foto do ${esc(q.nome)}" loading="lazy">` : `<span class="vazia" aria-hidden="true">${esc(nomeCurto.length <= 8 ? nomeCurto : q.nome)}</span>`}${situ}</div>
+      return `<article class="q ${S.quarto === q.id ? "escolhido" + (pulsa && !anima ? " pulsa" : "") : ""} ${S.livres && !pode ? "fora" : ""}"><div class="f">${q.foto_url ? `<img src="${esc(q.foto_url)}" alt="Foto do ${esc(q.nome)}" loading="lazy">` : `<span class="vazia" aria-hidden="true">${esc(nomeCurto.length <= 8 ? nomeCurto : q.nome)}</span>`}${situ}</div>
         <div class="c"><h3>${esc(q.nome)}</h3><p class="tipo">${esc(q.tipo || "Quarto")}, para até ${plural(q.capacidade, "pessoa", "pessoas")}</p>${q.descricao ? `<p class="desc">${esc(q.descricao)}</p>` : ""}
         <div class="pe"><span class="preco">${preco}</span>${acao}</div></div></article>`;
     }).join("");
+    if (anima) revela(document.querySelectorAll("#grade-q .q"), .09, "rv-cartao");
   }
   document.addEventListener("click", e => {
     const d = e.target.closest("[data-datas]"); if (d) { e.preventDefault(); $("bilhete").scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("b-in").focus(), 350); return; }
@@ -336,7 +528,10 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
     if (S.enviado) {
       const r = S.enviado, q = Q.find(x => x.id === r.quarto);
       const msg = `Olá! Mandei o pedido ${r.cod} pelo site: ${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}, ${plural(r.pessoas, "pessoa", "pessoas")}. Nome: ${r.nome}.`;
-      box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}</span>
+      const cores = ["var(--laranja)", "#ffffff", "#ffb27a", "var(--c30-clara)"];
+      const confete = MOV ? `<span class="confete" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 140;
+        return `<i style="--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d * .7 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;--t:${(Math.random() * .12).toFixed(2)}s;background:${cores[i % 4]}"></i>`; }).join("")}</span>` : "";
+      box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}${confete}</span>
         <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar${zap ? " pelo WhatsApp" : ""}. Guarde esse número.</p>
         <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap">${zap ? `<a class="btn btn--cheio btn--grande" href="${linkZap(msg)}" target="_blank" rel="noopener">Avisar a pousada no WhatsApp</a>` : ""}<button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
       $("outro").onclick = () => { S.enviado = null; S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); $("bilhete").scrollIntoView({ behavior: "smooth" }); };
@@ -346,7 +541,8 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
     const passo = !S.livres ? 1 : !q ? 2 : 3;
     const passos = `<ol class="passos" aria-label="Etapas do pedido">${["Datas", "Quarto", "Seus dados"].map((t, i) => `<li class="${i + 1 < passo ? "feito" : i + 1 === passo ? "agora" : ""}" ${i + 1 === passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>`;
     const cab = `<div class="secao-cab"><div><h2 class="titulo">Sua ficha</h2></div><p>Preencha uma vez e a pousada já recebe tudo. Quem estiver no balcão também pode preencher aqui na chegada.</p></div>`;
-    if (!q) { box.innerHTML = cab + passos + `<p class="espera">${passo === 1 ? "Escolha as datas no bilhete lá em cima e toque em Ver quartos livres." : "Escolha um quarto livre na lista acima. A ficha abre aqui."}</p>`; return; }
+    const entra = () => { mascara(box.querySelector("h2.titulo")); revela([box.querySelector("h2.titulo")], 0, "rv-titulo"); revela([box.querySelector(".secao-cab p"), box.querySelector(".passos"), ...box.querySelectorAll(".espera, .ficha .campos label, .ficha .enviar, .resumo")], .07); };
+    if (!q) { box.innerHTML = cab + passos + `<p class="espera">${passo === 1 ? "Escolha as datas no bilhete lá em cima e toque em Ver quartos livres." : "Escolha um quarto livre na lista acima. A ficha abre aqui."}</p>`; entra(); return; }
     box.innerHTML = cab + passos + `<div class="ficha">
       <form id="f-ficha" novalidate><div class="campos">
         <label class="todo">Nome completo<input id="f-nome" maxlength="100" autocomplete="name" required></label>
@@ -363,6 +559,7 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
         <div class="total"><dt>${plural(n, "noite", "noites")}</dt><dd>${brl(livre.total)}</dd></div></dl>
         ${P.sinal_percentual ? `<p class="aviso">A pousada pede sinal de ${P.sinal_percentual}% para confirmar.</p>` : ""}
         <button class="mudar" type="button" data-mudar>Trocar quarto ou datas</button></aside></div>`;
+    entra();
     document.querySelector("[data-mudar]").onclick = () => $("quartos").scrollIntoView({ behavior: "smooth" });
     $("f-ficha").addEventListener("input", () => { $("f-erro").hidden = true; });
     $("f-ficha").addEventListener("submit", async e => {
