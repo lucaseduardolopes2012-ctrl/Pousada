@@ -5,90 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cadastrar pousada · Painel de quartos</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#e9efe6">
+<meta name="theme-color" content="#020000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="app.css">
 <style>
-/* Layout: a pergunta num cartão à esquerda e, à direita, os quartos como vão aparecer no painel.
-   No celular a prévia vai para baixo da pergunta e os botões ficam presos embaixo. */
-.topo { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--fundo); }
-.topo .dentro { max-width: 1180px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; }
-.marca i { width: 34px; height: 34px; border-radius: 9px; background: var(--salvia); color: var(--salvia-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 15px; }
-.topo .ja { color: var(--suave); font-size: 14px; }
-.topo .ja a { color: var(--salvia-esc); font-weight: 700; text-decoration: none; }
+/* Mesmo estilo do painel (referência EliteVillas): fundo cinza-claro, cartões brancos de borda fina, tudo compacto.
+   A pergunta fica à esquerda e, à direita, os quartos como vão aparecer no painel. */
+body { background: var(--c60); }
+.topo { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 30; background: var(--c60); color: var(--c60-texto); border-bottom: 1px solid var(--c60-linha); }
+.topo .dentro { max-width: 1140px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.marca { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 14px; letter-spacing: -.02em; }
+.marca i { width: 28px; height: 28px; border-radius: 7px; background: var(--c10); color: var(--c10-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; }
+.topo .ja { color: var(--c30-suave); font-size: 13px; }
+.topo .ja a { color: #a9adfb; font-weight: 700; text-decoration: none; }
 @media (max-width: 560px) { .topo .ja span { display: none; } }
-.progresso { height: 4px; background: var(--linha); }
-.progresso span { display: block; height: 100%; background: var(--salvia); transition: width .3s ease; }
+.progresso { height: 3px; background: var(--c60-funda); }
+.progresso span { display: block; height: 100%; background: var(--c10); transition: width .3s ease; }
 
-.pagina { max-width: 1180px; margin: 0 auto; padding: 28px 24px 120px; display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 28px; align-items: start; }
-@media (max-width: 960px) { .pagina { grid-template-columns: 1fr; padding: 20px 16px 130px; gap: 20px; } }
+.pagina { max-width: 1140px; margin: 0 auto; padding: 26px 24px 110px; display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; align-items: start; }
+@media (max-width: 960px) { .pagina { grid-template-columns: 1fr; padding: 16px 14px 130px; gap: 14px; } }
 
-.pergunta { padding: 28px; display: grid; gap: 20px; }
-@media (max-width: 560px) { .pergunta { padding: 20px 18px; } }
-.passo-n { color: var(--suave); font-weight: 600; font-size: 14px; }
-.pergunta h1 { font-size: clamp(24px, 3.4vw, 30px); line-height: 1.15; }
+.pergunta { padding: 24px; display: grid; gap: 18px; }
+@media (max-width: 560px) { .pergunta { padding: 18px 16px; } }
+.passo-n { display: inline-flex; justify-self: start; align-items: center; height: 22px; padding: 0 9px; border-radius: 6px; background: var(--salvia); color: var(--salvia-tinta); font-size: 11px; font-weight: 600; }
+.pergunta h1 { font-size: 22px; line-height: 1.25; margin-top: -4px; }
 .pergunta h1:focus { outline: none; }
-.pergunta .ajuda { color: var(--suave); margin-top: -10px; max-width: 36em; }
-.navega { display: flex; gap: 10px; align-items: center; padding-top: 4px; }
-.navega .btn--cheio { min-width: 170px; }
+.pergunta .ajuda { color: var(--suave); font-size: 13px; margin-top: -12px; max-width: 40em; }
+.navega { display: flex; gap: 8px; align-items: center; padding-top: 14px; border-top: 1px solid var(--linha); }
+.navega .btn--cheio { min-width: 160px; margin-left: auto; }
 @media (max-width: 960px) {
-  .navega { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: var(--cartao); border-top: 1px solid var(--borda); }
+  .navega { position: fixed; z-index: 30; left: 0; right: 0; bottom: 0; padding: 10px max(14px, env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px)); background: var(--c60); border-top: 1px solid var(--c60-linha); }
   .navega .btn--cheio { flex: 1; min-width: 0; }
 }
 
 /* gerar quartos numerados */
-.gerar { display: grid; grid-template-columns: 110px minmax(0, 1fr) 100px 130px auto; gap: 10px; align-items: end; padding: 16px; border-radius: 12px; background: var(--fundo); }
-.gerar label { display: grid; gap: 6px; font-size: 13.5px; font-weight: 600; min-width: 0; }
-.gerar p { grid-column: 1 / -1; font-weight: 700; font-size: 14.5px; }
+.gerar { display: grid; grid-template-columns: 90px minmax(0, 1fr) 90px 120px auto; gap: 10px; align-items: end; padding: 14px; border-radius: 10px; background: var(--campo); border: 1px solid var(--linha); }
+.gerar label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 600; min-width: 0; }
+.gerar p { grid-column: 1 / -1; font-weight: 700; font-size: 13px; }
 @media (max-width: 720px) { .gerar { grid-template-columns: 1fr 1fr; } .gerar .btn { grid-column: 1 / -1; } }
 
-.lista-q { display: grid; gap: 8px; }
-.lista-q .cab-l { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 80px 120px 40px; gap: 8px; font-size: 12.5px; color: var(--suave); font-weight: 600; padding: 0 2px; }
-.linha-q { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 80px 120px 40px; gap: 8px; align-items: center; }
-.linha-q input, .linha-q select { height: 40px; }
-.linha-q .tira { width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--borda); background: var(--cartao); color: var(--suave); cursor: pointer; display: grid; place-items: center; }
-.linha-q .tira:hover { color: var(--atraso); border-color: var(--atraso); }
-.linha-q .tira svg { width: 16px; height: 16px; }
+.lista-q { display: grid; gap: 6px; }
+.lista-q .cab-l { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 76px 110px 34px; gap: 8px; font-size: 11.5px; color: var(--suave); font-weight: 500; padding: 0 2px 2px; }
+.linha-q { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 76px 110px 34px; gap: 8px; align-items: center; }
+.linha-q input { height: 34px !important; font-size: 13px !important; }
+.linha-q .tira { width: 34px; height: 34px; border-radius: 8px; border: 0; background: none; color: var(--suave); cursor: pointer; display: grid; place-items: center; }
+.linha-q .tira:hover { color: var(--atraso); background: var(--atraso-bg); }
+.linha-q .tira svg { width: 15px; height: 15px; }
 .linha-q .rot { display: none; }
 @media (max-width: 720px) {
   .lista-q .cab-l { display: none; }
-  .linha-q { grid-template-columns: 1fr 1fr; padding: 12px; border: 1px solid var(--borda); border-radius: 12px; gap: 10px; }
-  .linha-q label { display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; color: var(--suave); min-width: 0; }
+  .linha-q { grid-template-columns: 1fr 1fr; padding: 10px; border: 1px solid var(--borda); border-radius: 10px; gap: 8px; }
+  .linha-q label { display: grid; gap: 4px; font-size: 11.5px; font-weight: 600; color: var(--suave); min-width: 0; }
   .linha-q .rot { display: block; }
   .linha-q label:first-child { grid-column: 1 / -1; }
   .linha-q .tira { grid-column: 2; justify-self: end; }
 }
 .mais-q { justify-self: start; }
-.conta-q { color: var(--suave); font-size: 13.5px; }
+.conta-q { color: var(--suave); font-size: 12.5px; }
 
-.abas { display: inline-grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: var(--fundo); justify-self: start; }
-.abas button { height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: transparent; font-weight: 700; color: var(--suave); cursor: pointer; }
-.abas button[aria-selected="true"] { background: var(--cartao); color: var(--tinta); box-shadow: var(--sombra); }
+.abas { display: inline-flex; gap: 4px; padding: 3px; border-radius: 9px; background: var(--campo); border: 1px solid var(--linha); justify-self: start; }
+.abas button { height: 30px; padding: 0 14px; border: 0; border-radius: 7px; background: transparent; font-weight: 600; font-size: 12.5px; color: var(--suave); cursor: pointer; }
+.abas button[aria-selected="true"] { background: var(--cartao); color: var(--tinta); box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
 
 /* prévia: os quartos como cartões do painel */
-.previa { position: sticky; top: 86px; display: grid; gap: 12px; }
+.previa { position: sticky; top: 76px; }
 @media (max-width: 960px) { .previa { position: static; } }
-.previa .legenda { color: var(--suave); font-size: 13.5px; font-weight: 600; }
-.previa .caixa { padding: 16px; display: grid; gap: 14px; }
-.previa .cabeca { display: flex; align-items: center; gap: 10px; }
-.previa .cabeca i { width: 38px; height: 38px; border-radius: 10px; background: var(--salvia); color: var(--salvia-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; flex: none; }
-.previa .cabeca b { display: block; font-size: 16px; line-height: 1.2; overflow-wrap: anywhere; }
-.previa .cabeca span { color: var(--suave); font-size: 13px; }
-.mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; max-height: 470px; overflow-y: auto; }
+.previa .caixa { padding: 14px; display: grid; gap: 12px; }
+.previa .legenda { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.previa .legenda h2 { font-size: 14px; }
+.previa .legenda span { height: 22px; padding: 0 8px; border-radius: 6px; border: 1px solid var(--borda); font-size: 11px; font-weight: 600; color: var(--suave); display: inline-flex; align-items: center; }
+.previa .cabeca { display: flex; align-items: center; gap: 9px; padding: 10px; border-radius: 10px; background: var(--campo); }
+.previa .cabeca i { width: 30px; height: 30px; border-radius: 7px; background: var(--salvia); color: var(--salvia-tinta); display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 12px; flex: none; }
+.previa .cabeca b { display: block; font-size: 13px; line-height: 1.25; overflow-wrap: anywhere; }
+.previa .cabeca span { color: var(--suave); font-size: 11.5px; }
+.mini { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; max-height: 470px; overflow-y: auto; }
 @media (max-width: 960px) { .mini { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); max-height: none; } }
-.mq { border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; background: var(--cartao); }
-.mq .f { position: relative; aspect-ratio: 16 / 9; background: var(--salvia-clara); display: grid; place-items: center; font-weight: 800; font-size: 24px; color: var(--salvia); }
-.mq .f span { opacity: .6; }
-.mq .f .etiqueta { position: absolute; left: 6px; top: 6px; height: 20px; font-size: 11px; padding: 0 7px; }
-.mq .c { padding: 8px 10px 10px; }
-.mq b { display: block; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.mq small { color: var(--suave); font-size: 12px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.horas { display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--suave); border-top: 1px solid var(--linha); padding-top: 12px; }
+.mq { border: 1px solid var(--borda); border-radius: 10px; padding: 5px; background: var(--cartao); }
+.mq .f { position: relative; aspect-ratio: 16 / 11; border-radius: 7px; background: var(--salvia-clara); display: grid; place-content: center; justify-items: center; gap: 2px; color: var(--c10); font-size: 10px; font-weight: 600; }
+.mq .f svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+.mq .f .etiqueta { position: absolute; left: 5px; top: 5px; height: 18px; font-size: 10px; padding: 0 6px; border-radius: 5px; }
+.mq .c { padding: 6px 3px 2px; }
+.mq b { display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mq small { color: var(--suave); font-size: 10.5px; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mq .pr { display: block; font-size: 12px; font-weight: 700; margin-top: 3px; }
+.mq .pr em { font-style: normal; font-weight: 500; color: var(--suave); font-size: 10px; }
+.horas { display: flex; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--suave); border-top: 1px solid var(--linha); padding-top: 10px; }
 .horas b { color: var(--tinta); }
-.vazio-p { padding: 18px; text-align: center; color: var(--suave); border: 1px dashed var(--borda); border-radius: 12px; font-size: 13.5px; grid-column: 1 / -1; }
+.vazio-p { padding: 18px; text-align: center; color: var(--suave); background: var(--campo); border-radius: 10px; font-size: 12.5px; grid-column: 1 / -1; }
 </style>
 </head>
 <body>
@@ -100,8 +105,7 @@
 <main class="pagina">
   <section class="cartao pergunta" id="pergunta" aria-live="polite"></section>
   <aside class="previa" aria-label="Prévia dos quartos">
-    <p class="legenda">Assim os quartos vão aparecer no painel</p>
-    <div class="cartao caixa" id="previa"></div>
+    <div class="cartao caixa"><div class="legenda"><h2>Prévia do painel</h2><span>Ao vivo</span></div><div id="previa" style="display:grid;gap:12px"></div></div>
   </aside>
 </main>
 
@@ -116,7 +120,6 @@
   const TIPOS = ["Casal", "Solteiro", "Duplo", "Triplo", "Família", "Suíte", "Chalé"];
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
   const iniciais = s => String(s || "?").trim().split(/\s+/).slice(0, 2).map(x => x[0]).join("").toUpperCase();
-  const curto = n => { const r = String(n || "").replace(/^quarto\s*/i, "").trim(); return r && r.length <= 6 ? r : iniciais(n); };
 
   // já tem pousada? vai direto para o painel
   let { data: { session } } = await sb.auth.getSession();
@@ -173,7 +176,7 @@
   function previa() {
     const qs = R.quartos.filter(q => String(q.nome).trim());
     const html = `<div class="cabeca"><i>${esc(iniciais(R.nome || "P"))}</i><div><b>${R.nome ? esc(R.nome) : '<span class="suave">Nome da pousada</span>'}</b><span>${R.cidade ? esc(R.cidade) + " · " : ""}${plural(qs.length, "quarto", "quartos")}</span></div></div>
-      <div class="mini">${qs.length ? qs.map(q => `<div class="mq"><div class="f"><span aria-hidden="true">${esc(curto(q.nome))}</span><span class="etiqueta e-livre">Livre</span></div><div class="c"><b>${esc(q.nome)}</b><small>${esc(q.tipo || "Quarto")} · até ${esc(q.capacidade)}${Number(q.diaria) > 0 ? " · " + brl(q.diaria) : ""}</small></div></div>`).join("") : `<p class="vazio-p">Os quartos aparecem aqui quando você gerar.</p>`}</div>
+      <div class="mini">${qs.length ? qs.map(q => `<div class="mq"><div class="f"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/></svg>Sem foto<span class="etiqueta e-livre">Livre</span></div><div class="c"><b>${esc(q.nome)}</b><small>${esc(q.tipo || "Quarto")} · até ${esc(q.capacidade)}</small><span class="pr">${brl(q.diaria)} <em>/noite</em></span></div></div>`).join("") : `<p class="vazio-p">Os quartos aparecem aqui quando você gerar.</p>`}</div>
       <div class="horas"><span>Entrada a partir das <b>${esc(R.checkin_hora)}</b></span><span>·</span><span>Saída até as <b>${esc(R.checkout_hora)}</b></span></div>`;
     if (html === ultimo) return; ultimo = html; $("previa").innerHTML = html;
   }
@@ -187,7 +190,7 @@
     const p = P[R.i], ultimoPasso = R.i === TOTAL - 1;
     box.innerHTML = `<p class="passo-n">Passo ${R.i + 1} de ${total}</p><h1 tabindex="-1">${p.t}</h1><p class="ajuda">${p.a}</p>${p.h()}
       <p class="erro" id="erro" role="alert" hidden></p>
-      <div class="navega">${R.i > 0 ? `<button type="button" class="btn btn--borda btn--grande" id="voltar">Voltar</button>` : ""}<button type="button" class="btn btn--cheio btn--grande" id="seguir">${ultimoPasso && session ? "Criar minha pousada" : "Continuar"}</button></div>`;
+      <div class="navega">${R.i > 0 ? `<button type="button" class="btn btn--borda" id="voltar">Voltar</button>` : ""}<button type="button" class="btn btn--cheio" id="seguir">${ultimoPasso && session ? "Criar minha pousada" : "Continuar"}</button></div>`;
     if ($("voltar")) $("voltar").onclick = () => { p.l(); R.i--; salva(); desenha(); };
     $("seguir").onclick = seguir;
     box.querySelector("h1").focus({ preventScroll: true }); scrollTo({ top: 0 });
@@ -199,7 +202,7 @@
       <div class="abas" role="tablist"><button type="button" role="tab" id="a-nova" aria-selected="true">Criar conta</button><button type="button" role="tab" id="a-tenho" aria-selected="false">Já tenho conta</button></div>
       <div class="campos"><label class="todo">Email<input id="c-email" type="email" inputmode="email" autocomplete="email"></label><label class="todo">Senha <small id="c-dica">pelo menos 8 caracteres</small><input id="c-senha" type="password" autocomplete="new-password" minlength="8"></label></div>
       <p class="erro" id="erro" role="alert" hidden></p>
-      <div class="navega"><button type="button" class="btn btn--borda btn--grande" id="voltar">Voltar</button><button type="button" class="btn btn--cheio btn--grande" id="seguir">Criar minha pousada</button></div>`;
+      <div class="navega"><button type="button" class="btn btn--borda" id="voltar">Voltar</button><button type="button" class="btn btn--cheio" id="seguir">Criar minha pousada</button></div>`;
     let jaTenho = false;
     const aba = t => { jaTenho = t; $("a-nova").setAttribute("aria-selected", String(!t)); $("a-tenho").setAttribute("aria-selected", String(t)); $("c-senha").autocomplete = t ? "current-password" : "new-password"; $("c-dica").hidden = t; };
     $("a-nova").onclick = () => aba(false); $("a-tenho").onclick = () => aba(true);
