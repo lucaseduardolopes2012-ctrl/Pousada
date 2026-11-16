@@ -1,196 +1,59 @@
 <!doctype html>
-<html lang="pt-BR">
+<!-- Site público de cada pousada (site.html?p=<slug>), refeito com o kit da skill design-taste-frontend.
+     Plano: place · paleta warm-paper-walnut (papel quente e nogueira, como madeira, pedra e lençol de pousada) · source-serif ·
+     herói place (a foto da pousada; sem foto, o nome sobre a faixa da marca) · nav sem painel (fotos só as da pousada) ·
+     footer-columns · ritmo space · botões arrow · marca stack · momento picture-develops na foto da seção de quartos ·
+     página curta (menos de 8 fotos) ou compacta, conforme as fotos que a pousada enviou. Sem fotos de banco de imagens. -->
+<html lang="pt-BR" data-type="place" data-radius="soft" data-buttons="arrow" data-motion>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Pousada</title>
-<meta name="description" content="Veja os quartos e peça sua reserva.">
-<meta name="theme-color" content="#2a2622">
+<title>Pousada: quartos e pedido de reserva</title>
+<meta name="description" content="Veja os quartos, as diárias e peça sua reserva direto com a pousada.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pousada: quartos e pedido de reserva">
+<meta property="og:description" content="Veja os quartos, as diárias e peça sua reserva direto com a pousada.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f3ec">
+<meta name="site-kind" content="other">
+<meta name="page-type" content="place">
+<meta name="page-kind" content="place">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..600&family=Libre+Franklin:wght@400..700&display=swap">
-<link rel="stylesheet" href="app.css">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400..600&family=Libre+Franklin:wght@400..600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<link rel="stylesheet" href="assets/layout/layout.css">
 <style>
-/* Site público da pousada, no mesmo mundo do painel (tábua de marés e carta náutica).
-   A pousada é a protagonista: nome grande, fotos dela, e a escolha de datas escrita como uma tábua (entrada e saída em colunas, com hora). */
-:root { --sobre: var(--suave); }
-body { font-size: 16px; line-height: 1.55; }
-.dentro { width: min(1180px, 100% - 48px); margin-inline: auto; }
-@media (max-width: 560px) { .dentro { width: calc(100% - 32px); } }
-
-/* topo */
-.topo { position: sticky; top: 0; z-index: 40; background: var(--mar); color: #fff; padding-top: env(safe-area-inset-top, 0px); }
-.topo .dentro { display: flex; align-items: center; gap: 18px; height: 64px; }
-.topo .marca { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 400 21px/1 var(--num); letter-spacing: .01em; min-width: 0; }
-.topo .marca i { width: 34px; height: 34px; border-radius: 3px; background: var(--terra); color: var(--mar); display: grid; place-items: center; font: 400 15px/1 var(--num); font-style: normal; flex: none; }
-.topo .marca span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.topo nav { margin-left: auto; display: flex; align-items: center; gap: 24px; }
-.topo nav a.l { color: #dbe8f0; text-decoration: none; font-size: 15px; }
-.topo nav a.l:hover { color: #fff; text-decoration: underline; }
-@media (max-width: 640px) { .topo nav a.l { display: none; } }
-
-/* abertura: nome da pousada e a tábua da estadia */
-.abertura { position: relative; padding: clamp(40px, 6vw, 84px) 0 clamp(96px, 10vw, 140px); }
-/* faixa de maré no pé da abertura: a curva da carta náutica, em dois tons de água */
-.abertura::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: clamp(56px, 7vw, 96px); pointer-events: none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 100' preserveAspectRatio='none'%3E%3Cpath d='M0 55 C150 20 260 20 400 50 S650 90 800 55 S1050 15 1200 40 V100 H0Z' fill='%23ede6da'/%3E%3Cpath d='M0 75 C170 50 300 55 430 72 S700 98 850 74 S1080 50 1200 66 V100 H0Z' fill='%23ddc9ac'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat; }
-.abertura .dentro { position: relative; z-index: 1; }
-.abertura .dentro { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: clamp(28px, 5vw, 72px); align-items: end; }
-@media (max-width: 960px) { .abertura .dentro { grid-template-columns: minmax(0, 1fr); align-items: start; } }
-.onde { display: flex; align-items: center; gap: 7px; color: var(--sobre); font-size: 15px; }
-.onde svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; }
-h1.nome { font: 400 clamp(48px, 8vw, 112px)/.95 var(--num); letter-spacing: -.025em; margin: 0 0 14px; overflow-wrap: anywhere; text-wrap: balance; color: var(--mar); }
-.onde { margin-bottom: 18px; }
-.sobre { max-width: 36em; color: var(--tinta); font-size: 18px; }
-.fatos { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin: 30px 0 0; padding: 0; border-top: 2px solid var(--mar); border-bottom: 1px solid var(--fio-forte); max-width: 640px; }
-.fatos div { padding: 10px 14px 12px 0; }
-.fatos div + div { padding-left: 14px; border-left: 1px solid var(--fio); }
-.fatos dt { color: var(--sobre); font-size: 13.5px; }
-.fatos dd { margin: 2px 0 0; font: 500 30px/1 var(--num); font-variant-numeric: tabular-nums; }
-@media (max-width: 560px) { .fatos { grid-template-columns: 1fr 1fr; } .fatos div:nth-child(odd) { padding-left: 0; border-left: 0; } .fatos div:nth-child(n+3) { border-top: 1px solid var(--fio); } }
-.contato { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
-.btn--claro { background: var(--papel); color: var(--mar); border-color: var(--fio-forte); }
-.btn--claro:hover { border-color: var(--mar); }
-
-/* a tábua da estadia (formulário de datas) */
-.bilhete { background: var(--papel); border: 1px solid var(--fio-forte); border-radius: var(--r); box-shadow: var(--sombra); overflow: hidden; }
-.bilhete .parte { padding: 20px 22px; }
-.bilhete .parte:first-child { background: var(--mar); color: #fff; }
-.bilhete .parte + .parte { border-top: 1px solid var(--fio); }
-.bilhete h2 { font: 400 28px/1 var(--num); }
-.bilhete .rota { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0; margin-top: 16px; border-top: 1px solid rgba(255, 255, 255, .25); }
-.bilhete .rota .barco { display: none; }
-.bilhete .rota label { padding-top: 10px; }
-.bilhete .rota label + .barco + label { padding-left: 14px; border-left: 1px solid rgba(255, 255, 255, .25); }
-.bilhete label { display: grid; gap: 6px; font-size: 13.5px; font-weight: 700; min-width: 0; }
-.bilhete .parte:first-child label { color: var(--mar-suave); }
-.bilhete .rota input[type="date"] { font-size: 21px; height: 48px; min-width: 0; background: var(--mar-2); border-color: rgba(255, 255, 255, .2); color: #fff; color-scheme: dark; }
-.bilhete .rota input[type="date"]:focus { border-color: #fff; box-shadow: 0 0 0 3px rgba(255, 255, 255, .25); }
-@media (max-width: 420px) { .bilhete .parte { padding: 18px 16px; } .bilhete .rota input[type="date"] { font-size: 16px; padding: 0 6px; } .bilhete .rota label + .barco + label { padding-left: 10px; } .contador button { width: 34px; } }
-.bilhete .gente { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.contador { display: flex; align-items: center; justify-content: space-between; height: 48px; border: 1px solid var(--fio-forte); border-radius: var(--r-p); padding: 0 5px; color: var(--tinta); }
-.contador button { width: 38px; height: 38px; border-radius: 3px; border: 0; background: var(--agua-2); color: var(--mar); font-size: 20px; font-weight: 700; cursor: pointer; display: grid; place-items: center; }
-.contador button:hover { background: var(--raso); }
-.contador button:disabled { opacity: .35; cursor: default; }
-.contador output { font: 500 24px/1 var(--num); min-width: 2ch; text-align: center; }
-.bilhete .noites { margin: 12px 0 0; font-size: 14.5px; color: var(--mar-suave); min-height: 1.5em; }
-.bilhete .btn--cheio { width: 100%; min-height: 52px; font-size: 16px; margin-top: 16px; }
-
-/* quartos */
-.secao { padding: clamp(44px, 6vw, 80px) 0; }
-#quartos { background: #d9c4a4; background: linear-gradient(#d9c4a4, var(--agua) 220px); }
-.secao-cab { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
-h2.titulo { font: 400 clamp(38px, 5vw, 60px)/.95 var(--num); color: var(--mar); }
-.secao-cab p { color: var(--sobre); max-width: 34em; }
-.grade-q { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
-.q { background: var(--papel); border: 1px solid var(--fio); border-radius: var(--r); display: flex; flex-direction: column; overflow: hidden; transition: box-shadow .2s ease, border-color .2s ease; }
-.q.escolhido { border-color: var(--magenta); box-shadow: 0 0 0 2px var(--magenta), var(--sombra); }
-.q.fora { opacity: .62; }
-.q .f { aspect-ratio: 4 / 3; overflow: hidden; background-color: var(--raso); background-image: repeating-linear-gradient(0deg, transparent 0 31px, rgba(42, 38, 34, .2) 31px 32px), repeating-linear-gradient(90deg, transparent 0 31px, rgba(42, 38, 34, .2) 31px 32px); position: relative; display: grid; place-items: center; }
-.q .f img { width: 100%; height: 100%; object-fit: cover; }
-.q .f .vazia { font: 400 72px/.9 var(--num); color: var(--mar-2); padding: 0 12px; text-align: center; overflow-wrap: anywhere; }
-.q .f .situ { position: absolute; left: 10px; top: 10px; height: 28px; padding: 0 10px; border-radius: 3px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; background: rgba(42, 38, 34, .78); color: #fff; }
-.q .f .situ.livre { background: var(--chega); }
-.q .c { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
-.q h3 { font: 400 28px/1 var(--num); }
-.q .tipo { color: var(--sobre); font-size: 15px; }
-.q .desc { color: var(--tinta); font-size: 15px; margin-top: 4px; }
-.q .pe { display: flex; justify-content: space-between; align-items: end; gap: 10px; margin-top: auto; padding-top: 16px; flex-wrap: wrap; border-top: 1px solid var(--linha); margin-top: 16px; }
-.q .preco b { display: block; font: 500 30px/1 var(--num); white-space: nowrap; }
-.q .preco span { color: var(--sobre); font-size: 13.5px; }
-.ficha .campos label small { color: var(--mar-suave); }
-
-/* ficha: faixa em azul de carta */
-.ficha-faixa { background: var(--mar); color: #fff; padding: clamp(44px, 6vw, 80px) 0; }
-.ficha-faixa h2.titulo { color: #fff; }
-.ficha-faixa .secao-cab p { color: var(--mar-suave); }
-.ficha { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 40px; align-items: start; }
-@media (max-width: 900px) { .ficha { grid-template-columns: 1fr; } }
-.passos { list-style: none; margin: 0 0 24px; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 560px; counter-reset: p; border-top: 1px solid rgba(255, 255, 255, .25); }
-.passos li { counter-increment: p; padding: 10px 10px 0 0; font-weight: 700; font-size: 15px; color: var(--mar-suave); display: flex; align-items: baseline; gap: 8px; }
-.passos li::before { content: counter(p); font: 400 26px/1 var(--num); color: rgba(255, 255, 255, .4); }
-.passos li.feito { color: #dbe8f0; }
-.passos li.feito::before { color: var(--terra); }
-.passos li.agora { color: #fff; box-shadow: inset 0 3px 0 var(--terra); }
-.passos li.agora::before { color: #fff; }
-.ficha form { display: grid; gap: 20px; }
-.ficha .campos label { display: block; font-size: 14.5px; font-weight: 700; color: #fff; }
-.ficha .campos label small { margin-left: 4px; font-weight: 400; }
-.ficha .campos label > input, .ficha .campos label > textarea { margin-top: 7px; }
-.ficha input:not([type="checkbox"]), .ficha textarea { height: 50px; font-size: 16px; border-color: transparent; }
-.ficha input:focus, .ficha textarea:focus { box-shadow: 0 0 0 3px var(--terra); }
-.ficha textarea { height: auto; min-height: 96px; }
-.ficha .enviar { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-.ficha .enviar .btn--cheio { min-height: 52px; padding: 0 28px; font-size: 16px; }
-.ficha .enviar small a { color: #fff; text-decoration-color: var(--terra); text-decoration-thickness: 2px; }
-.ficha .enviar small { color: var(--mar-suave); font-size: 14px; max-width: 32em; }
-.resumo { position: sticky; top: 88px; background: var(--papel); color: var(--tinta); border-radius: var(--r); padding: 20px; display: grid; gap: 14px; }
-@media (max-width: 900px) { .resumo { position: static; order: -1; } }
-.resumo h3 { font: 400 28px/1 var(--num); }
-.resumo dl { margin: 0; display: grid; border-top: 2px solid var(--mar); }
-.resumo dl div { display: flex; justify-content: space-between; gap: 12px; font-size: 15px; padding: 9px 0; border-bottom: 1px solid var(--linha); }
-.resumo dt { color: var(--sobre); }
-.resumo dd { margin: 0; font-weight: 700; text-align: right; }
-.resumo .total { border-bottom: 0 !important; }
-.resumo .total dd { font: 500 34px/1 var(--num); color: var(--mar); }
-.resumo .mudar { justify-self: start; background: none; border: 0; padding: 0; color: var(--mar-2); font-weight: 700; cursor: pointer; font-size: 14.5px; text-decoration: underline; text-decoration-color: var(--fio-forte); }
-.resumo .aviso { font-size: 14px; color: var(--terra-tinta); background: var(--terra-clara); border: 1px solid var(--livre-borda); border-radius: var(--r-p); padding: 10px 12px; }
-.espera { padding: 20px 22px; border-radius: var(--r); border: 1px dashed rgba(255, 255, 255, .35); color: #dbe8f0; max-width: 40em; }
-
-.feito-ok { display: grid; gap: 14px; max-width: 42em; }
-.feito-ok .cod { font: 400 clamp(56px, 10vw, 112px)/.9 var(--num); color: var(--terra); }
-.feito-ok p { color: #dbe8f0; font-size: 17px; }
-@media (prefers-reduced-motion: no-preference) { .feito-ok { animation: aparece .45s cubic-bezier(.16, 1, .3, 1); } @keyframes aparece { from { opacity: 0; transform: translateY(10px); } } }
-
-/* fotos da pousada */
-.galeria { padding: 0 0 clamp(40px, 6vw, 72px); }
-.mosaico { position: relative; display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 240px 240px; gap: 6px; border-radius: var(--r); overflow: hidden; }
-.mosaico .tile { padding: 0; border: 0; margin: 0; cursor: zoom-in; background: var(--raso); overflow: hidden; min-width: 0; }
-.mosaico .tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.16, 1, .3, 1); }
-.mosaico .tile:hover img { transform: scale(1.03); }
-.mosaico .tile:first-child { grid-row: 1 / 3; }
-.mosaico[data-n="1"] { grid-template-columns: 1fr; grid-template-rows: clamp(260px, 42vw, 520px); }
-.mosaico[data-n="1"] .tile:first-child { grid-row: auto; }
-.mosaico[data-n="2"] .tile:nth-child(2) { grid-column: 2 / 4; grid-row: 1 / 3; }
-.mosaico[data-n="3"] .tile:nth-child(2), .mosaico[data-n="3"] .tile:nth-child(3) { grid-column: 2 / 4; }
-.mosaico[data-n="4"] .tile:nth-child(2) { grid-column: 2 / 4; }
-.mosaico .tile:focus-visible { outline: 3px solid var(--magenta); outline-offset: -3px; }
-.ver-todas { position: absolute; right: 14px; bottom: 14px; min-height: 40px; padding: 0 14px; border-radius: var(--r-p); border: 0; background: #fff; color: var(--mar); font: 700 14px var(--f); cursor: pointer; box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .55); }
-@media (max-width: 700px) {
-  .mosaico, .mosaico[data-n] { grid-template-columns: none; grid-template-rows: 260px; grid-auto-flow: column; grid-auto-columns: 86%; overflow-x: auto; scroll-snap-type: x mandatory; }
-  .mosaico .tile, .mosaico[data-n] .tile:nth-child(n) { grid-row: auto; grid-column: auto; scroll-snap-align: start; }
-  .mosaico[data-n="1"] { grid-auto-columns: 100%; }
-  .ver-todas { display: none; }
+:root {
+  --p-bg: #f7f3ec; --p-surface: #ede6da; --p-ink: #2a2622; --p-muted: #665e55;
+  --p-accent: #7a4a2c; --p-accent-ink: #ffffff; --p-action: #7a4a2c; --p-action-ink: #ffffff;
+  --p-inv-bg: #2a2622; --p-inv-surface: #36322e; --p-inv-ink: #f7f3ec; --p-inv-muted: #a29e98;
+  --p-inv-accent: #f7f3ec; --p-inv-accent-ink: #2a2622; --p-inv-action: #f7f3ec; --p-inv-action-ink: #2a2622;
+  --font-display: "Source Serif 4", Georgia, serif;
+  --font-text: "Libre Franklin", system-ui, sans-serif;
+  --display-weight: 400;
+  --display-tracking: -0.02em;
 }
-.visor { width: min(1100px, 100vw); max-width: 100vw; height: min(86vh, 900px); max-height: 100vh; padding: 0; border: 0; background: transparent; overflow: visible; }
-.visor::backdrop { background: rgba(28, 25, 22, .94); }
-.visor img { width: 100%; height: calc(100% - 40px); object-fit: contain; }
-.visor .conta { text-align: center; color: #fff; font: 500 18px var(--num); margin-top: 10px; }
-.visor .vb { position: fixed; width: 48px; height: 48px; border-radius: var(--r-p); border: 0; background: rgba(255, 255, 255, .14); color: #fff; font-size: 30px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
-.visor .vb:hover { background: rgba(255, 255, 255, .26); }
-.visor .fecha { top: calc(14px + env(safe-area-inset-top, 0px)); right: 14px; }
-.visor .ant { left: 14px; top: 50%; transform: translateY(-50%); }
-.visor .prox { right: 14px; top: 50%; transform: translateY(-50%); }
-
-/* bom saber */
-.saber { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0 32px; border-top: 2px solid var(--mar); }
-.saber div { padding: 18px 0 20px; border-bottom: 1px solid var(--fio); }
-.saber dt { font: 400 24px/1.1 var(--num); margin-bottom: 8px; }
-.saber dd { margin: 0; color: var(--tinta); white-space: pre-line; }
-.rodape { padding: 32px 0 calc(32px + env(safe-area-inset-bottom, 0px)); background: var(--mar); color: var(--mar-suave); font-size: 14.5px; }
-.rodape .dentro { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.rodape a { color: #fff; }
-
-.nao-achei { min-height: 70vh; display: grid; place-items: center; text-align: left; padding: 40px 20px; }
-.nao-achei div { max-width: 32em; display: grid; gap: 14px; }
-.nao-achei h1 { font: 400 48px/1 var(--num); color: var(--mar); }
-.nao-achei p { color: var(--sobre); }
-.carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre); font: 500 20px var(--num); }
-.ficha .erro, .bilhete .erro { margin: 0; }
+/* CSS da página: só o que o kit não traz (o pedido em etapas e o aviso) */
+.carregando { min-height: 100svh; display: grid; place-items: center; color: var(--p-muted); }
+.pedido-form .datas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); align-items: end; }
+.pedido-form .noites { min-height: 1.5em; }
+.rows__name small { display: block; }
+.livres { margin-top: var(--s-6); }
+.livres .rows label { cursor: pointer; display: flex; align-items: flex-start; gap: var(--s-3); }
+.livres .rows input { accent-color: var(--p-accent); width: 18px; height: 18px; margin-top: 4px; }
+.livres .rows li.fora { opacity: .55; }
+.dados-hospede { margin-top: var(--s-6); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); }
+.dados-hospede .todo { grid-column: 1 / -1; }
+@media (max-width: 639px) { .dados-hospede { grid-template-columns: 1fr; } }
+.feito .codigo { font-family: var(--font-display); font-size: clamp(48px, 7vw, 80px); line-height: 1; color: var(--p-accent); font-variant-numeric: tabular-nums lining-nums; }
+.recado { position: fixed; z-index: 90; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--p-inv-bg); color: var(--p-inv-ink); padding: 12px 18px; border-radius: 8px; }
 </style>
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
 </head>
 <body>
-<div id="raiz"><p class="carregando">Carregando a pousada…</p></div>
+<p class="carregando">Abrindo a pousada…</p>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
@@ -199,204 +62,175 @@ h2.titulo { font: 400 clamp(38px, 5vw, 60px)/.95 var(--num); color: var(--mar); 
 (async () => {
   const { sb, esc, brl, hoje, addDias, noites, dmy, errText } = PG;
   const $ = id => document.getElementById(id);
-  const raiz = $("raiz");
   const slug = new URLSearchParams(location.search).get("p") || "";
   const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"], MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
   const dia = d => { const t = new Date(d + "T12:00:00Z"); return `${SEM[t.getUTCDay()]}, ${t.getUTCDate()} de ${MES[t.getUTCMonth()]}`; };
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
-  const iniciais = s => String(s || "?").trim().split(/\s+/).filter(w => w.length > 2 || /^[A-Z]/.test(w)).slice(-2).map(w => w[0]).join("").toUpperCase() || "P";
-  const ICONE_LOCAL = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
-  const ICONE_BARCO = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17c1.5 1.3 3 1.3 4.5 0s3-1.3 4.5 0 3 1.3 4.5 0 3-1.3 4.5 0"/><path d="M5 14l-1-4h16l-2 4M12 10V4l5 6"/></svg>';
-  const naoAchei = (t, p) => { raiz.innerHTML = `<main class="nao-achei"><div><h1>${t}</h1><p>${p}</p></div></main>`; document.title = t; };
+  const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
+  const seta = '<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg>';
 
-  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return naoAchei("Endereço incompleto", "O link da pousada precisa terminar com ?p= e o nome dela. Peça o link certo para a pousada.");
+  function aviso(titulo, texto) {
+    document.title = titulo;
+    document.body.innerHTML = `<main><section class="section" style="--h: 1"><div class="wrap"><div class="section-head"><h1>${titulo}</h1><p>${texto}</p></div></div></section></main>`;
+  }
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return aviso("Endereço incompleto", "O link da pousada precisa terminar com ?p= e o nome dela. Peça o link certo para a pousada.");
   const { data: P, error: eP } = await sb.rpc("site_pousada", { p_slug: slug });
-  if (eP) return naoAchei("Não deu para abrir a pousada", errText(eP) + " Recarregue a página.");
-  if (!P) return naoAchei("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
-  const Q = (P.quartos || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true }));
+  if (eP) return aviso("Não deu para abrir a pousada", errText(eP) + " Recarregue a página.");
+  if (!P) return aviso("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
 
+  const Q = (P.quartos || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true }));
+  const F = (P.fotos || []).filter(u => /^https:\/\//.test(u));
   const lugar = [P.bairro, P.cidade].filter(Boolean).join(", ");
   const zap = (() => { let d = String(P.whatsapp || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d.length >= 12 ? d : ""; })();
   const linkZap = msg => `https://wa.me/${zap}?text=${encodeURIComponent(msg)}`;
-  document.title = `${P.nome}${P.cidade ? ", " + P.cidade : ""}`;
-  document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
+  const precos = Q.map(q => Number(q.diaria) || 0).filter(v => v > 0), precoMin = precos.length ? Math.min(...precos) : 0;
+  const titulo = `${P.nome}${P.cidade ? `, pousada em ${P.cidade}` : ""}`;
+  document.title = `${titulo}: quartos e pedido de reserva`;
+  const desc = P.descricao ? P.descricao.slice(0, 150) : `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Veja o que está livre e peça sua reserva.`;
+  document.querySelector('meta[name="description"]').content = desc;
+  document.querySelector('meta[property="og:title"]').content = document.title;
+  document.querySelector('meta[property="og:description"]').content = desc;
+  document.documentElement.dataset.pageMode = F.length >= 8 ? "compact" : "short";
 
-  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null };
-  const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
-  const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
+  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, quarto: null, enviado: null };
+  const fato = [precoMin ? `Diárias a partir de ${brl(precoMin)}` : "", `entrada a partir das ${P.checkin_hora}`].filter(Boolean).join(", ") + ".";
+  const lead = `${P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}.`} ${fato}`;
+  const acao = `<div class="btn-row"><a class="btn btn--primary" href="#reserva">Ver quartos livres${seta}</a></div>`;
 
-  /* ---------- página ---------- */
-  raiz.innerHTML = `
-  <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
-  <main id="inicio">
-    <section class="abertura"><div class="dentro">
-      <div>
-        <h1 class="nome">${esc(P.nome)}</h1>
-        ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
-        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma pelo WhatsApp.`)}</p>
-        <dl class="fatos"><div><dt>Entrada a partir das</dt><dd>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd>${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd>${brl(precoMin)}</dd></div>` : ""}</dl>
-        ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
-      </div>
-      <form class="bilhete" id="bilhete" novalidate aria-labelledby="b-titulo">
-        <div class="parte"><h2 id="b-titulo">Quando você vem?</h2>
-          <div class="rota"><label>Entrada<input type="date" id="b-in" min="${hoje()}" value="${S.entrada}" required></label><span class="barco">${ICONE_BARCO}</span><label>Saída<input type="date" id="b-out" min="${addDias(hoje(), 1)}" value="${S.saida}" required></label></div>
-          <p class="noites" id="b-noites" aria-live="polite"></p></div>
-        <div class="parte"><div class="gente">
-          <label>Adultos<span class="contador"><button type="button" data-conta="adultos" data-d="-1" aria-label="Menos um adulto">−</button><output id="o-adultos">${S.adultos}</output><button type="button" data-conta="adultos" data-d="1" aria-label="Mais um adulto">+</button></span></label>
-          <label>Crianças<span class="contador"><button type="button" data-conta="criancas" data-d="-1" aria-label="Menos uma criança">−</button><output id="o-criancas">${S.criancas}</output><button type="button" data-conta="criancas" data-d="1" aria-label="Mais uma criança">+</button></span></label></div>
-          <p class="erro" id="b-erro" role="alert" hidden></p>
-          <button class="btn btn--cheio" type="submit" id="b-ver">Ver quartos livres</button></div>
-      </form>
-    </div></section>
+  /* herói: a foto da pousada; sem foto, o nome sobre a faixa da marca */
+  const heroi = F.length
+    ? `<section class="hero hero--place" data-enter aria-labelledby="hero-h">
+        <img class="hero__bg" data-phone-fill src="${esc(F[0])}" alt="Foto da ${esc(P.nome)}" style="--ly-pos: 50% 50%" fetchpriority="high">
+        <div class="wrap"><div class="hero-text"><div class="hero__text"><h1 id="hero-h">${esc(titulo)}</h1><p class="hero__lead">${esc(lead)}</p>${acao}</div></div></div></section>`
+    : `<section class="hero hero--statement ground-brand" data-enter aria-labelledby="hero-h"><div class="wrap"><div class="hero__text"><h1 id="hero-h">${esc(titulo)}</h1><p class="hero__lead">${esc(lead)}</p>${acao}</div></div></section>`;
 
-    ${galeria()}
-    <section class="secao" id="quartos"><div class="dentro">
-      <div class="secao-cab"><h2 class="titulo">Quartos</h2><p id="q-legenda" aria-live="polite"></p></div>
-      <div class="grade-q" id="grade-q"></div>
-    </div></section>
+  const reserva = `<div class="closing__cta" id="reserva" aria-labelledby="reserva-h"><div class="section-head"><h2 id="reserva-h">Pedir reserva</h2><p>Você não paga nada agora. A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}.</p></div><div id="pedido"></div></div>`;
 
-    <section class="ficha-faixa" id="ficha"><div class="dentro" id="ficha-dentro"></div></section>
+  const rowsVisita = [
+    P.acesso ? ["Acesso", ACESSO[P.acesso]] : null,
+    P.como_chegar ? ["Como chegar", P.como_chegar] : null,
+    (P.pagamentos || []).length ? ["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `. Sinal de ${P.sinal_percentual}% para confirmar` : "")] : null,
+    P.politica ? ["Cancelamento", P.politica] : null,
+  ].filter(Boolean);
+  const visita = `<div class="visit" id="como-chegar">
+        <div class="visit__cols">
+          <div class="visit__col stack-4">${lugar ? `<address class="visit__address">${esc(P.bairro || "")}${P.bairro && P.cidade ? "<br>" : ""}${esc(P.cidade || "")}</address>` : ""}
+            ${P.bairro && P.cidade ? `<a class="link" href="https://www.openstreetmap.org/search?query=${encodeURIComponent(lugar)}" target="_blank" rel="noopener">Ver a região no mapa</a>` : ""}</div>
+          <div class="visit__col"><dl class="hours"><dt>Entrada</dt><dd>a partir das ${esc(P.checkin_hora)}</dd><dt>Saída</dt><dd>até as ${esc(P.checkout_hora)}</dd></dl></div>
+        </div>
+        ${rowsVisita.length ? `<ul class="visit__rows">${rowsVisita.map(([k, v]) => `<li><span>${esc(k)}</span><span>${esc(v)}</span></li>`).join("")}</ul>` : ""}
+      </div>`;
 
-    ${saber()}
-  </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
-  // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
-  const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
-  ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
+  /* quartos e diárias, com a segunda foto da pousada (ou a de um quarto) */
+  const fotoQ = F[1] || (Q.find(q => /^https:\/\//.test(q.foto_url || "")) || {}).foto_url || "";
+  const quartos = `<section class="section" id="quartos" aria-labelledby="quartos-h" style="--h: 1; --hm: 3">
+      <div class="wrap grid grid--top">
+        <div class="${fotoQ ? "span-6" : "span-8"}">
+          <div class="section-head"><h2 id="quartos-h">Quartos, diárias e como chegar</h2><p>Preço por noite. O total aparece quando você escolhe as datas.</p></div>
+          ${Q.length ? `<ul class="rows">${Q.map(q => `<li><span class="rows__name">${esc(q.nome)}<small>${esc(q.tipo || "Quarto")}, até ${plural(q.capacidade, "pessoa", "pessoas")}</small></span><span class="rows__value">${brl(q.diaria)}</span></li>`).join("")}</ul>` : `<p>A pousada ainda não cadastrou os quartos.${zap ? " Fale com ela pelo WhatsApp." : ""}</p>`}
+        </div>
+        <div class="${fotoQ ? "span-6" : "span-4"} stack-6">${fotoQ ? `<figure class="pl-photo" style="--pl-r: 1.6" data-moment="picture-develops"><img src="${esc(fotoQ)}" alt="Foto da ${esc(P.nome)}" loading="lazy"></figure>` : ""}${visita}</div>
+      </div></section>`;
 
-  function galeria() {
-    const F = (P.fotos || []).filter(u => /^https:\/\//.test(u)); if (!F.length) return "";
-    const n = Math.min(F.length, 5);
-    return `<section class="galeria" aria-label="Fotos da ${esc(P.nome)}"><div class="dentro"><div class="mosaico" data-n="${n}">
-      ${F.slice(0, n).map((u, i) => `<button type="button" class="tile" data-foto="${i}" aria-label="Ver foto ${i + 1} de ${F.length} em tela cheia"><img src="${esc(u)}" alt="Foto ${i + 1} da ${esc(P.nome)}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'}></button>`).join("")}
-      ${F.length > 1 ? `<button type="button" class="ver-todas" data-foto="0">Ver as ${F.length} fotos</button>` : ""}</div></div>
-      <dialog class="visor" id="visor" aria-label="Fotos da ${esc(P.nome)}"><img id="visor-img" alt=""><p class="conta" id="visor-conta" aria-live="polite"></p>
-        <button type="button" class="vb fecha" data-visor="fechar" aria-label="Fechar">×</button>${F.length > 1 ? `<button type="button" class="vb ant" data-visor="-1" aria-label="Foto anterior">‹</button><button type="button" class="vb prox" data-visor="1" aria-label="Próxima foto">›</button>` : ""}</dialog></section>`;
-  }
+  const contatos = [zap ? `<li><a href="${linkZap(`Olá! Vi o site da ${P.nome}.`)}" target="_blank" rel="noopener">WhatsApp</a></li>` : "", P.instagram ? `<li><a href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">Instagram</a></li>` : "", P.email ? `<li><a href="mailto:${esc(P.email)}">Email</a></li>` : ""].join("");
+  const rodape = `<footer class="footer closing" id="contato" aria-label="Pedido de reserva e contato"><div class="wrap">
+      ${reserva}
+      <div class="closing__links"><div class="grid">
+        <div class="span-4 stack-4"><a class="nav__logo" href="#topo"><span class="mark" data-mark="stack" aria-hidden="true"></span>${esc(P.nome)}</a><p class="footer__lede">${esc(lugar || "Pousada")}</p></div>
+        <div class="span-2 footer__col"><h3>Quartos</h3><ul><li><a href="#quartos">Diárias</a></li><li><a href="#reserva">Pedir reserva</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Visita</h3><ul><li><a href="#como-chegar">Como chegar</a></li><li><a href="#como-chegar">Horários</a></li></ul></div>
+        ${contatos ? `<div class="span-2 footer__col"><h3>Contato</h3><ul>${contatos}</ul></div>` : ""}
+      </div><div class="footer__legal"><span>${esc(P.nome)} &nbsp; <a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></div>
+    </div></footer>`;
 
-  function saber() {
-    const it = [];
-    it.push(["Horários", `Entrada a partir das ${P.checkin_hora}.\nSaída até as ${P.checkout_hora}.`]);
-    if (P.acesso || P.como_chegar) it.push(["Como chegar", [P.acesso && ACESSO[P.acesso], P.como_chegar].filter(Boolean).join(".\n")]);
-    if ((P.pagamentos || []).length) it.push(["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `.\nSinal de ${P.sinal_percentual}% para confirmar.` : ".")]);
-    if (P.politica) it.push(["Cancelamento", P.politica]);
-    return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2></div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
-  }
+  document.body.innerHTML = `<a class="skip" href="#principal">Pular para o conteúdo</a>
+    <header class="nav" id="topo"><div class="wrap nav__bar">
+      <a class="nav__logo" href="#topo"><span class="mark" data-mark="stack" aria-hidden="true"></span>${esc(P.nome)}</a>
+      <nav class="nav__links" aria-label="Principal"><div class="nav__item"><a class="nav__link" href="#quartos">Quartos</a></div><div class="nav__item"><a class="nav__link" href="#como-chegar">Como chegar</a></div></nav>
+      <div class="nav__actions"><a class="btn btn--primary" href="#reserva">Pedir reserva</a></div>
+      <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu"><span></span><span></span></button>
+    </div></header>
+    <main id="principal">${heroi}${quartos}</main>${rodape}
+    <nav class="actionbar" aria-label="Ações rápidas"><a class="btn btn--primary" href="#reserva">Pedir reserva</a></nav>`;
 
-  /* ---------- bilhete ---------- */
+  /* pedido em etapas: datas, quarto livre, dados do hóspede */
   const pessoas = () => S.adultos + S.criancas;
-  function atualizaBilhete() {
-    $("o-adultos").value = S.adultos; $("o-criancas").value = S.criancas;
-    document.querySelectorAll("[data-conta]").forEach(b => { const v = S[b.dataset.conta] + Number(b.dataset.d); b.disabled = v < (b.dataset.conta === "adultos" ? 1 : 0) || v > 20; });
-    const n = S.entrada && S.saida && S.saida > S.entrada ? noites(S.entrada, S.saida) : 0;
-    $("b-noites").textContent = n ? `${plural(n, "noite", "noites")}, de ${dia(S.entrada)} a ${dia(S.saida)}` : "";
-  }
-  $("b-in").addEventListener("change", e => { S.entrada = e.target.value; if (!S.saida || S.saida <= S.entrada) { S.saida = addDias(S.entrada, 1); $("b-out").value = S.saida; } $("b-out").min = addDias(S.entrada, 1); limpaBusca(); });
-  $("b-out").addEventListener("change", e => { S.saida = e.target.value; limpaBusca(); });
-  document.addEventListener("click", e => { const b = e.target.closest("[data-conta]"); if (!b) return; S[b.dataset.conta] = Math.max(0, S[b.dataset.conta] + Number(b.dataset.d)); limpaBusca(); });
-  function limpaBusca() { if (S.livres) { S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); } atualizaBilhete(); }
-
-  $("bilhete").addEventListener("submit", async e => {
-    e.preventDefault(); const err = $("b-erro"); err.hidden = true;
-    const falha = !S.entrada || !S.saida ? "Escolha a data de entrada e a de saída." : S.entrada < hoje() ? "A entrada precisa ser a partir de hoje." : S.saida <= S.entrada ? "A saída precisa ser depois da entrada." : noites(S.entrada, S.saida) > 60 ? "Dá para pedir até 60 noites por vez." : "";
-    if (falha) { err.textContent = falha; err.hidden = false; return; }
-    const btn = $("b-ver"); btn.disabled = true; btn.textContent = "Procurando quartos livres…";
-    const { data, error } = await sb.rpc("quartos_disponiveis", { p_slug: slug, p_entrada: S.entrada, p_saida: S.saida });
-    btn.disabled = false; btn.textContent = "Ver quartos livres";
-    if (error) { err.textContent = errText(error); err.hidden = false; return; }
-    S.livres = new Map((data || []).map(r => [r.id, r])); S.quarto = null;
-    desenhaQuartos(); desenhaFicha();
-    $("quartos").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-  });
-
-  /* ---------- quartos ---------- */
-  function desenhaQuartos() {
-    const n = noites(S.entrada, S.saida);
-    const leg = $("q-legenda");
-    if (!Q.length) { leg.textContent = ""; $("grade-q").innerHTML = `<p class="espera" style="color:var(--suave);border-color:var(--fio-forte)">A pousada ainda não cadastrou os quartos. ${zap ? "Fale com ela pelo WhatsApp." : ""}</p>`; return; }
-    if (!S.livres) leg.textContent = "Escolha as datas lá em cima para ver o que está livre e quanto fica a estadia.";
-    else { const ok = Q.filter(q => S.livres.has(q.id) && q.capacidade >= pessoas()).length; leg.textContent = ok ? `${plural(ok, "quarto livre", "quartos livres")} para ${plural(pessoas(), "pessoa", "pessoas")}, ${dia(S.entrada)} a ${dia(S.saida)}.` : `Nenhum quarto livre para ${plural(pessoas(), "pessoa", "pessoas")} nessas datas. Tente outras datas${zap ? " ou fale com a pousada pelo WhatsApp" : ""}.`; }
-    $("grade-q").innerHTML = Q.map(q => {
-      const livre = S.livres && S.livres.get(q.id), cabe = q.capacidade >= pessoas(), pode = livre && cabe;
-      const situ = !S.livres ? "" : pode ? `<span class="situ livre">Livre</span>` : `<span class="situ">${livre ? `Cabem até ${q.capacidade}` : "Ocupado nessas datas"}</span>`;
-      const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${brl(q.diaria)} cada</span>` : `<b>${brl(q.diaria)}</b><span>por noite</span>`;
-      const acao = !S.livres ? `<a class="btn btn--borda" href="#bilhete" data-datas>Escolher datas</a>` : pode ? `<button class="btn ${S.quarto === q.id ? "btn--cheio" : "btn--borda"}" data-escolher="${esc(q.id)}" aria-pressed="${S.quarto === q.id}">${S.quarto === q.id ? "Quarto escolhido" : "Escolher este quarto"}</button>` : "";
-      const nomeCurto = q.nome.replace(/^quarto\s*/i, "") || q.nome;
-      return `<article class="q ${S.quarto === q.id ? "escolhido" : ""} ${S.livres && !pode ? "fora" : ""}"><div class="f">${q.foto_url ? `<img src="${esc(q.foto_url)}" alt="Foto do ${esc(q.nome)}" loading="lazy">` : `<span class="vazia" aria-hidden="true">${esc(nomeCurto.length <= 8 ? nomeCurto : q.nome)}</span>`}${situ}</div>
-        <div class="c"><h3>${esc(q.nome)}</h3><p class="tipo">${esc(q.tipo || "Quarto")}, para até ${plural(q.capacidade, "pessoa", "pessoas")}</p>${q.descricao ? `<p class="desc">${esc(q.descricao)}</p>` : ""}
-        <div class="pe"><span class="preco">${preco}</span>${acao}</div></div></article>`;
-    }).join("");
-  }
-  document.addEventListener("click", e => {
-    const d = e.target.closest("[data-datas]"); if (d) { e.preventDefault(); $("bilhete").scrollIntoView({ behavior: "smooth", block: "center" }); setTimeout(() => $("b-in").focus(), 350); return; }
-    const b = e.target.closest("[data-escolher]"); if (!b) return;
-    S.quarto = b.dataset.escolher; desenhaQuartos(); desenhaFicha();
-    $("ficha").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
-    setTimeout(() => { const f = $("f-nome"); if (f) f.focus({ preventScroll: true }); }, 400);
-  });
-
-  /* ---------- ficha ---------- */
-  function desenhaFicha() {
-    const box = $("ficha-dentro");
+  function desenhaPedido() {
+    const box = $("pedido");
     if (S.enviado) {
       const r = S.enviado, q = Q.find(x => x.id === r.quarto);
       const msg = `Olá! Mandei o pedido ${r.cod} pelo site: ${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}, ${plural(r.pessoas, "pessoa", "pessoas")}. Nome: ${r.nome}.`;
-      box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}</span>
-        <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar${zap ? " pelo WhatsApp" : ""}. Guarde esse número.</p>
-        <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap">${zap ? `<a class="btn btn--cheio btn--grande" href="${linkZap(msg)}" target="_blank" rel="noopener">Avisar a pousada no WhatsApp</a>` : ""}<button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
-      $("outro").onclick = () => { S.enviado = null; S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); $("bilhete").scrollIntoView({ behavior: "smooth" }); };
-      $("ok").focus(); return;
+      box.innerHTML = `<div class="feito stack-4" tabindex="-1" id="feito"><p class="codigo">${esc(r.cod)}</p>
+        <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar. Guarde esse número.</p>
+        <div class="btn-row">${zap ? `<a class="btn btn--primary" href="${linkZap(msg)}" target="_blank" rel="noopener">Avisar a pousada no WhatsApp${seta}</a>` : ""}<button class="btn btn--secondary" type="button" id="outro">Fazer outro pedido</button></div></div>`;
+      $("outro").onclick = () => { S.enviado = null; S.livres = null; S.quarto = null; desenhaPedido(); };
+      $("feito").focus(); return;
     }
-    const q = S.quarto && Q.find(x => x.id === S.quarto), livre = q && S.livres.get(q.id), n = noites(S.entrada, S.saida);
-    const passo = !S.livres ? 1 : !q ? 2 : 3;
-    const passos = `<ol class="passos" aria-label="Etapas do pedido">${["Datas", "Quarto", "Seus dados"].map((t, i) => `<li class="${i + 1 < passo ? "feito" : i + 1 === passo ? "agora" : ""}" ${i + 1 === passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>`;
-    const cab = `<div class="secao-cab"><div><h2 class="titulo">Sua ficha</h2></div><p>Preencha uma vez e a pousada já recebe tudo. Quem estiver no balcão também pode preencher aqui na chegada.</p></div>`;
-    if (!q) { box.innerHTML = cab + passos + `<p class="espera">${passo === 1 ? "Escolha as datas lá em cima e toque em Ver quartos livres." : "Escolha um quarto livre na lista acima. A ficha abre aqui."}</p>`; return; }
-    box.innerHTML = cab + passos + `<div class="ficha">
-      <form id="f-ficha" novalidate><div class="campos">
-        <label class="todo">Nome completo<input id="f-nome" maxlength="100" autocomplete="name" required></label>
-        <label>WhatsApp com DDD<input id="f-tel" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" placeholder="(41) 99999-0000" required></label>
-        <label>CPF ou documento <small>opcional</small><input id="f-doc" maxlength="30" inputmode="numeric" autocomplete="off"></label>
-        <label class="todo">Email <small>opcional</small><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></label>
-        <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco. Não coloque dados de saúde.</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
-        <p class="erro" id="f-erro" role="alert" hidden></p>
-        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>Você ainda não paga nada. A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
+    const n = S.saida > S.entrada ? noites(S.entrada, S.saida) : 0;
+    const lista = S.livres ? Q.map(q => { const l = S.livres.get(q.id); return { q, l, pode: !!l && q.capacidade >= pessoas() }; }) : [];
+    const algum = lista.some(x => x.pode);
+    box.innerHTML = `<form class="form pedido-form" id="f-datas" novalidate>
+        <div class="datas">
+          <div class="field"><label for="b-in">Entrada</label><input id="b-in" type="date" min="${hoje()}" value="${S.entrada}" required></div>
+          <div class="field"><label for="b-out">Saída</label><input id="b-out" type="date" min="${addDias(S.entrada, 1)}" value="${S.saida}" required></div>
+          <div class="field"><label for="b-ad">Adultos</label><input id="b-ad" type="number" min="1" max="20" inputmode="numeric" value="${S.adultos}"></div>
+          <div class="field"><label for="b-cr">Crianças</label><input id="b-cr" type="number" min="0" max="20" inputmode="numeric" value="${S.criancas}"></div>
+        </div>
+        <p class="t-small muted noites" aria-live="polite">${n ? `${plural(n, "noite", "noites")}, de ${dia(S.entrada)} a ${dia(S.saida)}` : ""}</p>
+        <p class="field__error" id="b-erro" role="alert" hidden></p>
+        <div class="btn-row"><button class="btn btn--primary" type="submit" id="b-ver">Ver quartos livres</button></div>
       </form>
-      <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
-        <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
-        <div><dt>Pessoas</dt><dd>${plural(S.adultos, "adulto", "adultos")}${S.criancas ? ` e ${plural(S.criancas, "criança", "crianças")}` : ""}</dd></div>
-        <div class="total"><dt>${plural(n, "noite", "noites")}</dt><dd>${brl(livre.total)}</dd></div></dl>
-        ${P.sinal_percentual ? `<p class="aviso">A pousada pede sinal de ${P.sinal_percentual}% para confirmar.</p>` : ""}
-        <button class="mudar" type="button" data-mudar>Trocar quarto ou datas</button></aside></div>`;
-    document.querySelector("[data-mudar]").onclick = () => $("quartos").scrollIntoView({ behavior: "smooth" });
-    $("f-ficha").addEventListener("input", () => { $("f-erro").hidden = true; });
-    $("f-ficha").addEventListener("submit", async e => {
+      ${S.livres ? `<div class="livres"><p class="t-label">${algum ? `Livres para ${plural(pessoas(), "pessoa", "pessoas")}, ${plural(n, "noite", "noites")}` : `Nenhum quarto livre para ${plural(pessoas(), "pessoa", "pessoas")} nessas datas. Tente outras datas${zap ? " ou fale com a pousada pelo WhatsApp" : ""}.`}</p>
+        <ul class="rows" aria-label="Escolha o quarto">${lista.map(({ q, l, pode }) => `<li class="${pode ? "" : "fora"}"><label class="rows__name"><input type="radio" name="quarto" value="${esc(q.id)}" ${pode ? "" : "disabled"} ${S.quarto === q.id ? "checked" : ""}><span>${esc(q.nome)}<small>${pode ? `${esc(q.tipo || "Quarto")}, até ${plural(q.capacidade, "pessoa", "pessoas")}` : l ? `Cabem até ${q.capacidade}` : "Ocupado nessas datas"}</small></span></label><span class="rows__value">${pode ? brl(l.total) : `${brl(q.diaria)} a noite`}</span></li>`).join("")}</ul></div>` : ""}
+      ${S.quarto ? `<form class="form dados-hospede" id="f-ficha" novalidate>
+        <div class="field todo"><label for="f-nome">Nome completo</label><input id="f-nome" maxlength="100" autocomplete="name" required></div>
+        <div class="field"><label for="f-tel">WhatsApp com DDD</label><input id="f-tel" type="tel" inputmode="tel" maxlength="20" autocomplete="tel" required></div>
+        <div class="field"><label for="f-doc">CPF ou documento (opcional)</label><input id="f-doc" maxlength="30" inputmode="numeric" autocomplete="off"></div>
+        <div class="field todo"><label for="f-email">Email (opcional)</label><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></div>
+        <div class="field todo"><label for="f-obs">Recado para a pousada (opcional: horário de chegada, se vem de barco)</label><textarea id="f-obs" maxlength="500" rows="3"></textarea></div>
+        <p class="field__error todo" id="f-erro" role="alert" hidden></p>
+        <div class="btn-row todo"><button class="btn btn--primary" type="submit" id="f-enviar">Enviar pedido${seta}</button></div>
+        <p class="t-small muted todo">Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a class="link" href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.${P.sinal_percentual ? ` A pousada pede sinal de ${P.sinal_percentual}% para confirmar.` : ""}</p>
+      </form>` : ""}`;
+    liga();
+  }
+  function liga() {
+    const limpa = () => { S.livres = null; S.quarto = null; desenhaPedido(); };
+    $("b-in").onchange = e => { S.entrada = e.target.value; if (!S.saida || S.saida <= S.entrada) S.saida = addDias(S.entrada, 1); limpa(); };
+    $("b-out").onchange = e => { S.saida = e.target.value; limpa(); };
+    $("b-ad").onchange = e => { S.adultos = Math.max(1, Math.min(20, Number(e.target.value) || 1)); if (S.livres) limpa(); };
+    $("b-cr").onchange = e => { S.criancas = Math.max(0, Math.min(20, Number(e.target.value) || 0)); if (S.livres) limpa(); };
+    $("f-datas").onsubmit = async e => {
+      e.preventDefault(); const err = $("b-erro"); err.hidden = true;
+      S.adultos = Math.max(1, Number($("b-ad").value) || 1); S.criancas = Math.max(0, Number($("b-cr").value) || 0);
+      const falha = !S.entrada || !S.saida ? "Escolha a data de entrada e a de saída." : S.entrada < hoje() ? "A entrada precisa ser a partir de hoje." : S.saida <= S.entrada ? "A saída precisa ser depois da entrada." : noites(S.entrada, S.saida) > 60 ? "Dá para pedir até 60 noites por vez." : "";
+      if (falha) { err.textContent = falha; err.hidden = false; return; }
+      const btn = $("b-ver"); btn.disabled = true; btn.textContent = "Procurando quartos livres…";
+      const { data, error } = await sb.rpc("quartos_disponiveis", { p_slug: slug, p_entrada: S.entrada, p_saida: S.saida });
+      if (error) { btn.disabled = false; btn.textContent = "Ver quartos livres"; err.textContent = errText(error); err.hidden = false; return; }
+      S.livres = new Map((data || []).map(r => [r.id, r])); S.quarto = null; desenhaPedido();
+    };
+    document.querySelectorAll('input[name="quarto"]').forEach(r => r.onchange = () => { S.quarto = r.value; desenhaPedido(); const f = $("f-nome"); if (f) f.focus(); });
+    const ficha = $("f-ficha"); if (!ficha) return;
+    ficha.onsubmit = async e => {
       e.preventDefault(); const err = $("f-erro"); err.hidden = true;
+      const q = Q.find(x => x.id === S.quarto);
       const d = { nome: $("f-nome").value.trim(), tel: $("f-tel").value.trim(), doc: $("f-doc").value.trim(), email: $("f-email").value.trim(), obs: $("f-obs").value.trim() };
       const dig = d.tel.replace(/\D/g, "");
-      const falha = d.nome.length < 2 ? "Escreva seu nome completo." : dig.length < 10 || dig.length > 13 ? "Coloque o WhatsApp com DDD, por exemplo (41) 99999-0000." : d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email) ? "Esse email não parece completo. Confira ou deixe em branco." : "";
+      const falha = d.nome.length < 2 ? "Escreva seu nome completo." : dig.length < 10 || dig.length > 13 ? "Coloque o WhatsApp com DDD, com 10 ou 11 números." : d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email) ? "Esse email não parece completo. Confira ou deixe em branco." : "";
       if (falha) { err.textContent = falha; err.hidden = false; return; }
       const btn = $("f-enviar"); btn.disabled = true; btn.textContent = "Enviando pedido…";
       const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
       if (error) { btn.disabled = false; btn.textContent = "Enviar pedido"; err.textContent = errText(error); err.hidden = false; return; }
       S.enviado = { cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
-      desenhaFicha();
-    });
+      desenhaPedido();
+    };
   }
+  desenhaPedido();
 
-  // visor de fotos em tela cheia
-  const FOTOS = (P.fotos || []).filter(u => /^https:\/\//.test(u)); let fotoAtual = 0;
-  const mostraFoto = i => { fotoAtual = (i + FOTOS.length) % FOTOS.length; $("visor-img").src = FOTOS[fotoAtual]; $("visor-img").alt = `Foto ${fotoAtual + 1} da ${P.nome}`; $("visor-conta").textContent = `${fotoAtual + 1} de ${FOTOS.length}`; };
-  document.addEventListener("click", e => {
-    const t = e.target.closest("[data-foto]"); if (t && $("visor")) { mostraFoto(Number(t.dataset.foto)); $("visor").showModal(); return; }
-    const v = e.target.closest("[data-visor]"); if (v) { if (v.dataset.visor === "fechar") $("visor").close(); else mostraFoto(fotoAtual + Number(v.dataset.visor)); return; }
-    if (e.target.id === "visor") $("visor").close();
-  });
-  document.addEventListener("keydown", e => { const d = $("visor"); if (!d || !d.open) return; if (e.key === "ArrowRight") mostraFoto(fotoAtual + 1); if (e.key === "ArrowLeft") mostraFoto(fotoAtual - 1); });
-
-  atualizaBilhete(); desenhaQuartos(); desenhaFicha();
-  if (location.hash && location.hash !== "#inicio") { const alvo = document.querySelector(location.hash); if (alvo) alvo.scrollIntoView(); }
+  // o kit liga menu, botões, entrada do herói e o momento depois que a página existe
+  for (const m of ["assets/system.js", "assets/motion/motion.js", "assets/layout/layout.js"]) await import(new URL(m, location.href).href);
+  if (location.hash) { const alvo = document.querySelector(location.hash); if (alvo) alvo.scrollIntoView(); }
 })();
 </script>
 </body>
