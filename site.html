@@ -186,19 +186,20 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 
 /* ---------- tema por pousada ----------
    Pousada Guará: cores do logo (placa de madeira escura, letras brancas, guará vermelho).
-   Branco no fundo e vermelho nas superfícies fortes, ~45% cada; marrom e preto (~10%) no texto e nos detalhes. */
+   Branco no fundo e vermelho vivo nas superfícies fortes, ~45% cada; marrom e preto (~10%) no texto e nos detalhes.
+   Guarás em vetor, num vermelho mais escuro, voam na abertura e na ficha e um fica em pé nas ondas. */
 :root[data-tema="guara"] {
-  --g-vermelho: #b5222d; --g-vermelho-esc: #8e1922; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #f8ecea;
+  --g-vermelho: #dc1e2a; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
   --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
   --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
-  --c10: #ffffff; --c10-esc: #f6e1de; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
+  --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
   --c30-suave: rgba(255, 255, 255, .86); --c30-clara: var(--g-fundo-foto);
   --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2);
   --titulo: var(--g-vermelho); --risco: var(--g-marrom); --barra: #ffffff; --vazia: var(--g-vermelho);
-  --claro-borda: rgba(181, 34, 45, .45); --sombra-bilhete: rgba(142, 25, 34, .75); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(142, 25, 34, .6);
+  --claro-borda: rgba(220, 30, 42, .45); --sombra-bilhete: rgba(138, 15, 24, .7); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(138, 15, 24, .55);
   --escolhido: #ffffff; --anel: var(--g-preto); --pulso: rgba(29, 21, 18, .8);
   --situ-fundo: rgba(29, 21, 18, .6); --livre-fundo: var(--g-preto); --livre-tinta: #ffffff; --feito-fundo: rgba(255, 255, 255, .2);
-  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(181, 34, 45, .55);
+  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(220, 30, 42, .55);
   --confete-1: var(--g-preto); --confete-3: var(--g-marrom);
 }
 [data-tema="guara"] :focus-visible { outline-color: var(--g-preto); }
@@ -206,6 +207,31 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 [data-tema="guara"] .btn--cheio { box-shadow: 0 6px 16px -10px rgba(29, 21, 18, .55); }
 [data-tema="guara"] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
 [data-tema="guara"] .rodape a { color: rgba(255, 255, 255, .78); }
+.guara { display: block; fill: var(--g-guara); stroke: var(--g-guara); overflow: visible; }
+.guara .tr { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.guara .olho { fill: #fff; stroke: none; }
+.bando { position: absolute; pointer-events: none; z-index: 0; }
+.bando > span { position: absolute; display: block; }
+.bando--topo { top: clamp(12px, 3vw, 40px); right: max(20px, calc((100% - 1160px) / 2 + 40px)); width: 330px; height: 170px; }
+.bando--topo > span:nth-child(1) { width: 92px; left: 30px; top: 46px; }
+.bando--topo > span:nth-child(2) { width: 64px; left: 150px; top: 10px; }
+.bando--topo > span:nth-child(3) { width: 50px; left: 228px; top: 70px; }
+.bando--ficha { right: max(20px, calc((100% - 1160px) / 2)); bottom: clamp(16px, 3vw, 36px); width: 260px; height: 120px; }
+.bando--ficha .guara { fill: rgba(110, 8, 16, .85); stroke: rgba(110, 8, 16, .85); }
+.bando--ficha > span:nth-child(1) { width: 78px; left: 20px; top: 40px; }
+.bando--ficha > span:nth-child(2) { width: 54px; left: 130px; top: 6px; }
+.bando--ficha > span:nth-child(3) { width: 42px; left: 196px; top: 62px; }
+.ficha-faixa .dentro, .abertura .dentro { position: relative; z-index: 1; }
+.guara-agua { position: absolute; right: max(18px, 7vw); bottom: clamp(4px, 1.4vw, 18px); width: clamp(54px, 6vw, 84px); z-index: 0; pointer-events: none; }
+.guara-cab { width: 86px; align-self: center; }
+[data-tema="guara"] .topo .marca i { padding: 3px; }
+[data-tema="guara"] .topo .marca i .guara { width: 100%; height: 100%; fill: var(--g-vermelho); stroke: var(--g-vermelho); }
+@media (max-width: 920px) {
+  .bando--topo { top: 6px; right: 8px; width: 200px; height: 100px; scale: .62; transform-origin: top right; }
+  .bando--ficha { scale: .7; transform-origin: bottom right; }
+}
+@media (max-width: 700px) { .bando--ficha { display: none; } }
+@media (max-width: 560px) { .guara-cab { width: 64px; } }
 
 /* ---------- movimento ----------
    Tudo tem tema de mar: o nome sobe da linha d'água letra por letra, um traço de onda laranja se desenha embaixo,
@@ -278,6 +304,16 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   @keyframes m-respira { 50% { opacity: .45; } }
 
   .carregando { animation: m-respira 1.4s ease-in-out infinite; }
+  @keyframes m-asa { to { transform: scaleY(-.6); } }
+  @keyframes m-paira { 0%, 100% { translate: 0 0; } 50% { translate: -6px -9px; } }
+  @keyframes m-chega { from { opacity: 0; translate: 140px -50px; } }
+  @keyframes m-bica { 0%, 78%, 100% { transform: rotate(0deg); } 84%, 90% { transform: rotate(28deg); } 87% { transform: rotate(24deg); } }
+  .anima .guara .asa { transform-box: view-box; transform-origin: 50px 30px; animation: m-asa var(--bate, .55s) ease-in-out infinite alternate; }
+  .anima .bando > span { animation: m-chega 2.4s var(--e-sai) var(--chega, .6s) both; }
+  .anima .bando > span > .guara { animation: m-paira var(--paira, 6s) ease-in-out infinite; }
+  .anima .bando > span:nth-child(2) { --chega: .8s; --bate: .48s; --paira: 7s; }
+  .anima .bando > span:nth-child(3) { --chega: 1s; --bate: .62s; --paira: 5.2s; }
+  .anima .guara-agua .cabeca { transform-box: view-box; transform-origin: 42px 44px; animation: m-bica 7s ease-in-out 3s infinite; }
   .anima .mar svg { animation: m-onda 26s linear infinite; }
   .anima .mar svg:nth-child(2) { animation-duration: 18s; animation-direction: reverse; }
   .anima .mar svg:nth-child(3) { animation-duration: 34s; }
@@ -374,7 +410,8 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
 
   // tema de cores próprio de cada pousada (as outras ficam com o marinho e laranja padrão)
-  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#b5222d" } };
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#dc1e2a" } };
+  const GUARAS = TEMAS[slug] && TEMAS[slug].tema === "guara";
   if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
   const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
 
@@ -389,16 +426,30 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   const svgOnda = (h, d, extra = "") => `<svg viewBox="0 0 2400 ${h}" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="${d}" ${extra}/></svg>`;
   const MAR = `<div class="mar" aria-hidden="true">${svgOnda(120, onda(40, 14, 400))}${svgOnda(120, onda(64, 10, 300))}${svgOnda(120, onda(86, 8, 600))}</div>`;
   const ONDAS_TOPO = `<div class="ondas-topo" aria-hidden="true">${svgOnda(50, onda(24, 12, 600) + " L2400 50 L0 50 Z")}${svgOnda(50, onda(18, 10, 400) + " L2400 50 L0 50 Z")}</div>`;
+  // guarás em vetor: em pé (de lado, olhando para a esquerda) e voando (asa anima batendo)
+  const GUARA_PE = `<svg class="guara" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <path d="M38 40 C44 31 62 31 74 39 L86 44 C77 46 72 50 66 54 C56 58 43 55 38 40 Z"/>
+    <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
+    <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
+    <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></svg>`;
+  const GUARA_VOO = `<svg class="guara" viewBox="0 0 100 60" aria-hidden="true" focusable="false">
+    <path class="asa" opacity=".5" d="M38 29 C39 18 47 9 59 5 C66 3 73 4 79 7 C73 9 70 13 68 18 C66 23 63 27 60 30 Z"/>
+    <path d="M24 30 C36 23 60 23 75 29 C62 35 38 36 24 30 Z"/>
+    <path class="tr" stroke-width="4.6" d="M29 29.5 L15 28.5"/><circle cx="14" cy="28.5" r="3.8"/>
+    <path class="tr" stroke-width="1.9" d="M11 28.5 C6 29.5 3 33 0 38"/>
+    <path class="tr" stroke-width="1.6" d="M73 29.5 L98 30.5 M73 31 L97 33"/>
+    <path class="asa" d="M36 30 C36 18 44 8 57 3 C65 0 74 1 82 4 C76 7 72 11 70 17 C68 23 65 28 62 31 Z"/></svg>`;
+  const bando = cls => `<div class="bando ${cls}" aria-hidden="true">${"<span>" + GUARA_VOO + "</span>"}${"<span>" + GUARA_VOO + "</span>"}${"<span>" + GUARA_VOO + "</span>"}</div>`;
   const RISCO = `<svg class="risco" viewBox="0 0 340 16" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 10 Q 23 2 44 9 T 86 9 T 128 9 T 170 9 T 212 9 T 254 9 T 296 9 T 338 8"/></svg>`;
   const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
   const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
 
   /* ---------- página ---------- */
   raiz.innerHTML = `
-  <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
+  <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_PE : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
     <nav><a class="l" href="#quartos">Quartos</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
-    <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}<div class="dentro">
+    <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
         <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${letreiro(P.nome)}</span></h1>
@@ -425,7 +476,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       <div class="grade-q" id="grade-q"></div>
     </div></section>
 
-    <section class="ficha-faixa" id="ficha">${ONDAS_TOPO}<div class="dentro" id="ficha-dentro"></div></section>
+    <section class="ficha-faixa" id="ficha">${ONDAS_TOPO}${GUARAS ? bando("bando--ficha") : ""}<div class="dentro" id="ficha-dentro"></div></section>
 
     ${saber()}
   </main>
@@ -491,7 +542,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     if (P.acesso || P.como_chegar) it.push(["Como chegar", [P.acesso && ACESSO[P.acesso], P.como_chegar].filter(Boolean).join(".\n")]);
     if ((P.pagamentos || []).length) it.push(["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `.\nSinal de ${P.sinal_percentual}% para confirmar.` : ".")]);
     if (P.politica) it.push(["Cancelamento", P.politica]);
-    return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2></div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
+    return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2>${GUARAS ? `<span class="guara-cab" aria-hidden="true">${GUARA_VOO}</span>` : ""}</div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
   }
 
   /* ---------- bilhete ---------- */
