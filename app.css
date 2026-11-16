@@ -1,28 +1,28 @@
-/* Paleta 60-30-10 "Baía ao entardecer", na ordem escolhida pelo dono:
-   60% #F0A631 dourado: fundo da tela; também os ícones dos números e as barras do gráfico dentro dos cartões.
-   30% #0E3A47 azul-petróleo: menu lateral, cartões, textos sobre o dourado.
-   10% #EEF3F3 névoa: só o que pede ação ou destaca: botão principal, item ativo do menu, barra de hoje, foco.
-   Cores de situação (ocupado, sai hoje, atrasado, chega) são avisos e ficam fora da paleta. */
+/* Paleta 60-30-10 "Marinho e laranja" (cores complementares, escolhida pelo dono):
+   60% #F7F7F5 branco-gelo: fundo da tela.
+   30% #13294B azul-marinho: menu lateral, barra e bilhete do site, faixa da ficha, ícones dos números, barras do gráfico, textos.
+   10% #FF7A1A laranja: só o que pede ação ou destaca: botão principal, item ativo do menu, barra de hoje.
+   Cartões do painel são brancos. Cores de situação (ocupado, sai hoje, atrasado, chega) são avisos e ficam fora da paleta. */
 :root {
-  --dourado: #f0a631; --azul: #0e3a47; --nevoa: #eef3f3;
-  --branco: var(--nevoa); --preto: var(--azul); --violeta: var(--nevoa);
-  --c60: var(--dourado); --c60-funda: #e4981f; --c60-linha: rgba(14, 58, 71, .2); --c60-texto: var(--azul); --c60-suave: rgba(14, 58, 71, .74);
-  --c30: var(--azul); --c30-esc: #0a2d38; --c30-tinta: var(--nevoa); --c30-suave: rgba(238, 243, 243, .62); --c30-hover: rgba(238, 243, 243, .08); --c30-clara: #18495a;
-  --c10: var(--nevoa); --c10-esc: #d5e2e2; --c10-tinta: var(--azul); --c10-clara: rgba(238, 243, 243, .16); --c10-texto: var(--nevoa);
+  --gelo: #f7f7f5; --marinho: #13294b; --laranja: #ff7a1a;
+  --azul: var(--marinho); --nevoa: #ffffff; --dourado: var(--laranja); --branco: #ffffff; --preto: var(--marinho); --violeta: var(--laranja);
+  --c60: var(--gelo); --c60-funda: #ecece8; --c60-linha: rgba(19, 41, 75, .12); --c60-texto: var(--marinho); --c60-suave: rgba(19, 41, 75, .68);
+  --c30: var(--marinho); --c30-esc: #0c1c35; --c30-tinta: #ffffff; --c30-suave: rgba(255, 255, 255, .68); --c30-hover: rgba(255, 255, 255, .08); --c30-clara: #e4e9f1;
+  --c10: var(--laranja); --c10-esc: #ec6a0c; --c10-tinta: var(--marinho); --c10-clara: #ffe9d8; --c10-texto: #b84d05;
   --area: var(--c60); --menu: var(--c30); --moldura: var(--c60);
-  --cartao: var(--azul); --borda: #1f5263; --linha: #174756; --campo: #0a2f3a;
-  --tinta: var(--nevoa); --suave: rgba(238, 243, 243, .7); --fraco: rgba(238, 243, 243, .45);
-  --salvia: var(--dourado); --salvia-esc: #e4981f; --salvia-clara: #18495a; --salvia-tinta: var(--azul);
-  --vermelho: #ff5a52;
-  --ok: #8be3a8; --ok-bg: rgba(139, 227, 168, .12); --ok-borda: rgba(139, 227, 168, .35);
-  --sai: #ffd27a; --sai-bg: rgba(255, 210, 122, .13); --sai-borda: rgba(255, 210, 122, .4);
-  --atraso: #ffa29c; --atraso-bg: rgba(255, 90, 82, .16); --atraso-borda: rgba(255, 120, 112, .45);
-  --chega: #9fdcf0; --chega-bg: rgba(159, 220, 240, .12); --chega-borda: rgba(159, 220, 240, .38);
-  --livre: #c9d6d8; --livre-bg: rgba(238, 243, 243, .08); --livre-borda: rgba(238, 243, 243, .22);
-  --sombra: 0 10px 24px -18px rgba(14, 58, 71, .7);
+  --cartao: #ffffff; --borda: #e3e4e0; --linha: #efefec; --campo: #f7f7f5;
+  --tinta: #101f38; --suave: #5d6675; --fraco: #9aa1ab;
+  --salvia: var(--marinho); --salvia-esc: #0c1c35; --salvia-clara: #e4e9f1; --salvia-tinta: #ffffff;
+  --vermelho: #e5383b;
+  --ok: #1f7a46; --ok-bg: #eaf7ef; --ok-borda: #c4e8d1;
+  --sai: #a8520a; --sai-bg: #fff3e6; --sai-borda: #f8d6b3;
+  --atraso: #c81e1e; --atraso-bg: #fdecec; --atraso-borda: #f6c6c6;
+  --chega: var(--marinho); --chega-bg: #e8edf5; --chega-borda: #c9d3e4;
+  --livre: #5d6675; --livre-bg: #f2f3f2; --livre-borda: #e1e3e0;
+  --sombra: 0 1px 2px rgba(19, 41, 75, .05);
   --f: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   --r: 14px; --r-p: 9px;
-  color-scheme: dark;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -39,10 +39,10 @@ svg.i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor;
 
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: var(--r-p); border: 1px solid transparent; font-weight: 600; font-size: 13px; cursor: pointer; text-decoration: none; white-space: nowrap; }
 .btn svg { width: 15px; height: 15px; flex: none; }
-.btn--cheio { background: var(--c10); color: var(--c10-tinta); font-weight: 700; box-shadow: 0 6px 16px -10px rgba(0, 0, 0, .5); }
+.btn--cheio { background: var(--c10); color: var(--c10-tinta); font-weight: 700; box-shadow: 0 6px 16px -10px rgba(255, 122, 26, .9); }
 .btn--cheio:hover { background: var(--c10-esc); }
-.btn--sec { background: var(--dourado); color: var(--azul); }
-.btn--sec:hover { background: #ffb84a; }
+.btn--sec { background: var(--marinho); color: #ffffff; }
+.btn--sec:hover { background: #0c1c35; }
 .btn--borda { background: var(--cartao); border-color: var(--borda); color: var(--tinta); }
 .btn--borda:hover { border-color: var(--fraco); }
 .btn--perigo { background: var(--cartao); border-color: var(--atraso-borda); color: var(--atraso); }
