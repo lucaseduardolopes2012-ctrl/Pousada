@@ -204,12 +204,10 @@ h2.titulo { font-family: var(--display); font-variation-settings: "wdth" 80, "op
   const naoAchei = (t, p) => { raiz.innerHTML = `<main class="nao-achei"><div><h1>${t}</h1><p>${p}</p></div></main>`; document.title = t; };
 
   if (!/^[a-z0-9-]{3,40}$/.test(slug)) return naoAchei("Endereço incompleto", "O link da pousada precisa terminar com ?p= e o nome dela. Peça o link certo para a pousada.");
-  const COLS = "id,slug,nome,cidade,bairro,descricao,whatsapp,email,instagram,checkin_hora,checkout_hora,acesso,como_chegar,pagamentos,sinal_percentual,politica,fotos";
-  const { data: P, error: eP } = await sb.from("pousadas").select(COLS).eq("slug", slug).maybeSingle();
+  const { data: P, error: eP } = await sb.rpc("site_pousada", { p_slug: slug });
   if (eP) return naoAchei("Não deu para abrir a pousada", errText(eP) + " Recarregue a página.");
   if (!P) return naoAchei("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
-  const { data: QS } = await sb.from("quartos").select("id,nome,tipo,capacidade,diaria,descricao,foto_url").eq("pousada_id", P.id).eq("ativo", true);
-  const Q = (QS || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true }));
+  const Q = (P.quartos || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true }));
 
   const lugar = [P.bairro, P.cidade].filter(Boolean).join(", ");
   const zap = (() => { let d = String(P.whatsapp || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d.length >= 12 ? d : ""; })();

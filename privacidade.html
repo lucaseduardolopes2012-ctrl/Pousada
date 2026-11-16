@@ -97,7 +97,7 @@
 (async () => {
   const slug = new URLSearchParams(location.search).get("p") || "";
   if (!/^[a-z0-9-]{3,40}$/.test(slug)) return;
-  const { data: P } = await PG.sb.from("pousadas").select("nome,cidade,whatsapp,email").eq("slug", slug).maybeSingle();
+  const { data: P } = await PG.sb.rpc("site_pousada", { p_slug: slug });
   if (!P) return;
   document.querySelectorAll("[data-pousada]").forEach(el => { el.textContent = P.nome; });
   document.getElementById("topo-nome").textContent = P.nome;
