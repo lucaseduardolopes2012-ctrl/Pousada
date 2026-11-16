@@ -68,6 +68,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--c
 .e-ocupado { background: var(--ok-bg); border-color: var(--ok-borda); color: var(--ok); }
 .e-sai { background: var(--sai-bg); border-color: var(--sai-borda); color: var(--sai); }
 .e-atrasado, .e-cancelada { background: var(--atraso-bg); border-color: var(--atraso-borda); color: var(--atraso); }
+.e-pedido { background: var(--c10); border-color: var(--c10); color: var(--c10-tinta); }
 .e-chega, .e-proxima { background: var(--chega-bg); border-color: var(--chega-borda); color: var(--chega); }
 .e-livre, .e-fora, .e-encerrada { background: var(--livre-bg); border-color: var(--livre-borda); color: var(--livre); }
 

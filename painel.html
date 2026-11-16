@@ -114,6 +114,23 @@ details.tabela-alt td, details.tabela-alt th { padding: 3px 12px 3px 0; text-ali
 .pessoa-l div > span { display: block; color: var(--suave); font-size: 11.5px; }
 .pessoa-l div > span.tarde { color: var(--atraso); font-weight: 600; }
 .pessoa-l .btn { height: 30px; padding: 0 10px; font-size: 12px; }
+.pedidos { margin-bottom: 14px; border-color: var(--c10); box-shadow: 0 0 0 1px var(--c10); }
+.pedido { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--linha); }
+.pedido:last-child { border-bottom: 0; padding-bottom: 0; }
+.pedido .av { width: 36px; height: 36px; }
+.pedido b { font-size: 14px; font-weight: 700; }
+.pedido p { color: var(--suave); font-size: 12.5px; margin-top: 1px; }
+.pedido p a { color: var(--c10-texto); font-weight: 600; text-decoration: none; }
+.pedido .bts { display: flex; gap: 6px; }
+.pedido .bts .btn { height: 32px; padding: 0 12px; font-size: 12.5px; }
+@media (max-width: 640px) { .pedido { grid-template-columns: 36px minmax(0, 1fr); } .pedido .bts { grid-column: 1 / -1; } .pedido .bts .btn { flex: 1; } }
+.nav-item .n.v { background: var(--c10); }
+.site-link { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.site-link input { flex: 1 1 260px; font-size: 13px !important; }
+.qr { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; margin-top: 4px; }
+.qr .img { width: 150px; height: 150px; background: #fff; border: 1px solid var(--borda); border-radius: 12px; padding: 8px; }
+.qr .img svg { width: 100%; height: 100%; display: block; }
+@media (max-width: 520px) { .qr { grid-template-columns: 1fr; } }
 .vazio { padding: 18px; text-align: center; color: var(--suave); font-size: 13px; background: var(--campo); border-radius: 10px; }
 
 .av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 11.5px; flex: none; background: var(--av-bg, var(--salvia-clara)); color: var(--av-t, var(--salvia-esc)); }
@@ -239,7 +256,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     <a class="marca" href="#geral"><i id="m-ini"></i><b id="m-nome"></b></a>
     <a class="nav-item" href="#geral" data-v="geral" data-ic="grade">Visão geral<span class="n" data-atrasos hidden></span></a>
     <a class="nav-item" href="#quartos" data-v="quartos" data-ic="cama">Quartos</a>
-    <a class="nav-item" href="#estadias" data-v="estadias" data-ic="calendario">Estadias</a>
+    <a class="nav-item" href="#estadias" data-v="estadias" data-ic="calendario">Estadias<span class="n v" data-pedidos hidden></span></a>
     <a class="nav-item" href="#hospedes" data-v="hospedes" data-ic="pessoas">Hóspedes</a>
     <p class="grupo">Ajustes</p>
     <a class="nav-item" href="#config" data-v="config" data-ic="engrenagem">Configurações</a>
@@ -263,12 +280,13 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (async () => {
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
   const S = { pousada: null, papel: "dono", quartos: [], est: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,checkin_hora,checkout_hora";
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
   const P = {
@@ -311,7 +329,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   const dur = min => min >= 60 ? `${Math.floor(min / 60)}h${String(min % 60).padStart(2, "0")}` : `${min} min`;
   const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
   const semana = d => SEM[new Date(d + "T12:00:00Z").getUTCDay()];
-  const ROT = { ocupado: "Ocupado", sai: "Sai hoje", atrasado: "Saída atrasada", chega: "Chega hoje", livre: "Livre", fora: "Fora de uso", proxima: "Vai chegar" };
+  const ROT = { pedido: "Pedido do site", ocupado: "Ocupado", sai: "Sai hoje", atrasado: "Saída atrasada", chega: "Chega hoje", livre: "Livre", fora: "Fora de uso", proxima: "Vai chegar" };
   const FIM = { finalizada: ["Saiu", "encerrada"], cancelada: ["Cancelada", "cancelada"], no_show: ["Não veio", "cancelada"], solicitada: ["Pedido", "encerrada"] };
   const cod = r => "#" + String(r.codigo || "").padStart(5, "0");
   const nomeQ = id => (S.quartos.find(x => x.id === id) || {}).nome || "?";
@@ -324,6 +342,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       return r.saida === h ? "sai" : "ocupado";
     }
     if (r.status === "confirmada") return r.entrada <= h ? "chega" : "proxima";
+    if (r.status === "solicitada") return "pedido";
     return "encerrada";
   }
   function situacaoQuarto(q) {
@@ -390,6 +409,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     sb.channel("est-" + S.pousada.id).on("postgres_changes", { event: "*", schema: "public", table: "reservas", filter: `pousada_id=eq.${S.pousada.id}` }, p => {
       const n = p.new, i = n && n.id ? S.est.findIndex(x => x.id === n.id) : -1;
       if (p.eventType === "DELETE") S.est = S.est.filter(x => x.id !== (p.old || {}).id); else if (i >= 0) S.est[i] = n; else if (n && n.id) S.est.push(n);
+      if (p.eventType === "INSERT" && n && n.status === "solicitada") { PG.ding(); toast(`Pedido novo do site: ${n.nome}.`); }
       if (!S.gaveta) desenha();
     }).subscribe();
   }
@@ -408,10 +428,17 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     document.querySelectorAll("[data-v]").forEach(a => a.dataset.v === atual ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
     const atrasos = S.quartos.filter(q => situacaoQuarto(q).k === "atrasado").length;
     document.querySelectorAll("[data-atrasos]").forEach(n => { n.textContent = atrasos; n.hidden = !atrasos; });
-    $("sino-ponto").hidden = !atrasos; $("sino").setAttribute("aria-label", atrasos ? `${plural(atrasos, "saída atrasada", "saídas atrasadas")}` : "Nenhum aviso");
+    const pedidos = S.est.filter(r => r.status === "solicitada").length;
+    document.querySelectorAll("[data-pedidos]").forEach(n => { n.textContent = pedidos; n.hidden = !pedidos; });
+    $("sino-ponto").hidden = !(atrasos || pedidos);
+    $("sino").setAttribute("aria-label", [pedidos && plural(pedidos, "pedido do site", "pedidos do site"), atrasos && plural(atrasos, "saída atrasada", "saídas atrasadas")].filter(Boolean).join(" e ") || "Nenhum aviso");
     $("vista").innerHTML = { geral: vGeral, quartos: vQuartos, quarto: vQuarto, estadias: vEstadias, hospedes: vHospedes, config: vConfig }[S.v]();
     if (S.v === "geral") desenhaGrafico();
+    if (S.v === "config") desenhaQR();
   }
+  const urlSite = () => new URL(`site.html?p=${S.pousada.slug}`, location.href).href;
+  function svgQR(cel) { if (!window.qrcode) return ""; const q = qrcode(0, "M"); q.addData(urlSite()); q.make(); return q.createSvgTag({ cellSize: cel, margin: 2, scalable: true }); }
+  function desenhaQR() { const b = $("qr"); if (b) b.innerHTML = svgQR(4) || '<span class="suave" style="font-size:12px">QR code indisponível sem internet.</span>'; }
 
   /* ---------- visão geral ---------- */
   function vGeral() {
@@ -426,7 +453,9 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const num = (icone, rot, val, rod, alerta) => `<div class="cartao num ${alerta ? "alerta" : ""}"><div class="rot"><span class="q">${ic(icone)}</span>${rot}</div><b>${val}</b><small>${rod}</small></div>`;
     const linhaP = (s, botao) => `<div class="pessoa-l">${av(s.r.nome)}<div><b>${esc(s.r.nome)}</b><span class="${s.k === "atrasado" ? "tarde" : ""}">${esc(s.q.nome)} · ${s.k === "atrasado" ? textoSaida(s.r, "atrasado").replace(/^Saída era /, "era ") : s.k === "sai" ? `até ${esc(S.pousada.checkout_hora)}` : `a partir das ${esc(S.pousada.checkin_hora)}`}</span></div>${botao}</div>`;
     const sair = [...atras, ...saem], resumo = sair.length ? `${plural(sair.length, "quarto precisa", "quartos precisam")} ser liberado${sair.length > 1 ? "s" : ""} hoje${atras.length ? `, ${atras.length} com saída atrasada` : ""}.` : "Nenhuma saída marcada para hoje. Veja quem está em cada quarto.";
+    const peds = S.est.filter(r => r.status === "solicitada").sort((a, b) => a.entrada.localeCompare(b.entrada));
     return `<div class="cab"><div><h1>${oi}</h1><p>${resumo}</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
+      ${peds.length ? blocoPedidos(peds) : ""}
       <section class="numeros">
         ${num("cama", "Hospedados agora", hosp.length, `${plural(pessoas, "pessoa", "pessoas")} na pousada`)}
         ${num("saida", "Saem hoje", saem.length, `Até as ${esc(S.pousada.checkout_hora)} · ${at.toLowerCase()}`)}
@@ -441,6 +470,13 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       </section>
       <section class="cartao bloco"><div class="bloco-cab"><h2>Estadias em andamento</h2><a class="link" href="#estadias">Ver todas</a></div>${tabela(andamento, "Nenhum hóspede na pousada agora. Use Registrar estadia quando alguém chegar.")}</section>`;
   }
+
+  function blocoPedidos(peds) {
+    return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">Confirme ou recuse</span></div>
+      ${peds.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}, ${brl(r.valor_total)}${r.telefone ? ` · <a href="https://wa.me/${esc(zapDe(r.telefone))}" target="_blank" rel="noopener">${esc(r.telefone)}</a>` : ""}${r.observacoes ? `<br>Recado: ${esc(r.observacoes)}` : ""}</p></div>
+        <div class="bts"><button class="btn btn--cheio" data-acao="confirmar" data-id="${esc(r.id)}">Confirmar</button><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Ver ou trocar o quarto" aria-label="Ver pedido de ${esc(r.nome)}">${ic("lapis")}</button><button class="btn btn--perigo" data-acao="recusar" data-id="${esc(r.id)}">Recusar</button></div></div>`).join("")}</section>`;
+  }
+  const zapDe = t => { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d; };
 
   function tabela(lista, vazio) {
     if (!lista.length) return `<div class="vazio">${vazio}</div>`;
@@ -530,14 +566,14 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   }
 
   /* ---------- estadias ---------- */
-  const ABAS = () => { const h = hoje(); return { andamento: r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h), proximas: r => r.status === "confirmada" && r.entrada > h, encerradas: r => ["finalizada", "cancelada", "no_show"].includes(r.status) }; };
+  const ABAS = () => { const h = hoje(); return { pedidos: r => r.status === "solicitada", andamento: r => r.status === "hospedado" || (r.status === "confirmada" && r.entrada <= h), proximas: r => r.status === "confirmada" && r.entrada > h, encerradas: r => ["finalizada", "cancelada", "no_show"].includes(r.status) }; };
   function vEstadias() {
     const b = S.busca.toLowerCase(), A = ABAS();
     let l = S.est.filter(A[S.aba]).filter(r => !b || r.nome.toLowerCase().includes(b) || nomeQ(r.quarto_id).toLowerCase().includes(b) || cod(r).includes(b));
     l = S.aba === "encerradas" ? l.sort((x, y) => y.saida.localeCompare(x.saida)).slice(0, 150) : l.sort((x, y) => (S.aba === "andamento" ? x.saida.localeCompare(y.saida) : x.entrada.localeCompare(y.entrada)));
     return `<div class="cab"><div><h1>Estadias</h1><p>Quem está na pousada, quem vai chegar e quem já saiu.</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
-      <div class="abas" role="group" aria-label="Escolher estadias">${[["andamento", "Em andamento"], ["proximas", "Próximas"], ["encerradas", "Encerradas"]].map(([k, t]) => `<button data-aba="${k}" aria-pressed="${S.aba === k}">${t}<b>${S.est.filter(A[k]).length}</b></button>`).join("")}</div>
-      <section class="cartao bloco">${tabela(l, { andamento: "Ninguém hospedado agora.", proximas: "Nenhuma chegada marcada. Use Registrar estadia para anotar uma reserva.", encerradas: "Nenhuma estadia encerrada ainda." }[S.aba])}</section>`;
+      <div class="abas" role="group" aria-label="Escolher estadias">${[["pedidos", "Pedidos do site"], ["andamento", "Em andamento"], ["proximas", "Próximas"], ["encerradas", "Encerradas"]].map(([k, t]) => `<button data-aba="${k}" aria-pressed="${S.aba === k}">${t}<b>${S.est.filter(A[k]).length}</b></button>`).join("")}</div>
+      <section class="cartao bloco">${tabela(l, { pedidos: "Nenhum pedido esperando. Os pedidos feitos no site da pousada aparecem aqui.", andamento: "Ninguém hospedado agora.", proximas: "Nenhuma chegada marcada. Use Registrar estadia para anotar uma reserva.", encerradas: "Nenhuma estadia encerrada ainda." }[S.aba])}</section>`;
   }
 
   /* ---------- hóspedes (montado a partir das estadias) ---------- */
@@ -563,11 +599,17 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       <form class="cartao bloco" id="f-config" novalidate style="max-width:620px;display:grid;gap:16px"><div class="campos">
         <label class="todo">Nome da pousada<input id="c-nome" maxlength="80" value="${esc(p.nome)}"></label>
         <label class="todo">Cidade<input id="c-cid" maxlength="80" value="${esc(p.cidade)}"></label>
+        <label class="todo">Apresentação no site <small>opcional, aparece embaixo do nome</small><textarea id="c-desc" maxlength="600">${esc(p.descricao || "")}</textarea></label>
+        <label class="todo">WhatsApp da pousada <small>com DDD, para os hóspedes falarem com você</small><input id="c-zap" type="tel" maxlength="20" value="${esc(p.whatsapp || "")}" placeholder="(41) 99999-0000"></label>
         <label>Entrada a partir das<input id="c-ci" type="time" value="${esc(p.checkin_hora)}"></label>
         <label>Saída até as<input id="c-co" type="time" value="${esc(p.checkout_hora)}"></label></div>
         <p class="erro" id="c-err" role="alert" hidden></p>
         <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
-        <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}.</p></form>`;
+        <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}.</p></form>
+      <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Site da pousada</h2><a class="link" href="${esc(urlSite())}" target="_blank" rel="noopener">Abrir o site</a></div>
+        <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
+        <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
+        <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>`;
   }
 
   /* ---------- gaveta: estadia e quarto ---------- */
@@ -590,7 +632,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <label>Telefone<input id="g-tel" type="tel" maxlength="20" value="${esc(f.telefone)}"></label><label>Documento <small>opcional</small><input id="g-doc" maxlength="30" value="${esc(f.documento)}"></label>
         <label>Entrada<input id="g-in" type="date" value="${esc(f.entrada)}"></label><label>Saída<input id="g-out" type="date" value="${esc(f.saida)}"></label>
         <label>Adultos<input id="g-ad" type="number" min="1" max="20" value="${f.adultos}"></label><label>Crianças<input id="g-cr" type="number" min="0" max="20" value="${f.criancas}"></label>
-        <label class="todo">Situação<select id="g-st">${[["hospedado", "Já está hospedado"], ["confirmada", "Ainda vai chegar"], ["finalizada", "Já saiu"], ["cancelada", "Cancelada"], ["no_show", "Não veio"]].map(([k, t]) => `<option value="${k}" ${f.status === k ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label class="todo">Situação<select id="g-st">${[...(f.status === "solicitada" ? [["solicitada", "Pedido do site, ainda não confirmado"]] : []), ["hospedado", "Já está hospedado"], ["confirmada", "Ainda vai chegar"], ["finalizada", "Já saiu"], ["cancelada", "Cancelada"], ["no_show", "Não veio"]].map(([k, t]) => `<option value="${k}" ${f.status === k ? "selected" : ""}>${t}</option>`).join("")}</select></label>
         <label>Valor total (R$) <small>em branco: diárias</small><input id="g-val" type="number" min="0" step="0.01" value="${f.valor_total === "" ? "" : esc(f.valor_total)}"></label><label>Já pago (R$)<input id="g-pago" type="number" min="0" step="0.01" value="${esc(f.sinal_pago)}"></label>
         <label class="todo">Observações<textarea id="g-obs" maxlength="500">${esc(f.observacoes)}</textarea></label></div>
         <p class="erro" id="g-err" role="alert" hidden></p></form>
@@ -662,6 +704,10 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     switch (d.acao) {
       case "filtro": S.menuFiltro = !S.menuFiltro; return desenha();
       case "baixar": return baixar();
+      case "copiar-link": try { await navigator.clipboard.writeText(urlSite()); toast("Link copiado."); } catch (er) { $("c-link").select(); toast("Selecione e copie o link."); } return;
+      case "imprimir-qr": { const w = open("", "_blank"); if (!w) { toast("Permita janelas novas para imprimir."); return; } w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>QR code ${esc(S.pousada.nome)}</title><body style="font-family:system-ui,sans-serif;text-align:center;padding:40px"><h1 style="font-size:34px;margin:0 0 6px">${esc(S.pousada.nome)}</h1><p style="font-size:20px;margin:0 0 24px">Aponte a câmera para ver os quartos e fazer sua ficha</p><div style="width:360px;margin:0 auto">${svgQR(8)}</div><p style="font-size:14px;color:#555;margin-top:18px">${esc(urlSite())}</p><script>onload=()=>print()<\/script></body></html>`); w.document.close(); return; }
+      case "confirmar": t.disabled = true; return muda(d.id, { status: "confirmada" }, x => `Reserva de ${x.nome} confirmada. Avise pelo WhatsApp.`);
+      case "recusar": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } return muda(d.id, { status: "cancelada" }, x => `Pedido de ${x.nome} recusado.`);
       case "saida": t.disabled = true; return muda(d.id, { status: "finalizada" }, x => `Saída de ${x.nome} registrada. Quarto livre.`);
       case "entrada": t.disabled = true; return muda(d.id, { status: "hospedado" }, x => `Entrada de ${x.nome} registrada.`);
       case "nao-veio": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo para confirmar"; return; } return muda(d.id, { status: "no_show" }, x => `${x.nome} marcado como não veio.`);
@@ -694,8 +740,9 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   });
   document.addEventListener("submit", async e => {
     if (e.target.id !== "f-config") return; e.preventDefault(); const err = $("c-err"); err.hidden = true;
-    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00" };
+    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), descricao: $("c-desc").value.trim(), whatsapp: $("c-zap").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00" };
     if (d.nome.length < 2) { err.textContent = "Coloque o nome da pousada."; err.hidden = false; return; }
+    const zd = d.whatsapp.replace(/\D/g, ""); if (zd && (zd.length < 10 || zd.length > 13)) { err.textContent = "O WhatsApp precisa ter DDD e número, por exemplo (41) 99999-0000."; err.hidden = false; return; }
     const res = await sb.from("pousadas").update(d).eq("id", S.pousada.id).select(COLS).single();
     if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
     S.pousada = res.data; marca(); toast("Configurações salvas."); desenha();
