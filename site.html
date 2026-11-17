@@ -384,6 +384,26 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     .q:hover .f img { scale: 1.06; }
   }
 }
+/* avaliações */
+.avaliacoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.avaliacao { margin: 0; padding: 22px 24px; border: 1px solid var(--fio); border-radius: 18px; background: var(--c60, #fff); display: grid; gap: 14px; }
+.avaliacao blockquote { margin: 0; color: var(--tinta, inherit); font-size: 15.5px; line-height: 1.6; }
+.avaliacao figcaption { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--sobre-preto); font-size: 13.5px; }
+.estrelas { color: var(--titulo, var(--azul)); letter-spacing: .12em; font-size: 16px; }
+/* sobre a casa */
+.regras-casa { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); border-top: 1px solid var(--fio); }
+.regra { padding: 20px 24px 20px 0; border-bottom: 1px solid var(--fio); }
+.regra h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 19px; font-weight: 700; }
+.regra h3 span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--titulo, var(--azul)); color: #fff; font: 700 12px/1 var(--f); }
+.regras-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; color: var(--sobre-preto); }
+.regras-lista li { position: relative; padding-left: 24px; }
+.regras-lista li::before { content: "☆"; position: absolute; left: 0; top: 0; color: var(--titulo, currentColor); }
+.onde-casa { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px 28px; padding-top: 26px; }
+.onde-casa h3 { margin: 0 0 6px; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 19px; font-weight: 700; }
+.onde-casa address { font-style: normal; font-size: 17px; }
+.onde-casa p { margin: 4px 0 0; color: var(--sobre-preto); }
+.acoes-casa { display: flex; flex-wrap: wrap; gap: 10px; }
+.acoes-casa .btn { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -420,6 +440,27 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
   // tema de cores próprio de cada pousada (as outras ficam com o marinho e laranja padrão)
   const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
+  // texto da casa: regras, café, endereço e contato (por pousada)
+  const CASAS = {
+    "pousada-exemplo": {
+      endereco: "Rua Ferreira Lopes, 128 – Guaraqueçaba, PR",
+      mapa: "https://www.google.com/maps/place/Pousada+Guar%C3%A1+%2F+DoThon/@-25.2986895,-48.9382581,10z/data=!4m13!1m2!2m1!1spousada+guara+dothon!3m9!1s0x94db0b081e9cdd0d:0x4b2598d8a23c1f52!5m2!4m1!1i2!8m2!3d-25.2986895!4d-48.3285169!15sChRwb3VzYWRhIGd1YXJhIGRvbnRvbpIBA2lubuABAA!16s%2Fg%2F11h0mpwdxz?entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D",
+      zap: "5541996336644", zapTexto: "(41) 99633-6644 (Thon)",
+      avaliacoes: [
+        { t: "Pousada bem agradável e tranquila, café da manhã simples e fresquinho. O café do Thon é sensacional! O Thon é um ótimo anfitrião, soube recomendar excelentes passeios e lugares para comer. Também recomendou o barqueiro Marcos que nos levou em passeios incríveis. Sem os conselhos do Thon acho que a viagem não teria sido tão legal e isso foi o diferencial da pousada. Quarto simples e banheiro bacana. Quiosque para sentar e relaxar ao ar livre. Lugar silencioso ao lado da pracinha do skate, pertinho do trapiche pra ir a pé." },
+        { t: "Excelente experiência! A pousada tem uma recepção muito acolhedora, com atendimento atencioso desde a chegada. O café da manhã é simples, porém, bem servido. Além disso, recebemos ótimas indicações de lugares para conhecer na região e tivemos conversas muito agradáveis com o Thon. O ambiente é tranquilo, organizado e com clima familiar. Com certeza voltaremos e recomendamos muito!" },
+        { t: "Tivemos uma experiência maravilhosa na Pousada Guará! 💚 Fomos muito bem acolhidos, com muita atenção e carinho durante toda a nossa estadia. O lugar é tranquilo, aconchegante e perfeito para quem busca descansar e recarregar as energias. Agradecemos por todo o cuidado e pela hospitalidade. Com certeza foi uma ótima escolha e esperamos voltar em breve! 🌿✨", nota: 5, quando: "Uma semana atrás, no Google" },
+        { t: "A melhor recepção de Guaraqueçaba! Super recomendamos! Que grata surpresa! Chegamos sem reserva e o Tom e seu pai nos receberam de braços abertos. Quartos limpinhos, cheirosos, toalhas super macias e um café da manhã delicioso, cheio de histórias boas. O Tom e a sua esposa são daquelas pessoas raras que a gente leva para a vida no coração. Já conhecíamos Guara, mas dessa vez levamos um casal de amigos que também se apaixonou pelo lugar. Com certeza voltaremos em breve para fazer os passeios de barco. Nota mil!", nota: 5 }
+      ],
+      blocos: [
+        ["Proibido", ["Fumar em áreas internas.", "Circular com trajes íntimos e de banho.", "Utilizar som alto."]],
+        ["Atenção", ["Não utilizar as toalhas de formas inadequadas, como para retirar maquiagem ou limpar calçados. Sujeito a cobrança de taxas."]],
+        ["Cuidados", ["Ao sair: apagar as luzes, desligar o ventilador e a TV, fechar as portas dos quartos e guardar as chaves.", "Ao entrar: depois das 22h, manter o silêncio e fechar o portão de acesso."]],
+        ["Café da manhã", ["Horário: das 07h às 09h.", "Horário extra pode ser combinado, com valor adicional por pessoa."]]
+      ]
+    }
+  };
+  const CASA = CASAS[slug];
   const GUARAS = TEMAS[slug] && TEMAS[slug].tema === "guara";
   if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
   const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
@@ -464,7 +505,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   /* ---------- página ---------- */
   raiz.innerHTML = `
   <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_LUA : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="sobre.html?p=${encodeURIComponent(slug)}">Sobre a casa</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
+    <nav><a class="l" href="#quartos">Quartos</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
@@ -495,9 +536,11 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
     <section class="ficha-faixa" id="ficha">${ONDAS_TOPO}${GUARAS ? bando("bando--ficha") : ""}<div class="dentro" id="ficha-dentro"></div></section>
 
+    ${avaliacoes()}
+    ${sobreCasa()}
     ${saber()}
   </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="sobre.html?p=${encodeURIComponent(slug)}">Sobre a casa</a><a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
@@ -552,6 +595,26 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       <dialog class="visor" id="visor" aria-label="Fotos da ${esc(P.nome)}"><img id="visor-img" alt=""><p class="conta" id="visor-conta" aria-live="polite"></p>
         <button type="button" class="vb fecha" data-visor="fechar" aria-label="Fechar">×</button>${F.length > 1 ? `<button type="button" class="vb ant" data-visor="-1" aria-label="Foto anterior">‹</button><button type="button" class="vb prox" data-visor="1" aria-label="Próxima foto">›</button>` : ""}</dialog></section>`;
   }
+
+  function avaliacoes() {
+    if (!CASA || !(CASA.avaliacoes || []).length) return "";
+    const estrelas = n => `<span class="estrelas" role="img" aria-label="${n} de 5 estrelas">${"★".repeat(n)}</span>`;
+    return `<section class="secao" id="avaliacoes"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Avaliações</h2><p>O que os hóspedes contam depois da estadia.</p></div>
+      <div class="avaliacoes">${CASA.avaliacoes.map(a => `<figure class="avaliacao"><blockquote>${esc(a.t)}</blockquote>${a.nota || a.quando ? `<figcaption>${a.nota ? estrelas(a.nota) : ""}${a.quando ? `<span>${esc(a.quando)}</span>` : ""}</figcaption>` : ""}</figure>`).join("")}</div></div></section>`;
+  }
+
+  function sobreCasa() {
+    if (!CASA) return "";
+    const lista = it => `<ul class="regras-lista">${it.map(t => `<li>${esc(t)}</li>`).join("")}</ul>`;
+    const acoes = [
+      CASA.mapa ? `<a class="btn btn--cheio" href="${esc(CASA.mapa)}" target="_blank" rel="noopener">Abrir no Google Maps</a>` : "",
+      CASA.zap ? `<a class="btn btn--claro" href="${linkZap0(CASA.zap, `Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""
+    ].join("");
+    return `<section class="secao" id="sobre"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Sobre a casa</h2><p>O que combinar antes de chegar, para a estadia ser boa para todo mundo.</p></div>
+      <div class="regras-casa">${CASA.blocos.map(([t, it], i) => `<div class="regra"><h3><span>${i + 1}</span>${esc(t)}</h3>${lista(it)}</div>`).join("")}</div>
+      <div class="onde-casa"><div><h3>Endereço e contato</h3><address>${esc(CASA.endereco)}</address>${CASA.zapTexto ? `<p>WhatsApp: ${esc(CASA.zapTexto)}</p>` : ""}</div><div class="acoes-casa">${acoes}</div></div></div></section>`;
+  }
+  function linkZap0(num, msg) { return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`; }
 
   function saber() {
     const it = [];
