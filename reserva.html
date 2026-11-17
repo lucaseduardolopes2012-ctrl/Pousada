@@ -137,6 +137,8 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 
   // estados do pedido, na linguagem do hóspede
   const ESTADOS = {
+    aguardando_pagamento: { rotulo: "Aguardando pagamento", tom: "espera", passo: 0, texto: R => `Pague o sinal de <b>${brl(R.sinal_exigido)}</b> por Pix até ${hora(R.expira_em)} de ${dmy(String(R.expira_em).slice(0, 10))}. Assim que a pousada receber, o pedido é aprovado e esta página muda sozinha.` },
+    expirada: { rotulo: "Prazo vencido", tom: "nao", passo: -1, texto: () => "O prazo de 24 horas para pagar o sinal acabou e o pedido foi cancelado. Você pode fazer um novo pedido." },
     solicitada: { rotulo: "Pendente", tom: "espera", passo: 0, texto: () => "A pousada recebeu seu pedido e ainda vai confirmar. Esta página atualiza sozinha, é só deixar aberta ou voltar depois." },
     confirmada: { rotulo: "Confirmada", tom: "ok", passo: 1, texto: () => `Sua reserva está confirmada. A entrada é a partir das ${esc(P.checkin_hora)}.` },
     hospedado: { rotulo: "Hospedado", tom: "ok", passo: 2, texto: () => `Você já está hospedado. A saída é até as ${esc(P.checkout_hora)}. Boa estadia!` },
@@ -144,12 +146,13 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     cancelada: { rotulo: "Recusada ou cancelada", tom: "nao", passo: -1, texto: () => "A pousada não pôde confirmar este pedido, ou ele foi cancelado. Você pode fazer um novo pedido com outras datas ou outro quarto." },
     no_show: { rotulo: "Não compareceu", tom: "nao", passo: -1, texto: () => "A pousada registrou que você não chegou nas datas da reserva. Se foi engano, faça um novo pedido." }
   };
-  const PASSOS = ["Pendente", "Confirmada", "Hospedado", "Encerrada"];
+  const PASSOS = R => [Number(R.sinal_exigido) > 0 ? "Pagamento do sinal" : "Pendente", "Confirmada", "Hospedado", "Encerrada"];
+  const hora = iso => new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   // formas de pagar o que falta (sinal e/ou restante)
   function opcoesPix(R) {
     const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pct = P.sinal_percentual || 0;
-    const sinal = pct > 0 && pct < 100 ? Math.round(total * pct) / 100 : 0, falta = Math.max(0, Math.round((total - pago) * 100) / 100), op = [];
+    const sinal = Number(R.sinal_exigido) > 0 ? Number(R.sinal_exigido) : pct > 0 && pct < 100 ? Math.round(total * pct) / 100 : 0, falta = Math.max(0, Math.round((total - pago) * 100) / 100), op = [];
     const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: P.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + String(R.codigo).padStart(5, "0") }) });
     if (sinal > 0 && pago + 0.005 < sinal) op.push(mk("sinal", `Só o sinal de ${pct}%`, Math.round((sinal - pago) * 100) / 100));
     if (falta > 0) op.push(mk("total", pago > 0 ? "O que falta" : "Valor total", falta));
@@ -162,20 +165,20 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", passo: -1, texto: () => "" };
     const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pc = total > 0 ? Math.min(100, Math.round(pago / total * 100)) : 0;
     const noites = Math.round((new Date(R.saida + "T12:00:00Z") - new Date(R.entrada + "T12:00:00Z")) / 86400000);
-    const pagavel = P.pix_chave && (R.status === "solicitada" || R.status === "confirmada");
+    const pagavel = P.pix_chave && (R.status === "aguardando_pagamento" || R.status === "solicitada" || R.status === "confirmada");
     const op = pagavel ? opcoesPix(R) : [];
-    const passos = E.passo >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS.map((t, i) => `<li class="${i < E.passo ? "feito" : i === E.passo ? "agora" : ""}" ${i === E.passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
+    const passos = E.passo >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(R).map((t, i) => `<li class="${i < E.passo ? "feito" : i === E.passo ? "agora" : ""}" ${i === E.passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
     const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
     const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
         <div class="barra" role="img" aria-label="${pc}% pago"><i style="--pc:${pc}%"></i></div>
-        <p>${pago > 0 ? `Recebido: <b>${brl(pago)}</b> de ${brl(total)}.` : `Nada recebido ainda. Valor da estadia: <b>${brl(total)}</b>.`}${pagavel && P.sinal_percentual && pago <= 0 && P.sinal_percentual < 100 ? ` A pousada pede sinal de ${P.sinal_percentual}% para confirmar.` : ""}</p>
+        <p>${pago > 0 ? `Recebido: <b>${brl(pago)}</b> de ${brl(total)}.` : `Nada recebido ainda. Valor da estadia: <b>${brl(total)}</b>.`}${pagavel && R.status !== "aguardando_pagamento" && P.sinal_percentual && pago <= 0 && P.sinal_percentual < 100 ? ` A pousada pede sinal de ${P.sinal_percentual}% para confirmar.` : ""}</p>
         ${op.length ? `<div class="pix" id="pix"><h3>Pagar por Pix</h3>
           ${op.length > 1 ? `<div class="pix-opcoes" role="radiogroup" aria-label="Quanto pagar agora">${op.map((o, k) => `<label class="pix-op"><input type="radio" name="pix-op" value="${o.id}"${k === 0 ? " checked" : ""}><span><b>${esc(o.rotulo)}</b><small>${brl(o.valor)}</small></span></label>`).join("")}</div>` : ""}
           <p class="pix-valor" id="pix-valor" aria-live="polite"></p>
           <div class="pix-qr" id="pix-qr" role="img"></div>
           <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
           <div class="pix-copia"><input id="pix-cod" readonly aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
-          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. Quando ela conferir o pagamento, o valor recebido muda aqui.</p></div>` : ""}</section>` : "";
+          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. ${R.status === "aguardando_pagamento" ? "Assim que ela receber, seu pedido é aprovado e esta página muda sozinha." : "Quando ela conferir o pagamento, o valor recebido muda aqui."}</p></div>` : ""}</section>` : "";
     const quando = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const aberto = $("estado-bloco");
     raiz.innerHTML = `
@@ -186,7 +189,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     <main><div class="dentro">
       <h1>Pedido ${cod(R.codigo)}</h1>
       <p class="sub">Olá, ${esc(R.nome)}. Aqui você vê em que pé está o seu pedido na ${esc(P.nome)}.</p>
-      <section class="estado ${E.tom}" id="estado-bloco" aria-live="polite"><span class="pilula">${esc(E.rotulo)}</span><p>${E.texto()}</p>${passos}</section>
+      <section class="estado ${E.tom}" id="estado-bloco" aria-live="polite"><span class="pilula">${esc(E.rotulo)}</span><p>${E.texto(R)}</p>${passos}</section>
       <dl class="dados">
         <div><dt>Quarto</dt><dd>${esc(R.quarto)}</dd></div>
         <div><dt>Entrada</dt><dd>${dia(R.entrada)}</dd></div>
@@ -226,10 +229,10 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     history.replaceState(null, "", `reserva.html?p=${encodeURIComponent(slug)}&c=${c}`);
     desenha(R);
     clearInterval(timer);
-    if (["solicitada", "confirmada", "hospedado"].includes(R.status)) timer = setInterval(async () => {
+    if (["aguardando_pagamento", "solicitada", "confirmada", "hospedado"].includes(R.status)) timer = setInterval(async () => {
       if (document.hidden) return;
       const r = await consulta(c, tel);
-      if (r.R) { const mudou = r.R.status !== atual.status || r.R.sinal_pago !== atual.sinal_pago; if (mudou) { atual = r.R; desenha(r.R, "Atualizado agora: o estado do pedido mudou."); if (!["solicitada", "confirmada", "hospedado"].includes(r.R.status)) clearInterval(timer); } else { const a = $("atualizado"); if (a) a.textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.`; } }
+      if (r.R) { const mudou = r.R.status !== atual.status || r.R.sinal_pago !== atual.sinal_pago; if (mudou) { atual = r.R; desenha(r.R, "Atualizado agora: o estado do pedido mudou."); if (!["aguardando_pagamento", "solicitada", "confirmada", "hospedado"].includes(r.R.status)) clearInterval(timer); } else { const a = $("atualizado"); if (a) a.textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.`; } }
     }, 30000);
   }
 

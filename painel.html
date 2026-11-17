@@ -334,7 +334,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 (async () => {
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
-  const S = { pousada: null, papel: "dono", quartos: [], est: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
+  const S = { pousada: null, papel: "dono", quartos: [], est: [], pend: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
   const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual";
   const TERMOS = "2026-11-16";
 
@@ -475,14 +475,17 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       sb.from("quartos").select("*").eq("pousada_id", Pid),
       sb.from("reservas").select("*").eq("pousada_id", Pid).or(`saida.gte.${addDias(hoje(), -180)},status.in.(hospedado,confirmada)`).order("entrada").limit(2000),
     ]);
-    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); S.est = r.data || [];
+    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); const todas = r.data || []; S.est = todas.filter(x => x.status !== "aguardando_pagamento"); S.pend = todas.filter(x => x.status === "aguardando_pagamento");
     if (q.error || r.error) toast(errText(q.error || r.error));
   }
   function assinar() {
     sb.channel("est-" + S.pousada.id).on("postgres_changes", { event: "*", schema: "public", table: "reservas", filter: `pousada_id=eq.${S.pousada.id}` }, p => {
-      const n = p.new, i = n && n.id ? S.est.findIndex(x => x.id === n.id) : -1;
-      if (p.eventType === "DELETE") S.est = S.est.filter(x => x.id !== (p.old || {}).id); else if (i >= 0) S.est[i] = n; else if (n && n.id) S.est.push(n);
+      const n = p.new, id = n && n.id ? n.id : (p.old || {}).id, antes = S.pend.find(x => x.id === id);
+      S.est = S.est.filter(x => x.id !== id); S.pend = S.pend.filter(x => x.id !== id);
+      if (p.eventType !== "DELETE" && n && n.id) (n.status === "aguardando_pagamento" ? S.pend : S.est).push(n);
       if (p.eventType === "INSERT" && n && n.status === "solicitada") { PG.ding(); toast(`Pedido novo do site: ${n.nome}.`); }
+      if (p.eventType === "INSERT" && n && n.status === "aguardando_pagamento") toast(`Novo pedido de ${n.nome}, aguardando o Pix do sinal.`);
+      if (antes && n && n.status === "confirmada") { PG.ding(); toast(`Sinal pago: reserva de ${n.nome} aprovada.`); }
       if (!S.gaveta) desenha();
     }).subscribe();
   }
@@ -547,6 +550,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const peds = S.est.filter(r => r.status === "solicitada").sort((a, b) => a.entrada.localeCompare(b.entrada));
     return `<div class="cab"><div><h1>${oi}</h1><p>${resumo}</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
       ${peds.length ? blocoPedidos(peds) : ""}
+      ${blocoAguardando()}
       <section class="numeros">
         ${num("cama", "Hospedados agora", hosp.length, `${plural(pessoas, "pessoa", "pessoas")} na pousada`)}
         ${num("saida", "Saem hoje", saem.length, `Até as ${esc(S.pousada.checkout_hora)} · ${at.toLowerCase()}`)}
@@ -566,6 +570,15 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">Confirme ou recuse</span></div>
       ${peds.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}, ${brl(r.valor_total)}${r.telefone ? ` · <a href="https://wa.me/${esc(zapDe(r.telefone))}" target="_blank" rel="noopener">${esc(r.telefone)}</a>` : ""}${r.observacoes ? `<br>Recado: ${esc(r.observacoes)}` : ""}</p></div>
         <div class="bts"><button class="btn btn--cheio" data-acao="confirmar" data-id="${esc(r.id)}">Confirmar</button><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Ver ou trocar o quarto" aria-label="Ver pedido de ${esc(r.nome)}">${ic("lapis")}</button><button class="btn btn--perigo" data-acao="recusar" data-id="${esc(r.id)}">Recusar</button></div></div>`).join("")}</section>`;
+  }
+  const sinalDe = r => Math.round(Number(r.valor_total || 0) * (S.pousada.sinal_percentual || 0)) / 100;
+  function blocoAguardando() {
+    const l = S.pend.filter(r => new Date(r.criado_em).getTime() + 864e5 > Date.now()).sort((a, b) => a.entrada.localeCompare(b.entrada));
+    if (!l.length) return "";
+    return `<section class="cartao bloco pedidos" id="aguardando"><div class="bloco-cab"><h2>${plural(l.length, "pedido aguardando o sinal", "pedidos aguardando o sinal")}</h2><span class="pilula" style="background:var(--linha);color:var(--tinta)">Ainda não chegaram para aprovar</span></div>
+      <p class="suave" style="font-size:13px;margin:0 0 10px">O hóspede recebeu o QR code do Pix. Quando o dinheiro cair na sua conta, toque em "Recebi" e a reserva é aprovada na hora. Quem não pagar em 24 horas é cancelado.</p>
+      ${l.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${brl(r.valor_total)} · sinal de ${brl(sinalDe(r))}${r.telefone ? ` · ${esc(r.telefone)}` : ""}</p></div>
+        <div class="bts"><button class="btn btn--cheio" data-acao="recebi" data-id="${esc(r.id)}" data-valor="${sinalDe(r)}">Recebi ${brl(sinalDe(r))}</button><button class="btn btn--perigo" data-acao="cancelar-pend" data-id="${esc(r.id)}">Cancelar</button></div></div>`).join("")}</section>`;
   }
   const zapDe = t => { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d; };
 
@@ -807,6 +820,8 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       case "pix-remover": { if (d.certeza !== "1") { d.certeza = "1"; toast("Toque de novo para remover a chave Pix."); return; } t.disabled = true; const res = await sb.from("pousadas").update({ pix_chave: "" }).eq("id", S.pousada.id).select(COLS).single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pousada = res.data; toast("Chave Pix removida."); return desenha(); }
       case "copiar-link": try { await navigator.clipboard.writeText(urlSite()); toast("Link copiado."); } catch (er) { $("c-link").select(); toast("Selecione e copie o link."); } return;
       case "imprimir-qr": { const w = open("", "_blank"); if (!w) { toast("Permita janelas novas para imprimir."); return; } w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>QR code ${esc(S.pousada.nome)}</title><body style="font-family:system-ui,sans-serif;text-align:center;padding:40px"><h1 style="font-size:34px;margin:0 0 6px">${esc(S.pousada.nome)}</h1><p style="font-size:20px;margin:0 0 24px">Aponte a câmera para ver os quartos e fazer sua ficha</p><div style="width:360px;margin:0 auto">${svgQR(8)}</div><p style="font-size:14px;color:#555;margin-top:18px">${esc(urlSite())}</p><script>onload=()=>print()<\/script></body></html>`); w.document.close(); return; }
+      case "recebi": { t.disabled = true; const r0 = S.pend.find(x => x.id === d.id), valor = Math.max(Number(r0 ? r0.sinal_pago : 0), Number(d.valor)); const res = await sb.from("reservas").update({ sinal_pago: valor }).eq("id", d.id).select().single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pend = S.pend.filter(x => x.id !== d.id); (res.data.status === "aguardando_pagamento" ? S.pend : S.est).push(res.data); toast(res.data.status === "aguardando_pagamento" ? "Valor registrado, mas ainda abaixo do sinal." : `Sinal registrado. Reserva de ${res.data.nome} aprovada.`); return desenha(); }
+      case "cancelar-pend": { if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } t.disabled = true; const res = await sb.from("reservas").update({ status: "cancelada" }).eq("id", d.id).select().single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pend = S.pend.filter(x => x.id !== d.id); S.est.push(res.data); toast(`Pedido de ${res.data.nome} cancelado.`); return desenha(); }
       case "confirmar": t.disabled = true; return muda(d.id, { status: "confirmada" }, x => `Reserva de ${x.nome} confirmada. Avise pelo WhatsApp.`);
       case "recusar": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } return muda(d.id, { status: "cancelada" }, x => `Pedido de ${x.nome} recusado.`);
       case "saida": t.disabled = true; return muda(d.id, { status: "finalizada" }, x => `Saída de ${x.nome} registrada. Quarto livre.`);

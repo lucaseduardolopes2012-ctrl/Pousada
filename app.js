@@ -11,7 +11,7 @@
   const noites = (a, b) => Math.round((toUTC(b) - toUTC(a)) / 86400000);
   const dm = s => s ? `${s.slice(8, 10)}/${s.slice(5, 7)}` : "";
   const dmy = s => s ? `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}` : "";
-  const STATUS = { solicitada: "Pedido novo", confirmada: "Confirmada", hospedado: "Hospedado", finalizada: "Finalizada", cancelada: "Cancelada", no_show: "Não veio" };
+  const STATUS = { aguardando_pagamento: "Aguardando pagamento", solicitada: "Pedido novo", confirmada: "Confirmada", hospedado: "Hospedado", finalizada: "Finalizada", cancelada: "Cancelada", no_show: "Não veio" };
   const ORIGEM = { site: "Site", balcao: "Balcão", telefone: "Telefone", whatsapp: "WhatsApp", booking: "Booking", outro: "Outro" };
 
   function errText(e) {
