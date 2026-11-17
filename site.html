@@ -8,7 +8,8 @@
 <meta name="theme-color" content="#13294b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Federo&display=swap">
+<link rel="icon" type="image/png" href="img/favicon-guara.png">
 <link rel="stylesheet" href="app.css">
 <style>
 /* Site público da pousada. Paleta do dono: branco-gelo (fundo, 60%), azul-marinho (barra, bilhete, cartões e faixa da ficha, 30%), laranja (só ação e seleção, 10%).
@@ -254,6 +255,14 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 .ondas-topo svg + svg path { opacity: .3; }
 h1.nome .pal { display: inline-block; }
 h1.nome .le { display: inline-block; transform-origin: 0 100%; }
+/* logo do guará: "Pousada" em cima, GUARÁ embaixo, com o U trocado por uma meia-lua com o guará dentro */
+.guara-lockup { display: inline-flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .9; }
+.guara-lockup .lk-p { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 80, "opsz" 96; font-size: .36em; letter-spacing: .01em; margin-bottom: .06em; }
+.guara-lockup .lk-g { font-family: "Federo", var(--display), serif; font-size: 1em; letter-spacing: .06em; white-space: nowrap; display: inline-flex; align-items: baseline; }
+.guara-u { display: inline-block; width: .8em; height: .8em; margin: 0 .02em; overflow: visible; vertical-align: baseline; fill: currentColor; stroke: none; }
+.guara-u path { fill: currentColor; stroke: none; }
+.guara-u .tr { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.guara-u .olho { fill: #fff; stroke: none; }
 .risco { display: block; width: min(340px, 62%); height: auto; margin: -8px 0 20px; color: var(--risco, var(--laranja)); overflow: visible; }
 .risco path { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; }
 .fatos { position: relative; }
@@ -432,6 +441,14 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
     <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
     <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></svg>`;
+  // o U de GUARÁ: meia-lua com o guará dentro (mesmo desenho do ícone, em tinta da letra)
+  const GUARA_U = `<svg class="guara-u" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <path d="M14.3 29 A38 38 0 0 0 85.7 29 A35.7 35.7 0 0 1 14.3 29 Z"/>
+    <g transform="translate(24 4) scale(.6)">
+    <path d="M38 40 C44 31 62 31 74 39 L86 44 C77 46 72 50 66 54 C56 58 43 55 38 40 Z"/>
+    <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
+    <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
+    <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></g></svg>`;
   // guará sobre a lua (como na logo): lua branca em crescente, guará vermelho pousado nela
   const GUARA_LUA = `<svg class="guara" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
     <path fill="#fff" stroke="none" d="M14.3 29 A38 38 0 0 0 85.7 29 A35.7 35.7 0 0 1 14.3 29 Z"/>
@@ -460,7 +477,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
-        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${letreiro(P.nome)}</span></h1>
+        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${GUARAS ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">G${GUARA_U}ARÁ</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
         <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma pelo WhatsApp.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
