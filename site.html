@@ -189,17 +189,17 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
    Branco no fundo e vermelho vivo nas superfícies fortes, ~45% cada; marrom e preto (~10%) no texto e nos detalhes.
    Guarás em vetor, num vermelho mais escuro, voam na abertura e na ficha e um fica em pé nas ondas. */
 :root[data-tema="guara"] {
-  --g-vermelho: #dc1e2a; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
+  --g-vermelho: #ff2400; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
   --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
   --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
   --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
   --c30-suave: rgba(255, 255, 255, .86); --c30-clara: var(--g-fundo-foto);
   --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2);
   --titulo: var(--g-vermelho); --risco: var(--g-marrom); --barra: #ffffff; --vazia: var(--g-vermelho);
-  --claro-borda: rgba(220, 30, 42, .45); --sombra-bilhete: rgba(138, 15, 24, .7); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(138, 15, 24, .55);
+  --claro-borda: rgba(255, 36, 0, .45); --sombra-bilhete: rgba(138, 15, 24, .7); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(138, 15, 24, .55);
   --escolhido: #ffffff; --anel: var(--g-preto); --pulso: rgba(29, 21, 18, .8);
   --situ-fundo: rgba(29, 21, 18, .6); --livre-fundo: var(--g-preto); --livre-tinta: #ffffff; --feito-fundo: rgba(255, 255, 255, .2);
-  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(220, 30, 42, .55);
+  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(255, 36, 0, .55);
   --confete-1: var(--g-preto); --confete-3: var(--g-marrom);
 }
 [data-tema="guara"] :focus-visible { outline-color: var(--g-preto); }
@@ -410,7 +410,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
 
   // tema de cores próprio de cada pousada (as outras ficam com o marinho e laranja padrão)
-  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#dc1e2a" } };
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
   const GUARAS = TEMAS[slug] && TEMAS[slug].tema === "guara";
   if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
   const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
