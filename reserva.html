@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Acompanhar pedido</title>
+<meta name="description" content="Veja o estado do seu pedido de reserva.">
+<meta name="theme-color" content="#13294b">
+<link rel="icon" type="image/png" href="img/favicon-guara.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+/* Acompanhar pedido: mesma paleta do site da pousada (o tema do guará vem do ?p=). */
+:root { --display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif; --sobre-preto: rgba(19, 41, 75, .72); --fio: rgba(19, 41, 75, .14); --ok: #1f7a3d; --espera: #9a5b00; --nao: #b3121d; }
+:root[data-tema="guara"] {
+  --g-vermelho: #ff2400; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
+  --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
+  --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
+  --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
+  --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2); --titulo: var(--g-vermelho);
+}
+body { font-size: 15px; line-height: 1.55; }
+.dentro { width: min(860px, 100% - 40px); margin-inline: auto; }
+@media (max-width: 560px) { .dentro { width: calc(100% - 32px); } }
+a { text-underline-offset: 3px; }
+.topo { position: sticky; top: 0; z-index: 40; background: var(--azul); color: var(--nevoa); padding-top: env(safe-area-inset-top, 0px); }
+.topo .dentro { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 58px; }
+.topo a { color: inherit; text-decoration: none; font-weight: 600; }
+.topo a:hover { text-decoration: underline; }
+.topo .voltar { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.topo .voltar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topo svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+main { padding: clamp(28px, 5vw, 64px) 0 clamp(40px, 7vw, 88px); }
+h1 { color: var(--titulo, inherit); font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; font-size: clamp(40px, 8vw, 84px); line-height: .92; letter-spacing: -.035em; margin: 0 0 10px; }
+.sub { color: var(--sobre-preto); font-size: 16px; max-width: 36em; margin: 0 0 28px; }
+h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(22px, 3vw, 28px); line-height: 1; letter-spacing: -.02em; margin: 0 0 14px; color: var(--titulo, inherit); }
+
+.busca { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: end; max-width: 620px; }
+.busca label { display: grid; gap: 6px; font-weight: 600; font-size: 13.5px; }
+.busca small { font-weight: 400; color: var(--sobre-preto); }
+.busca input { height: 44px; padding: 0 12px; border: 1.5px solid var(--fio); border-radius: 12px; font: 500 16px/1 var(--f); background: #fff; color: #1d1512; }
+.busca input:focus-visible { outline: 2px solid var(--titulo, var(--azul)); outline-offset: 1px; }
+.busca .btn { height: 44px; }
+.erro { color: var(--nao); margin: 10px 0 0; font-weight: 600; }
+
+.estado { display: grid; gap: 12px; margin-top: 34px; padding: 24px 26px; border: 1px solid var(--fio); border-radius: 20px; }
+.estado .pilula { justify-self: start; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-weight: 700; font-size: 15px; color: #fff; background: var(--cor-estado, var(--azul)); }
+.estado .pilula::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; opacity: .85; }
+.estado p { margin: 0; font-size: 16.5px; max-width: 38em; }
+.estado.espera { --cor-estado: var(--espera); } .estado.ok { --cor-estado: var(--ok); } .estado.nao { --cor-estado: var(--nao); } .estado.fim { --cor-estado: #555; }
+.passos { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.passos li { position: relative; padding-top: 18px; font-size: 13.5px; color: var(--sobre-preto); }
+.passos li::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; border-radius: 3px; background: var(--fio); }
+.passos li.feito::before { background: var(--cor-estado); opacity: .55; }
+.passos li.agora::before { background: var(--cor-estado); }
+.passos li.agora { color: var(--tinta, inherit); font-weight: 700; }
+@media (max-width: 480px) { .passos { grid-template-columns: repeat(2, 1fr); row-gap: 12px; } }
+
+.dados { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border-top: 1px solid var(--fio); margin-top: 34px; }
+.dados div { padding: 16px 20px 16px 0; border-bottom: 1px solid var(--fio); }
+.dados dt { font-size: 13px; color: var(--sobre-preto); }
+.dados dd { margin: 2px 0 0; font-weight: 600; }
+.pagamento { margin-top: 34px; display: grid; gap: 10px; }
+.barra { height: 10px; border-radius: 6px; background: var(--fio); overflow: hidden; max-width: 420px; }
+.barra i { display: block; height: 100%; background: var(--ok); width: var(--pc, 0%); }
+.pagamento p { margin: 0; color: var(--sobre-preto); }
+.pagamento .pix-valor { color: var(--titulo, var(--azul)); }
+.pagamento .pix-valor small { color: var(--sobre-preto); }
+
+.pix { display: grid; gap: 12px; justify-items: start; max-width: 420px; margin: 14px 0 0; padding: 22px 24px; border: 1px solid var(--fio); border-radius: 18px; background: #fff; color: #1d1512; }
+.pix h3 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 20px; font-weight: 700; }
+.pix-valor { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 80; font-size: 40px; font-weight: 750; line-height: 1; color: var(--titulo, var(--azul)); }
+.pix-valor small { font: 500 14px/1 var(--f); color: var(--sobre-preto); }
+.pix-qr { width: min(240px, 100%); aspect-ratio: 1; padding: 8px; background: #fff; border-radius: 12px; border: 1px solid var(--fio); }
+.pix-qr svg { display: block; width: 100%; height: 100%; }
+.pix-ajuda, .pix-nota { margin: 0; color: var(--sobre-preto); font-size: 13.5px; }
+.pix-copia { display: flex; gap: 8px; width: 100%; }
+.pix-copia input { flex: 1; min-width: 0; height: 40px; padding: 0 10px; border: 1px solid var(--fio); border-radius: 10px; font: 500 12px/1 ui-monospace, monospace; background: #fff; color: #1d1512; }
+.pix-opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; width: 100%; }
+.pix-op { position: relative; display: block; cursor: pointer; }
+.pix-op input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pix-op span { display: grid; gap: 2px; padding: 10px 12px; border: 1.5px solid var(--fio); border-radius: 12px; background: #fff; color: #1d1512; }
+.pix-op b { font-weight: 700; font-size: 14px; }
+.pix-op small { color: var(--sobre-preto); font-size: 13px; }
+.pix-op input:checked + span { border-color: var(--titulo, var(--azul)); box-shadow: 0 0 0 1px var(--titulo, var(--azul)); }
+.pix-op input:focus-visible + span { outline: 2px solid var(--g-preto, currentColor); outline-offset: 2px; }
+
+.acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.acoes .btn { text-decoration: none; }
+.atualizado { color: var(--sobre-preto); font-size: 13px; margin-top: 18px; }
+.rodape { padding: 30px 0 calc(30px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--fio); color: var(--sobre-preto); font-size: 13.5px; }
+.rodape .dentro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; }
+.rodape a { color: var(--sobre-preto); }
+[data-tema="guara"] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
+[data-tema="guara"] .rodape a { color: rgba(255, 255, 255, .78); }
+.nao-achei { min-height: 70vh; display: grid; place-items: center; text-align: center; padding: 24px; }
+.nao-achei p { color: var(--sobre-preto); }
+.carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
+</style>
+</head>
+<body>
+<div id="raiz"><p class="carregando">Carregando…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(async () => {
+  const { sb, esc, brl, dmy, errText } = PG;
+  const raiz = document.getElementById("raiz");
+  const $ = id => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const slug = params.get("p") || "";
+  const naoAchei = (t, p) => { raiz.innerHTML = `<main class="nao-achei"><div><h1>${t}</h1><p>${p}</p></div></main>`; document.title = t; };
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return naoAchei("Endereço incompleto", "O link da pousada precisa terminar com ?p= e o nome dela.");
+  const { data: P, error } = await sb.rpc("site_pousada", { p_slug: slug });
+  if (error) return naoAchei("Não deu para abrir a página", errText(error) + " Recarregue a página.");
+  if (!P) return naoAchei("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
+
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
+  if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
+  document.title = `Acompanhar pedido | ${P.nome}`;
+
+  const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"], MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  const dia = d => { const t = new Date(d + "T12:00:00Z"); return `${SEM[t.getUTCDay()]}, ${t.getUTCDate()} de ${MES[t.getUTCMonth()]} de ${t.getUTCFullYear()}`; };
+  const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+  const cod = n => "#" + String(n).padStart(5, "0");
+  const voltar = `site.html?p=${encodeURIComponent(slug)}`;
+  const chaveTel = c => `pg-tel-${slug}-${c}`;
+  const ler = k => { try { return sessionStorage.getItem(k) || ""; } catch (e) { return ""; } };
+  const guardar = (k, v) => { try { sessionStorage.setItem(k, v); } catch (e) {} };
+
+  // estados do pedido, na linguagem do hóspede
+  const ESTADOS = {
+    solicitada: { rotulo: "Pendente", tom: "espera", passo: 0, texto: () => "A pousada recebeu seu pedido e ainda vai confirmar. Esta página atualiza sozinha, é só deixar aberta ou voltar depois." },
+    confirmada: { rotulo: "Confirmada", tom: "ok", passo: 1, texto: () => `Sua reserva está confirmada. A entrada é a partir das ${esc(P.checkin_hora)}.` },
+    hospedado: { rotulo: "Hospedado", tom: "ok", passo: 2, texto: () => `Você já está hospedado. A saída é até as ${esc(P.checkout_hora)}. Boa estadia!` },
+    finalizada: { rotulo: "Encerrada", tom: "fim", passo: 3, texto: () => `Estadia encerrada. Obrigado por se hospedar na ${esc(P.nome)}!` },
+    cancelada: { rotulo: "Recusada ou cancelada", tom: "nao", passo: -1, texto: () => "A pousada não pôde confirmar este pedido, ou ele foi cancelado. Você pode fazer um novo pedido com outras datas ou outro quarto." },
+    no_show: { rotulo: "Não compareceu", tom: "nao", passo: -1, texto: () => "A pousada registrou que você não chegou nas datas da reserva. Se foi engano, faça um novo pedido." }
+  };
+  const PASSOS = ["Pendente", "Confirmada", "Hospedado", "Encerrada"];
+
+  // formas de pagar o que falta (sinal e/ou restante)
+  function opcoesPix(R) {
+    const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pct = P.sinal_percentual || 0;
+    const sinal = pct > 0 && pct < 100 ? Math.round(total * pct) / 100 : 0, falta = Math.max(0, Math.round((total - pago) * 100) / 100), op = [];
+    const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: P.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + String(R.codigo).padStart(5, "0") }) });
+    if (sinal > 0 && pago + 0.005 < sinal) op.push(mk("sinal", `Só o sinal de ${pct}%`, Math.round((sinal - pago) * 100) / 100));
+    if (falta > 0) op.push(mk("total", pago > 0 ? "O que falta" : "Valor total", falta));
+    return op;
+  }
+
+  let atual = null, timer = null, pixAtual = null;
+
+  function desenha(R, avisoAtualizado) {
+    const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", passo: -1, texto: () => "" };
+    const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pc = total > 0 ? Math.min(100, Math.round(pago / total * 100)) : 0;
+    const noites = Math.round((new Date(R.saida + "T12:00:00Z") - new Date(R.entrada + "T12:00:00Z")) / 86400000);
+    const pagavel = P.pix_chave && (R.status === "solicitada" || R.status === "confirmada");
+    const op = pagavel ? opcoesPix(R) : [];
+    const passos = E.passo >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS.map((t, i) => `<li class="${i < E.passo ? "feito" : i === E.passo ? "agora" : ""}" ${i === E.passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
+    const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
+    const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
+        <div class="barra" role="img" aria-label="${pc}% pago"><i style="--pc:${pc}%"></i></div>
+        <p>${pago > 0 ? `Recebido: <b>${brl(pago)}</b> de ${brl(total)}.` : `Nada recebido ainda. Valor da estadia: <b>${brl(total)}</b>.`}${pagavel && P.sinal_percentual && pago <= 0 && P.sinal_percentual < 100 ? ` A pousada pede sinal de ${P.sinal_percentual}% para confirmar.` : ""}</p>
+        ${op.length ? `<div class="pix" id="pix"><h3>Pagar por Pix</h3>
+          ${op.length > 1 ? `<div class="pix-opcoes" role="radiogroup" aria-label="Quanto pagar agora">${op.map((o, k) => `<label class="pix-op"><input type="radio" name="pix-op" value="${o.id}"${k === 0 ? " checked" : ""}><span><b>${esc(o.rotulo)}</b><small>${brl(o.valor)}</small></span></label>`).join("")}</div>` : ""}
+          <p class="pix-valor" id="pix-valor" aria-live="polite"></p>
+          <div class="pix-qr" id="pix-qr" role="img"></div>
+          <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
+          <div class="pix-copia"><input id="pix-cod" readonly aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
+          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. Quando ela conferir o pagamento, o valor recebido muda aqui.</p></div>` : ""}</section>` : "";
+    const quando = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    const aberto = $("estado-bloco");
+    raiz.innerHTML = `
+    <header class="topo"><div class="dentro">
+      <a class="voltar" href="${voltar}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>${esc(P.nome)}</span></a>
+      <a href="${voltar}#quartos">Ver quartos</a>
+    </div></header>
+    <main><div class="dentro">
+      <h1>Pedido ${cod(R.codigo)}</h1>
+      <p class="sub">Olá, ${esc(R.nome)}. Aqui você vê em que pé está o seu pedido na ${esc(P.nome)}.</p>
+      <section class="estado ${E.tom}" id="estado-bloco" aria-live="polite"><span class="pilula">${esc(E.rotulo)}</span><p>${E.texto()}</p>${passos}</section>
+      <dl class="dados">
+        <div><dt>Quarto</dt><dd>${esc(R.quarto)}</dd></div>
+        <div><dt>Entrada</dt><dd>${dia(R.entrada)}</dd></div>
+        <div><dt>Saída</dt><dd>${dia(R.saida)}</dd></div>
+        <div><dt>Estadia</dt><dd>${plural(noites, "noite", "noites")}, ${plural(R.adultos, "adulto", "adultos")}${R.criancas ? ` e ${plural(R.criancas, "criança", "crianças")}` : ""}</dd></div>
+      </dl>
+      ${pagamento}
+      <div class="acoes">${R.status === "cancelada" || R.status === "no_show" || R.status === "finalizada" ? `<a class="btn btn--cheio btn--grande" href="${voltar}#bilhete">Fazer um novo pedido</a>` : ""}<a class="btn btn--borda btn--grande" href="${voltar}">Voltar para o site</a><button class="btn btn--borda btn--grande" type="button" id="outro">Ver outro pedido</button></div>
+      <p class="atualizado" id="atualizado">${avisoAtualizado || `Atualizado às ${quando}.`}</p>
+    </div></main>
+    <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${P.cidade ? ", " + esc(P.cidade) : ""}</span>${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}</div></footer>`;
+    $("outro").onclick = () => { clearInterval(timer); pedeBusca(); };
+    if (op.length) ligaPix(op);
+    if (aberto && atual && atual.status !== R.status) $("estado-bloco").focus?.();
+  }
+
+  function ligaPix(op) {
+    const pinta = o => {
+      pixAtual = o; $("pix-valor").innerHTML = `${brl(o.valor)}`; $("pix-cod").value = o.codigo; $("pix-qr").setAttribute("aria-label", `QR code do Pix de ${brl(o.valor)}`);
+      if (window.qrcode) { const qr = qrcode(0, "M"); qr.addData(o.codigo); qr.make(); $("pix-qr").innerHTML = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true }); }
+      else $("pix-qr").innerHTML = '<span class="pix-ajuda">QR code indisponível. Use o Pix copia e cola.</span>';
+    };
+    pinta(op[0]);
+    raiz.querySelectorAll('input[name="pix-op"]').forEach(i => i.addEventListener("change", () => pinta(op.find(o => o.id === i.value))));
+    $("pix-copiar").onclick = async () => { try { await navigator.clipboard.writeText(pixAtual.codigo); $("pix-copiar").textContent = "Copiado"; } catch (e) { $("pix-cod").select(); $("pix-copiar").textContent = "Selecionado"; } setTimeout(() => { const b = $("pix-copiar"); if (b) b.textContent = "Copiar"; }, 2200); };
+    $("pix-cod").addEventListener("focus", e => e.target.select());
+  }
+
+  async function consulta(c, tel) {
+    const { data, error } = await sb.rpc("consultar_pedido", { p_slug: slug, p_codigo: c, p_telefone: tel });
+    if (error) return { erro: errText(error) };
+    return data ? { R: data } : { erro: "Não encontramos esse pedido. Confira o número e use o mesmo telefone (WhatsApp) que você colocou ao pedir." };
+  }
+
+  function mostra(R, c, tel) {
+    atual = R; guardar(chaveTel(c), tel);
+    history.replaceState(null, "", `reserva.html?p=${encodeURIComponent(slug)}&c=${c}`);
+    desenha(R);
+    clearInterval(timer);
+    if (["solicitada", "confirmada", "hospedado"].includes(R.status)) timer = setInterval(async () => {
+      if (document.hidden) return;
+      const r = await consulta(c, tel);
+      if (r.R) { const mudou = r.R.status !== atual.status || r.R.sinal_pago !== atual.sinal_pago; if (mudou) { atual = r.R; desenha(r.R, "Atualizado agora: o estado do pedido mudou."); if (!["solicitada", "confirmada", "hospedado"].includes(r.R.status)) clearInterval(timer); } else { const a = $("atualizado"); if (a) a.textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}.`; } }
+    }, 30000);
+  }
+
+  function pedeBusca(msg, c0, tel0) {
+    const c = c0 ?? (params.get("c") || "");
+    raiz.innerHTML = `
+    <header class="topo"><div class="dentro"><a class="voltar" href="${voltar}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>${esc(P.nome)}</span></a></div></header>
+    <main><div class="dentro">
+      <h1>Acompanhar pedido</h1>
+      <p class="sub">Coloque o número do pedido e o telefone que você usou ao pedir. O estado do pedido aparece aqui: pendente, confirmada, hospedado, encerrada ou recusada.</p>
+      <form class="busca" id="f-busca" novalidate>
+        <label>Número do pedido<input id="b-cod" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="#00042" value="${esc(c)}" required></label>
+        <label>Telefone <small>o mesmo do pedido</small><input id="b-tel" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(41) 99999-0000" value="${esc(tel0 || "")}" required></label>
+        <button class="btn btn--cheio btn--grande" type="submit" id="b-ver">Ver meu pedido</button>
+      </form>
+      <p class="erro" id="b-erro" role="alert" ${msg ? "" : "hidden"}>${esc(msg || "")}</p>
+    </div></main>
+    <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${P.cidade ? ", " + esc(P.cidade) : ""}</span><a href="${voltar}">Voltar para o site</a></div></footer>`;
+    $("f-busca").addEventListener("submit", async e => {
+      e.preventDefault(); const er = $("b-erro"); er.hidden = true;
+      const n = Number(String($("b-cod").value).replace(/\D/g, "")), tel = $("b-tel").value.trim(), dig = tel.replace(/\D/g, "");
+      if (!n) { er.textContent = "Coloque o número do pedido, por exemplo #00042."; er.hidden = false; return; }
+      if (dig.length < 10 || dig.length > 13) { er.textContent = "Coloque o telefone com DDD, por exemplo (41) 99999-0000."; er.hidden = false; return; }
+      const b = $("b-ver"); b.disabled = true; b.textContent = "Procurando…";
+      const r = await consulta(n, tel);
+      if (r.R) return mostra(r.R, n, tel);
+      b.disabled = false; b.textContent = "Ver meu pedido"; er.textContent = r.erro; er.hidden = false;
+    });
+    $(c ? (tel0 ? "b-ver" : "b-tel") : "b-cod").focus();
+  }
+
+  // abre direto quando vem da tela "Pedido enviado" (o telefone fica só nesta aba, nunca no endereço)
+  const c = Number(params.get("c")) || 0, tel = c ? ler(chaveTel(c)) : "";
+  if (c && tel) { const r = await consulta(c, tel); if (r.R) return mostra(r.R, c, tel); return pedeBusca(r.erro, String(c), tel); }
+  pedeBusca();
+})();
+</script>
+</body>
+</html>

@@ -525,14 +525,14 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   /* ---------- página ---------- */
   raiz.innerHTML = `
   <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_LUA : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
         <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${GUARAS ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUARÁ</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
-        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma pelo WhatsApp.`)}</p>
+        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
         ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
       </div>
@@ -560,7 +560,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     ${sobreCasa()}
     ${saber()}
   </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
@@ -708,7 +708,6 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     const box = $("ficha-dentro");
     if (S.enviado) {
       const r = S.enviado, q = Q.find(x => x.id === r.quarto);
-      const msg = `Olá! Mandei o pedido ${r.cod} pelo site: ${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}, ${plural(r.pessoas, "pessoa", "pessoas")}. Nome: ${r.nome}.`;
       const cores = ["var(--confete-1, var(--laranja))", "#ffffff", "var(--confete-3, #ffb27a)", "var(--c30-clara)"];
       const confete = MOV ? `<span class="confete" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 140;
         return `<i style="--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d * .7 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;--t:${(Math.random() * .12).toFixed(2)}s;background:${cores[i % 4]}"></i>`; }).join("")}</span>` : "";
@@ -716,7 +715,6 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: P.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + r.cod.replace(/\D/g, "") }) });
         const op = []; if (pct > 0 && pct < 100) op.push(mk("sinal", `Só o sinal de ${pct}%`, Math.round(total * pct) / 100)); op.push(mk("total", "Valor total", total));
         return { total, op }; })();
-      const msgPix = o => `Olá! Paguei o Pix de ${brl(o.valor)} (${o.id === "sinal" ? "sinal" : "valor total"}) do pedido ${r.cod} (${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}). Nome: ${r.nome}. Segue o comprovante.`;
       const valorPix = o => `${brl(o.valor)}${o.id === "sinal" ? ` <small>de ${brl(pix.total)}</small>` : ""}`;
       const pixHtml = !pix ? "" : `<div class="pix" id="pix"><h3>Pague por Pix</h3>
           ${pix.op.length > 1 ? `<div class="pix-opcoes" role="radiogroup" aria-label="Quanto pagar agora">${pix.op.map((o, k) => `<label class="pix-op"><input type="radio" name="pix-op" value="${o.id}"${k === 0 ? " checked" : ""}><span><b>${esc(o.rotulo)}</b><small>${brl(o.valor)}</small></span></label>`).join("")}</div>` : ""}
@@ -724,11 +722,11 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
           <div class="pix-qr" id="pix-qr" role="img" aria-label="QR code do Pix de ${brl(pix.op[0].valor)}"></div>
           <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
           <div class="pix-copia"><input id="pix-cod" readonly value="${esc(pix.op[0].codigo)}" aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
-          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. Depois de pagar, mande o comprovante pelo WhatsApp: a pousada confere e confirma a reserva.</p></div>`;
+          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. Quando a pousada conferir o pagamento, o valor recebido muda na página do seu pedido.</p></div>`;
       box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}${confete}</span>
-        <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar${zap ? " pelo WhatsApp" : ""}. Guarde esse número.</p>
+        <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar. Guarde esse número: com ele e o seu telefone você acompanha o estado do pedido.</p>
         ${pixHtml}
-        <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap">${pix && zap ? `<a class="btn btn--cheio btn--grande" id="pix-zap" href="${linkZap(msgPix(pix.op[0]))}" target="_blank" rel="noopener">Enviar comprovante no WhatsApp</a>` : zap ? `<a class="btn btn--cheio btn--grande" href="${linkZap(msg)}" target="_blank" rel="noopener">Avisar a pousada no WhatsApp</a>` : ""}<button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
+        <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--cheio btn--grande" href="reserva.html?p=${encodeURIComponent(slug)}&c=${r.num}">Acompanhar meu pedido</a><button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
       $("outro").onclick = () => { S.enviado = null; S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); $("bilhete").scrollIntoView({ behavior: "smooth" }); };
       if (pix) {
         let atual = pix.op[0];
@@ -736,7 +734,6 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
           atual = o; $("pix-valor").innerHTML = valorPix(o); $("pix-cod").value = o.codigo; $("pix-qr").setAttribute("aria-label", `QR code do Pix de ${brl(o.valor)}`);
           if (window.qrcode) { const qr = qrcode(0, "M"); qr.addData(o.codigo); qr.make(); $("pix-qr").innerHTML = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true }); }
           else $("pix-qr").innerHTML = '<span class="pix-sem">QR code indisponível. Use o Pix copia e cola.</span>';
-          const z = $("pix-zap"); if (z) z.href = linkZap(msgPix(o));
         };
         pinta(atual);
         box.querySelectorAll('input[name="pix-op"]').forEach(inp => inp.addEventListener("change", () => pinta(pix.op.find(o => o.id === inp.value))));
@@ -759,7 +756,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         <label class="todo">Email <small>opcional</small><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></label>
         <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco. Não coloque dados de saúde.</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
         <p class="erro" id="f-erro" role="alert" hidden></p>
-        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>${P.pix_chave ? "Depois de enviar, você paga o sinal por Pix." : "Você ainda não paga nada."} A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
+        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>${P.pix_chave ? "Depois de enviar, você paga o sinal por Pix." : "Você ainda não paga nada."} A pousada confirma e você acompanha o estado do pedido numa página. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
       </form>
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
@@ -779,7 +776,8 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const btn = $("f-enviar"); btn.disabled = true; btn.textContent = "Enviando pedido…";
       const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
       if (error) { btn.disabled = false; btn.textContent = "Enviar pedido"; err.textContent = errText(error); err.hidden = false; return; }
-      S.enviado = { total: livre.total, cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
+      try { sessionStorage.setItem(`pg-tel-${slug}-${data}`, d.tel); } catch (er) {}
+      S.enviado = { num: data, total: livre.total, cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
       desenhaFicha();
     });
   }

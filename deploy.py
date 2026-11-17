@@ -1,5 +1,5 @@
 import base64, glob, json, subprocess, sys
-files = ["vercel.json", "404.html", "index.html", "comecar.html", "painel.html", "site.html", "sobre.html", "termos.html", "privacidade.html", "app.js", "app.css", "config.js", "img/favicon-guara.png"]
+files = ["vercel.json", "404.html", "index.html", "comecar.html", "painel.html", "site.html", "reserva.html", "termos.html", "privacidade.html", "app.js", "app.css", "config.js", "img/favicon-guara.png"]
 files += sorted(glob.glob("img/**/*.jpg", recursive=True))  # fotos das pousadas publicadas junto com o site
 body = {"name": "pousada-gestao", "target": "production",
         "files": [{"file": f, "data": base64.b64encode(open(f, "rb").read()).decode(), "encoding": "base64"} for f in files],
