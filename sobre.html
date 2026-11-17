@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sobre a casa</title>
+<meta name="description" content="Regras da casa, café da manhã, endereço e contato.">
+<meta name="theme-color" content="#13294b">
+<link rel="icon" type="image/png" href="img/favicon-guara.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="app.css">
+<style>
+/* Página "Sobre a casa": mesma paleta do site da pousada (o tema do guará vem do ?p=). */
+:root { --display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif; --sobre-preto: rgba(19, 41, 75, .72); --fio: rgba(19, 41, 75, .14); }
+:root[data-tema="guara"] {
+  --g-vermelho: #ff2400; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
+  --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
+  --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
+  --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
+  --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2); --titulo: var(--g-vermelho);
+}
+body { font-size: 15px; line-height: 1.55; }
+.dentro { width: min(980px, 100% - 40px); margin-inline: auto; }
+@media (max-width: 560px) { .dentro { width: calc(100% - 32px); } }
+a { text-underline-offset: 3px; }
+
+.topo { position: sticky; top: 0; z-index: 40; background: var(--azul); color: var(--nevoa); padding-top: env(safe-area-inset-top, 0px); }
+.topo .dentro { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 58px; }
+.topo a { color: inherit; text-decoration: none; font-weight: 600; }
+.topo a:hover { text-decoration: underline; }
+.topo .voltar { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.topo .voltar span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.topo svg { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+main { padding: clamp(32px, 6vw, 72px) 0 clamp(40px, 7vw, 88px); }
+h1 { color: var(--titulo, inherit); font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; font-size: clamp(44px, 9vw, 104px); line-height: .9; letter-spacing: -.035em; margin: 0 0 12px; }
+.sub { color: var(--sobre-preto); font-size: 17px; max-width: 36em; margin: 0 0 clamp(28px, 5vw, 48px); }
+h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(24px, 3.4vw, 34px); line-height: 1; letter-spacing: -.02em; margin: 0 0 14px; color: var(--titulo, inherit); }
+
+.bloco { padding: clamp(22px, 3.6vw, 36px) 0; border-top: 1px solid var(--fio); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 12px clamp(20px, 4vw, 56px); }
+@media (max-width: 720px) { .bloco { grid-template-columns: 1fr; } }
+.bloco h2 { margin: 0; }
+.bloco h2 small { display: block; font: 600 12px/1 var(--f); letter-spacing: .08em; text-transform: uppercase; color: var(--sobre-preto); margin-bottom: 8px; }
+.regras { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.regras li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; }
+.regras li::before { content: "☆"; color: var(--titulo, currentColor); font-size: 17px; line-height: 1.35; }
+.nota { color: var(--sobre-preto); font-size: 14px; }
+.endereco { font-style: normal; font-size: 17px; }
+.acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.acoes .btn { text-decoration: none; }
+.texto p { margin: 0 0 12px; max-width: 38em; }
+.fotos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 18px; }
+.fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 14px; display: block; }
+
+.rodape { padding: 30px 0 calc(30px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--fio); color: var(--sobre-preto); font-size: 13.5px; }
+.rodape .dentro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; }
+.rodape a { color: var(--sobre-preto); }
+[data-tema="guara"] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
+[data-tema="guara"] .rodape a { color: rgba(255, 255, 255, .78); }
+.nao-achei { min-height: 70vh; display: grid; place-items: center; text-align: center; padding: 24px; }
+.nao-achei p { color: var(--sobre-preto); }
+.carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
+</style>
+</head>
+<body>
+<div id="raiz"><p class="carregando">Carregando…</p></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+(async () => {
+  const { sb, esc, errText } = PG;
+  const raiz = document.getElementById("raiz");
+  const slug = new URLSearchParams(location.search).get("p") || "";
+  const naoAchei = (t, p) => { raiz.innerHTML = `<main class="nao-achei"><div><h1>${t}</h1><p>${p}</p></div></main>`; document.title = t; };
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return naoAchei("Endereço incompleto", "O link da pousada precisa terminar com ?p= e o nome dela.");
+  const { data: P, error } = await sb.rpc("site_pousada", { p_slug: slug });
+  if (error) return naoAchei("Não deu para abrir a página", errText(error) + " Recarregue a página.");
+  if (!P) return naoAchei("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
+
+  // tema de cores próprio de cada pousada (igual ao do site)
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
+  if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
+
+  // o que a casa quer que o hóspede saiba: regras, café e contato (texto da casa, por pousada)
+  const CASAS = {
+    "pousada-exemplo": {
+      endereco: "Rua Ferreira Lopes, 128 – Guaraqueçaba, PR",
+      mapa: "https://www.google.com/maps/place/Pousada+Guar%C3%A1+%2F+DoThon/@-25.2986895,-48.9382581,10z/data=!4m13!1m2!2m1!1spousada+guara+dothon!3m9!1s0x94db0b081e9cdd0d:0x4b2598d8a23c1f52!5m2!4m1!1i2!8m2!3d-25.2986895!4d-48.3285169!15sChRwb3VzYWRhIGd1YXJhIGRvbnRvbpIBA2lubuABAA!16s%2Fg%2F11h0mpwdxz?entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D",
+      zap: "5541996336644", zapTexto: "(41) 99633-6644 (Thon)",
+      blocos: [
+        ["Proibido", ["Fumar em áreas internas.", "Circular com trajes íntimos e de banho.", "Utilizar som alto."]],
+        ["Atenção", ["Não utilizar as toalhas de formas inadequadas, como para retirar maquiagem ou limpar calçados. Sujeito a cobrança de taxas."]],
+        ["Cuidados", ["Ao sair: apagar as luzes, desligar o ventilador e a TV, fechar as portas dos quartos e guardar as chaves.", "Ao entrar: depois das 22h, manter o silêncio e fechar o portão de acesso."]],
+        ["Café da manhã", ["Horário: das 07h às 09h.", "Horário extra pode ser combinado, com valor adicional por pessoa."]]
+      ]
+    }
+  };
+  const C = CASAS[slug] || {};
+  const lugar = [P.bairro, P.cidade].filter(Boolean).join(", ");
+  const linkZap = (num, msg) => `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+  const zapNum = C.zap || (() => { let d = String(P.whatsapp || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d.length >= 12 ? d : ""; })();
+  const paragrafos = String(P.descricao || "").split(/\n+/).map(s => s.trim()).filter(Boolean);
+  const F = (P.fotos || []).filter(u => /^https:\/\//.test(u)).slice(0, 3);
+  const voltar = `site.html?p=${encodeURIComponent(slug)}`;
+
+  document.title = `Sobre a casa | ${P.nome}`;
+  document.querySelector('meta[name="description"]').content = `Regras da casa, café da manhã, endereço e contato da ${P.nome}.`;
+
+  const bloco = (titulo, corpo, peq = "") => `<section class="bloco"><h2>${peq ? `<small>${esc(peq)}</small>` : ""}${esc(titulo)}</h2><div>${corpo}</div></section>`;
+  const lista = it => `<ul class="regras">${it.map(t => `<li><span>${esc(t)}</span></li>`).join("")}</ul>`;
+
+  const ondeFica = C.endereco || lugar;
+  const acoes = [
+    C.mapa ? `<a class="btn btn--cheio btn--grande" href="${esc(C.mapa)}" target="_blank" rel="noopener">Abrir no Google Maps</a>` : "",
+    zapNum ? `<a class="btn btn--borda btn--grande" href="${linkZap(zapNum, `Olá! Vi a página da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""
+  ].join("");
+
+  raiz.innerHTML = `
+  <header class="topo"><div class="dentro">
+    <a class="voltar" href="${voltar}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg><span>${esc(P.nome)}</span></a>
+    <a href="${voltar}#quartos">Ver quartos</a>
+  </div></header>
+  <main><div class="dentro">
+    <h1>Sobre a casa</h1>
+    <p class="sub">${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}. O que combinar antes de chegar para a estadia ser boa para todo mundo.</p>
+    ${paragrafos.length ? bloco("A pousada", `<div class="texto">${paragrafos.map(p => `<p>${esc(p)}</p>`).join("")}</div>${F.length ? `<div class="fotos">${F.map((u, i) => `<img src="${esc(u)}" alt="Foto ${i + 1} da ${esc(P.nome)}" loading="lazy">`).join("")}</div>` : ""}`) : ""}
+    ${(C.blocos || []).map(([t, it], i) => bloco(t, lista(it), `${i + 1}`)).join("")}
+    ${ondeFica || zapNum ? bloco("Endereço e contato", `${ondeFica ? `<address class="endereco">${esc(ondeFica)}</address>` : ""}${zapNum && C.zapTexto ? `<p class="nota">WhatsApp: ${esc(C.zapTexto)}</p>` : ""}<div class="acoes">${acoes}</div>`, "Como chegar") : ""}
+  </div></main>
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><a href="${voltar}">Voltar para o site</a></div></footer>`;
+})();
+</script>
+</body>
+</html>

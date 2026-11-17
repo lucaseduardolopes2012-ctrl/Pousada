@@ -464,7 +464,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   /* ---------- página ---------- */
   raiz.innerHTML = `
   <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_LUA : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="sobre.html?p=${encodeURIComponent(slug)}">Sobre a casa</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
@@ -497,7 +497,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
     ${saber()}
   </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="sobre.html?p=${encodeURIComponent(slug)}">Sobre a casa</a><a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
