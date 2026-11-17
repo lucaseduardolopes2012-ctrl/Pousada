@@ -711,10 +711,11 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const cores = ["var(--confete-1, var(--laranja))", "#ffffff", "var(--confete-3, #ffb27a)", "var(--c30-clara)"];
       const confete = MOV ? `<span class="confete" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 140;
         return `<i style="--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d * .7 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;--t:${(Math.random() * .12).toFixed(2)}s;background:${cores[i % 4]}"></i>`; }).join("")}</span>` : "";
-      const cobra = !!P.pix_chave && P.sinal_percentual > 0;
-      const pix = !P.pix_chave ? null : (() => { const pct = P.sinal_percentual || 0, total = Number(r.total) || 0; if (!(total > 0)) return null;
-        const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: P.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + r.cod.replace(/\D/g, "") }) });
-        const op = []; if (pct > 0 && pct < 100) op.push(mk("sinal", `Só o sinal de ${pct}%`, Math.round(total * pct) / 100)); op.push(mk("total", "Valor total", total));
+      const R = r.R, chave = R && R.pix_chave;
+      const cobra = !!(R && R.status === "aguardando_pagamento");
+      const pix = !chave ? null : (() => { const total = Number(R.valor_total) || 0, sinal = Number(R.sinal_exigido) || 0; if (!(total > 0)) return null;
+        const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + r.cod.replace(/\D/g, "") }) });
+        const op = []; if (sinal > 0 && sinal < total) op.push(mk("sinal", `Só o sinal de ${P.sinal_percentual}%`, sinal)); op.push(mk("total", sinal > 0 ? "Valor total" : "Pagar por Pix", total));
         return { total, op }; })();
       const valorPix = o => `${brl(o.valor)}${o.id === "sinal" ? ` <small>de ${brl(pix.total)}</small>` : ""}`;
       const pixHtml = !pix ? "" : `<div class="pix" id="pix"><h3>Pague por Pix</h3>
@@ -757,7 +758,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         <label class="todo">Email <small>opcional</small><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></label>
         <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco. Não coloque dados de saúde.</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
         <p class="erro" id="f-erro" role="alert" hidden></p>
-        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>${P.pix_chave && P.sinal_percentual > 0 ? "Depois de enviar, você paga o sinal por Pix e o pedido é aprovado." : P.pix_chave ? "Depois de enviar, você pode pagar por Pix." : "Você ainda não paga nada."} A pousada confirma e você acompanha o estado do pedido numa página. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
+        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>${P.cobra_sinal ? "Depois de enviar, você paga o sinal por Pix e o pedido é aprovado." : P.aceita_pix ? "Depois de enviar, você pode pagar por Pix." : "Você ainda não paga nada."} A pousada confirma e você acompanha o estado do pedido numa página. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
       </form>
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
@@ -778,7 +779,8 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
       if (error) { btn.disabled = false; btn.textContent = "Enviar pedido"; err.textContent = errText(error); err.hidden = false; return; }
       try { sessionStorage.setItem(`pg-tel-${slug}-${data}`, d.tel); } catch (er) {}
-      S.enviado = { num: data, total: livre.total, cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
+      let R = null; try { const rr = await sb.rpc("consultar_pedido", { p_slug: slug, p_codigo: data, p_telefone: d.tel }); R = rr.data || null; } catch (er) {}
+      S.enviado = { num: data, R, total: livre.total, cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
       desenhaFicha();
     });
   }

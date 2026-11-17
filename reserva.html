@@ -153,7 +153,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
   function opcoesPix(R) {
     const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pct = P.sinal_percentual || 0;
     const sinal = Number(R.sinal_exigido) > 0 ? Number(R.sinal_exigido) : pct > 0 && pct < 100 ? Math.round(total * pct) / 100 : 0, falta = Math.max(0, Math.round((total - pago) * 100) / 100), op = [];
-    const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: P.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + String(R.codigo).padStart(5, "0") }) });
+    const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave: R.pix_chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + String(R.codigo).padStart(5, "0") }) });
     if (sinal > 0 && pago + 0.005 < sinal) op.push(mk("sinal", `Só o sinal de ${pct}%`, Math.round((sinal - pago) * 100) / 100));
     if (falta > 0) op.push(mk("total", pago > 0 ? "O que falta" : "Valor total", falta));
     return op;
@@ -165,7 +165,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", passo: -1, texto: () => "" };
     const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pc = total > 0 ? Math.min(100, Math.round(pago / total * 100)) : 0;
     const noites = Math.round((new Date(R.saida + "T12:00:00Z") - new Date(R.entrada + "T12:00:00Z")) / 86400000);
-    const pagavel = P.pix_chave && (R.status === "aguardando_pagamento" || R.status === "solicitada" || R.status === "confirmada");
+    const pagavel = R.pix_chave && (R.status === "aguardando_pagamento" || R.status === "solicitada" || R.status === "confirmada");
     const op = pagavel ? opcoesPix(R) : [];
     const passos = E.passo >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(R).map((t, i) => `<li class="${i < E.passo ? "feito" : i === E.passo ? "agora" : ""}" ${i === E.passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
     const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
