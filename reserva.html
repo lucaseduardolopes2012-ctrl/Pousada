@@ -164,7 +164,8 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 
   // Pagamento por cartão (Stripe). Desligado por padrão: só aparece com ?cartao=1 ou quando
   // CARTAO_ATIVO=true (ligue junto com as chaves de PRODUÇÃO da Stripe). Em modo teste, deixe false.
-  const CARTAO_ATIVO = false;
+  const CARTAO_ATIVO = true;   // cartão visível para todos
+  const CARTAO_TESTE = true;   // em modo de teste (mude para false ao ir para produção com chaves sk_live)
   const mostrarCartao = CARTAO_ATIVO || params.get("cartao") === "1";
   const FN_CARTAO = (window.PG_CONFIG.supabaseUrl || "").replace(/\/+$/, "") + "/functions/v1/criar-pagamento-cartao";
   const ANON = window.PG_CONFIG.supabaseKey;
@@ -191,6 +192,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     const cartaoHtml = podeCartao ? `<div class="cartao" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--fio);display:grid;gap:8px;max-width:420px">
           <p class="pix-ajuda">Prefere cartão? Pague o sinal no cartão de crédito:</p>
           <button type="button" id="pagar-cartao" class="btn btn--borda btn--grande" style="justify-self:start">Pagar com cartão</button>
+          ${CARTAO_TESTE ? `<p class="pix-ajuda">Pagamento com cartão em modo de teste.</p>` : ""}
           <p class="pix-ajuda" id="cartao-erro" role="alert" hidden></p></div>` : "";
     const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
     const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
