@@ -8,8 +8,11 @@ Estas funções adicionam **cartão pela Stripe com confirmação automática**:
 2. `stripe-webhook` — quando a Stripe confirma o pagamento, grava `sinal_pago` na reserva.
    O gatilho `reservas_aprova_pagamento` (já existe no banco) muda o status para `confirmada`.
 
-> ⚠️ Código ainda **não testado em produção** — depende das suas chaves da Stripe.
-> Nada disto está publicado nem aparece no site até ativarmos juntos.
+> ✅ **Já publicado no Supabase e testado em modo teste** (sk_test):
+> criação da sessão de Checkout, webhook com assinatura real e confirmação
+> automática da reserva pelo gatilho — tudo verificado.
+> O botão "Pagar com cartão" no site está **desligado** (`CARTAO_ATIVO=false`
+> em reserva.html); só aparece com `?cartao=1` na URL, para você testar.
 
 ## Passo a passo para ativar (teste primeiro)
 
@@ -40,5 +43,8 @@ supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_xxx
 3. Na página do pedido, clique em **Pagar com cartão** e use o cartão de teste `4242 4242 4242 4242`, validade futura, CVC qualquer.
 4. O webhook deve gravar o sinal e a reserva vira **Confirmada** sozinha.
 
-Só depois de funcionar no teste, troque para as chaves de produção (`sk_live_…`).
-O botão "Pagar com cartão" no site só é adicionado quando você mandar — hoje não existe.
+## Ir para produção (dinheiro real)
+1. Troque os segredos pelas chaves `sk_live_…` e recrie o webhook em modo live
+   (novo `whsec_…`). Me avise que eu faço isso.
+2. Em `reserva.html`, mude `CARTAO_ATIVO` para `true` para o botão aparecer
+   para todos os hóspedes.

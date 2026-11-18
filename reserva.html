@@ -162,7 +162,22 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     return op;
   }
 
-  let atual = null, timer = null, pixAtual = null;
+  // Pagamento por cartão (Stripe). Desligado por padrão: só aparece com ?cartao=1 ou quando
+  // CARTAO_ATIVO=true (ligue junto com as chaves de PRODUÇÃO da Stripe). Em modo teste, deixe false.
+  const CARTAO_ATIVO = false;
+  const mostrarCartao = CARTAO_ATIVO || params.get("cartao") === "1";
+  const FN_CARTAO = (window.PG_CONFIG.supabaseUrl || "").replace(/\/+$/, "") + "/functions/v1/criar-pagamento-cartao";
+  const ANON = window.PG_CONFIG.supabaseKey;
+  let pedCod = null, pedTel = null, atual = null, timer = null, pixAtual = null;
+  async function pagarCartao(btn, erroEl) {
+    const txt = btn.textContent; btn.disabled = true; btn.textContent = "Abrindo pagamento…"; if (erroEl) erroEl.hidden = true;
+    try {
+      const res = await fetch(FN_CARTAO, { method: "POST", headers: { "Content-Type": "application/json", apikey: ANON, Authorization: "Bearer " + ANON }, body: JSON.stringify({ slug, codigo: pedCod, telefone: pedTel }) });
+      const d = await res.json().catch(() => ({}));
+      if (d.url) { location.href = d.url; return; }
+      btn.disabled = false; btn.textContent = txt; if (erroEl) { erroEl.textContent = d.erro || "Não deu para abrir o pagamento. Use o Pix."; erroEl.hidden = false; }
+    } catch (e) { btn.disabled = false; btn.textContent = txt; if (erroEl) { erroEl.textContent = "Falha de conexão. Use o Pix."; erroEl.hidden = false; } }
+  }
 
   function desenha(R, avisoAtualizado) {
     const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", texto: () => "" };
@@ -172,6 +187,11 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     const pagavel = R.pix_chave && (R.status === "aguardando_pagamento" || R.status === "confirmada");
     const op = pagavel ? opcoesPix(R) : [];
     const passos = passoIdx >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(cobra).map((t, i) => `<li class="${i < passoIdx ? "feito" : i === passoIdx ? "agora" : ""}" ${i === passoIdx ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
+    const podeCartao = mostrarCartao && R.status === "aguardando_pagamento" && R.pix_chave && op.length;
+    const cartaoHtml = podeCartao ? `<div class="cartao" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--fio);display:grid;gap:8px;max-width:420px">
+          <p class="pix-ajuda">Prefere cartão? Pague o sinal no cartão de crédito:</p>
+          <button type="button" id="pagar-cartao" class="btn btn--borda btn--grande" style="justify-self:start">Pagar com cartão</button>
+          <p class="pix-ajuda" id="cartao-erro" role="alert" hidden></p></div>` : "";
     const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
     const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
         <div class="barra" role="img" aria-label="${pc}% pago"><i style="--pc:${pc}%"></i></div>
@@ -182,7 +202,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
           <div class="pix-qr" id="pix-qr" role="img"></div>
           <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
           <div class="pix-copia"><input id="pix-cod" readonly aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
-          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. ${R.status === "aguardando_pagamento" ? "Assim que ela receber, seu pedido é aprovado e esta página muda sozinha." : "Quando ela conferir o pagamento, o valor recebido muda aqui."}</p></div>` : ""}</section>` : "";
+          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. ${R.status === "aguardando_pagamento" ? "Assim que ela receber, seu pedido é aprovado e esta página muda sozinha." : "Quando ela conferir o pagamento, o valor recebido muda aqui."}</p></div>` : ""}${cartaoHtml}</section>` : "";
     const quando = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const aberto = $("estado-bloco");
     raiz.innerHTML = `
@@ -207,6 +227,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${P.cidade ? ", " + esc(P.cidade) : ""}</span>${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}</div></footer>`;
     $("outro").onclick = () => { clearInterval(timer); pedeBusca(); };
     if (op.length) ligaPix(op);
+    const bc = $("pagar-cartao"); if (bc) bc.onclick = () => pagarCartao(bc, $("cartao-erro"));
     if (aberto && atual && atual.status !== R.status) $("estado-bloco").focus?.();
   }
 
@@ -229,6 +250,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
   }
 
   function mostra(R, c, tel) {
+    pedCod = c; pedTel = tel;
     atual = R; guardar(chaveTel(c), tel);
     history.replaceState(null, "", `reserva.html?p=${encodeURIComponent(slug)}&c=${c}`);
     desenha(R);
