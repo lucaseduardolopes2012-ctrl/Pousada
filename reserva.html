@@ -137,16 +137,19 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 
   // estados do pedido, na linguagem do hóspede
   const ESTADOS = {
-    aguardando_pagamento: { rotulo: "Aguardando pagamento", tom: "espera", passo: 0, texto: R => `Pague o sinal de <b>${brl(R.sinal_exigido)}</b> por Pix até ${hora(R.expira_em)} de ${dmy(String(R.expira_em).slice(0, 10))}. Assim que a pousada receber, o pedido é aprovado e esta página muda sozinha.` },
-    expirada: { rotulo: "Prazo vencido", tom: "nao", passo: -1, texto: () => "O prazo de 24 horas para pagar o sinal acabou e o pedido foi cancelado. Você pode fazer um novo pedido." },
-    solicitada: { rotulo: "Pendente", tom: "espera", passo: 0, texto: () => "A pousada recebeu seu pedido e ainda vai confirmar. Esta página atualiza sozinha, é só deixar aberta ou voltar depois." },
-    confirmada: { rotulo: "Confirmada", tom: "ok", passo: 1, texto: () => `Sua reserva está confirmada. A entrada é a partir das ${esc(P.checkin_hora)}.` },
-    hospedado: { rotulo: "Hospedado", tom: "ok", passo: 2, texto: () => `Você já está hospedado. A saída é até as ${esc(P.checkout_hora)}. Boa estadia!` },
-    finalizada: { rotulo: "Encerrada", tom: "fim", passo: 3, texto: () => `Estadia encerrada. Obrigado por se hospedar na ${esc(P.nome)}!` },
-    cancelada: { rotulo: "Recusada ou cancelada", tom: "nao", passo: -1, texto: () => "A pousada não pôde confirmar este pedido, ou ele foi cancelado. Você pode fazer um novo pedido com outras datas ou outro quarto." },
-    no_show: { rotulo: "Não compareceu", tom: "nao", passo: -1, texto: () => "A pousada registrou que você não chegou nas datas da reserva. Se foi engano, faça um novo pedido." }
+    aguardando_pagamento: { rotulo: "Aguardando pagamento", tom: "espera", texto: R => `A pousada aceitou seu pedido! Pague o sinal de <b>${brl(R.sinal_exigido)}</b> por Pix até ${hora(R.expira_em)} de ${dmy(String(R.expira_em).slice(0, 10))} para confirmar. Pago o sinal, esta página muda sozinha.` },
+    expirada: { rotulo: "Prazo vencido", tom: "nao", texto: () => "O prazo de 24 horas para pagar o sinal acabou e o pedido foi cancelado. Você pode fazer um novo pedido." },
+    solicitada: { rotulo: "Pendente", tom: "espera", texto: R => "A pousada está analisando seu pedido." + (Number(R.sinal_exigido) > 0 ? " Se aceitar, você paga o sinal por aqui para confirmar a reserva." : " Assim que ela confirmar, o estado muda nesta página.") + " Esta página atualiza sozinha, é só voltar depois." },
+    confirmada: { rotulo: "Confirmada", tom: "ok", texto: () => `Sua reserva está confirmada. A entrada é a partir das ${esc(P.checkin_hora)}.` },
+    hospedado: { rotulo: "Hospedado", tom: "ok", texto: () => `Você já está hospedado. A saída é até as ${esc(P.checkout_hora)}. Boa estadia!` },
+    finalizada: { rotulo: "Encerrada", tom: "fim", texto: () => `Estadia encerrada. Obrigado por se hospedar na ${esc(P.nome)}!` },
+    cancelada: { rotulo: "Recusada ou cancelada", tom: "nao", texto: () => "A pousada não pôde confirmar este pedido, ou ele foi cancelado. Você pode fazer um novo pedido com outras datas ou outro quarto." },
+    no_show: { rotulo: "Não compareceu", tom: "nao", texto: () => "A pousada registrou que você não chegou nas datas da reserva. Se foi engano, faça um novo pedido." }
   };
-  const PASSOS = R => [Number(R.sinal_exigido) > 0 ? "Pagamento do sinal" : "Pendente", "Confirmada", "Hospedado", "Encerrada"];
+  // etapas: pousada que cobra sinal tem a fase extra do pagamento
+  const temSinal = R => Number(R.sinal_exigido) > 0 || R.status === "aguardando_pagamento";
+  const PASSOS = cobra => cobra ? ["Pedido", "Sinal", "Confirmada", "Encerrada"] : ["Pedido", "Confirmada", "Hospedado", "Encerrada"];
+  const STEP = (status, cobra) => (cobra ? { solicitada: 0, aguardando_pagamento: 1, confirmada: 2, hospedado: 2, finalizada: 3 } : { solicitada: 0, confirmada: 1, hospedado: 2, finalizada: 3 })[status] ?? -1;
   const hora = iso => new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 
   // formas de pagar o que falta (sinal e/ou restante)
@@ -162,12 +165,13 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
   let atual = null, timer = null, pixAtual = null;
 
   function desenha(R, avisoAtualizado) {
-    const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", passo: -1, texto: () => "" };
+    const E = ESTADOS[R.status] || { rotulo: R.status, tom: "fim", texto: () => "" };
+    const cobra = temSinal(R), passoIdx = STEP(R.status, cobra);
     const total = Number(R.valor_total) || 0, pago = Number(R.sinal_pago) || 0, pc = total > 0 ? Math.min(100, Math.round(pago / total * 100)) : 0;
     const noites = Math.round((new Date(R.saida + "T12:00:00Z") - new Date(R.entrada + "T12:00:00Z")) / 86400000);
-    const pagavel = R.pix_chave && (R.status === "aguardando_pagamento" || R.status === "solicitada" || R.status === "confirmada");
+    const pagavel = R.pix_chave && (R.status === "aguardando_pagamento" || R.status === "confirmada");
     const op = pagavel ? opcoesPix(R) : [];
-    const passos = E.passo >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(R).map((t, i) => `<li class="${i < E.passo ? "feito" : i === E.passo ? "agora" : ""}" ${i === E.passo ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
+    const passos = passoIdx >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(cobra).map((t, i) => `<li class="${i < passoIdx ? "feito" : i === passoIdx ? "agora" : ""}" ${i === passoIdx ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
     const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
     const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
         <div class="barra" role="img" aria-label="${pc}% pago"><i style="--pc:${pc}%"></i></div>
