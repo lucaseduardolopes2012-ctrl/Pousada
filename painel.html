@@ -356,7 +356,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
   const S = { pousada: null, papel: "dono", quartos: [], est: [], pend: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual,tema";
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual,tema,politica,cobranca";
   const TERMOS = "2026-11-16";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
@@ -495,10 +495,12 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     document.title = `${S.pousada.nome} · Painel`; }
   async function carregar() {
     const Pid = S.pousada.id;
-    const [q, r] = await Promise.all([
+    const [q, r, av] = await Promise.all([
       sb.from("quartos").select("*").eq("pousada_id", Pid),
       sb.from("reservas").select("*").eq("pousada_id", Pid).or(`saida.gte.${addDias(hoje(), -180)},status.in.(hospedado,confirmada)`).order("entrada").limit(2000),
+      sb.from("avaliacoes").select("*").eq("pousada_id", Pid).order("criado_em", { ascending: false }).limit(50),
     ]);
+    S.aval = av.data || [];
     S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); const todas = r.data || []; S.est = todas.filter(x => x.status !== "aguardando_pagamento"); S.pend = todas.filter(x => x.status === "aguardando_pagamento");
     if (q.error || r.error) toast(errText(q.error || r.error));
   }
@@ -573,6 +575,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const sair = [...atras, ...saem], resumo = sair.length ? `${plural(sair.length, "quarto precisa", "quartos precisam")} ser liberado${sair.length > 1 ? "s" : ""} hoje${atras.length ? `, ${atras.length} com saída atrasada` : ""}.` : "Nenhuma saída marcada para hoje. Veja quem está em cada quarto.";
     const peds = S.est.filter(r => r.status === "solicitada").sort((a, b) => a.entrada.localeCompare(b.entrada));
     return `<div class="cab"><div><h1>${oi}</h1><p>${resumo}</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
+      ${blocoCancelamentos()}
       ${peds.length ? blocoPedidos(peds) : ""}
       ${blocoAguardando()}
       <section class="numeros">
@@ -590,6 +593,14 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       <section class="cartao bloco"><div class="bloco-cab"><h2>Estadias em andamento</h2><a class="link" href="#estadias">Ver todas</a></div>${tabela(andamento, "Nenhum hóspede na pousada agora. Use Registrar estadia quando alguém chegar.")}</section>`;
   }
 
+  // pedidos de cancelamento feitos pelo hóspede (reserva confirmada ou com pagamento): a pousada cancela ou mantém
+  const pedidosCancel = () => [...S.est, ...(S.pend || [])].filter(r => r.cancelamento_pedido_em && !["cancelada", "no_show", "finalizada", "hospedado"].includes(r.status));
+  function blocoCancelamentos() {
+    const l = pedidosCancel(); if (!l.length) return "";
+    return `<section class="cartao bloco pedidos" style="border-color:var(--atraso);box-shadow:0 0 0 1px var(--atraso)"><div class="bloco-cab"><h2>${plural(l.length, "pedido de cancelamento", "pedidos de cancelamento")}</h2><span class="pilula" style="background:var(--atraso);color:#fff">Responda ao hóspede</span></div>
+      ${l.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b> <span class="suave" style="font-size:12px">${cod(r)}</span><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)}, ${brl(r.valor_total)}${Number(r.sinal_pago) > 0 ? `, ${brl(r.sinal_pago)} já pago` : ""}. Pediu em ${dmy(String(r.cancelamento_pedido_em).slice(0, 10))}${r.cancelamento_motivo ? `: “${esc(r.cancelamento_motivo)}”` : "."}${r.telefone ? ` · <a href="https://wa.me/${esc(zapDe(r.telefone))}" target="_blank" rel="noopener">WhatsApp</a>` : ""}</p></div>
+        <div class="bts"><button class="btn btn--perigo" data-acao="cancel-aprovar" data-id="${esc(r.id)}">Cancelar a reserva</button><button class="btn btn--borda" data-acao="cancel-manter" data-id="${esc(r.id)}">Manter</button></div></div>`).join("")}</section>`;
+  }
   function blocoPedidos(peds) {
     const cobra = S.pousada.pix_chave && S.pousada.sinal_percentual > 0;
     return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">${cobra ? "Aceite ou recuse" : "Confirme ou recuse"}</span></div>
@@ -648,7 +659,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       : `<p class="linha-i">${ic("calendario")}<span>${s.k === "fora" ? "Fora de uso" : s.prox ? `Próxima chegada ${semana(s.prox.entrada)} ${dm(s.prox.entrada)}` : "Sem chegadas marcadas"}</span></p>`;
     return `<article class="cartao quarto"><div class="foto">${fotoOuVazio(q)}${etiqueta(s.k)}<button class="editar" data-acao="editar-quarto" data-id="${esc(q.id)}">${ic("lapis")}Editar</button></div>
       <div class="corpo"><h3>${esc(q.nome)}</h3><p class="linha-i">${ic("cama")}<span>${esc(q.tipo || "Quarto")} · até ${plural(q.capacidade, "pessoa", "pessoas")}</span></p>${linha}
-      <div class="rodape"><span class="preco">${brl(q.diaria)} <small>/noite</small></span><a class="btn btn--sec" href="#quarto-${esc(q.id)}">Ver detalhes</a></div></div></article>`;
+      <div class="rodape"><span class="preco">${brl(q.diaria)} <small>${S.pousada.cobranca === "pessoa" ? "/pessoa/noite" : "/noite"}</small></span><a class="btn btn--sec" href="#quarto-${esc(q.id)}">Ver detalhes</a></div></div></article>`;
   }
   const FILTROS = [["todos", "Todos os quartos"], ["ocupado", "Ocupados"], ["sai", "Saem hoje"], ["atrasado", "Saída atrasada"], ["chega", "Chegam hoje"], ["livre", "Livres"], ["fora", "Fora de uso"]];
   const casa = (k, f) => f === "todos" || k === f || (f === "ocupado" && ["ocupado", "sai", "atrasado"].includes(k));
@@ -765,7 +776,9 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <label class="todo">Apresentação no site <small>opcional, aparece embaixo do nome</small><textarea id="c-desc" maxlength="600">${esc(p.descricao || "")}</textarea></label>
         <label class="todo">WhatsApp da pousada <small>com DDD, para os hóspedes falarem com você</small><input id="c-zap" type="tel" maxlength="20" value="${esc(p.whatsapp || "")}" placeholder="(41) 99999-0000"></label>
         <label>Entrada a partir das<input id="c-ci" type="time" value="${esc(p.checkin_hora)}"></label>
-        <label>Saída até as<input id="c-co" type="time" value="${esc(p.checkout_hora)}"></label></div>
+        <label>Saída até as<input id="c-co" type="time" value="${esc(p.checkout_hora)}"></label>
+        <label class="todo">Como cobrar a diária<select id="c-cob"><option value="quarto" ${p.cobranca !== "pessoa" ? "selected" : ""}>Por quarto (o mesmo preço para quem estiver no quarto)</option><option value="pessoa" ${p.cobranca === "pessoa" ? "selected" : ""}>Por pessoa (adulto e criança acima de 5 anos pagam; até 5 anos não paga)</option></select></label>
+        <label class="todo">Política de cancelamento <small>aparece no site, na ficha e na página do pedido</small><textarea id="c-pol" maxlength="1000" placeholder="Ex.: Cancelamento gratuito até 7 dias depois de fazer a reserva.">${esc(p.politica || "")}</textarea></label></div>
         <p class="erro" id="c-err" role="alert" hidden></p>
         <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
         <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}. ${p.termos_aceitos_em ? `Termos de Uso (versão ${esc(p.termos_versao)}) aceitos em ${dmy(String(p.termos_aceitos_em).slice(0, 10))}.` : "Termos de Uso ainda não aceitos."} <a class="link" href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> · <a class="link" href="privacidade.html?p=${esc(p.slug)}" target="_blank" rel="noopener">Aviso de Privacidade dos hóspedes</a></p></form>
@@ -775,6 +788,9 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
         <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
         <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>
+      ${S.papel === "dono" ? `<section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Avaliações dos hóspedes</h2><span class="suave" style="font-size:12px">${(S.aval || []).length}</span></div>
+        <p class="suave" style="font-size:13px">O hóspede avalia pela página do pedido depois da saída, e a avaliação aparece direto no site. Se alguma for ofensiva, remova aqui.</p>
+        ${(S.aval || []).length ? (S.aval || []).map(a => `<div class="linha-lista"><div><b style="color:#e0a100">${"★".repeat(a.nota)}<span style="color:var(--linha)">${"★".repeat(5 - a.nota)}</span></b> <span class="d" style="display:inline">${esc(a.nome)} · ${dmy(String(a.criado_em).slice(0, 10))}</span>${a.texto ? `<span class="d">${esc(a.texto)}</span>` : ""}</div><button class="ic" type="button" data-acao="aval-remover" data-id="${esc(a.id)}" aria-label="Remover avaliação de ${esc(a.nome)}" title="Remover">${ic("lixo")}</button></div>`).join("") : '<p class="vazio">Nenhuma avaliação ainda.</p>'}</section>` : ""}
       <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Fotos da pousada</h2><span class="suave" style="font-size:12px">${(p.fotos || []).length} de 12</span></div>
         <p class="suave" style="font-size:13px">Fachada, varanda, vista, café da manhã. Aparecem no site logo abaixo do nome. A primeira é a capa.</p>
         ${S.papel === "dono" ? `<div class="galeria-ed">${(p.fotos || []).map((u, i) => `<figure><img src="${esc(u)}" alt="Foto ${i + 1} da pousada" loading="lazy">${i === 0 ? '<span class="capa">Capa</span>' : ""}<figcaption>${i ? `<button class="btn btn--borda" type="button" data-acao="foto-capa" data-i="${i}">Usar como capa</button>` : ""}<button class="ic" type="button" data-acao="foto-remover" data-i="${i}" aria-label="Remover foto ${i + 1}" title="Remover">${ic("lixo")}</button></figcaption></figure>`).join("")}</div>
@@ -870,6 +886,19 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     if (d.filtro) { S.filtro = d.filtro; S.menuFiltro = false; return desenha(); }
     if (d.aba) { S.aba = d.aba; return desenha(); }
     const r = d.id && S.est.find(x => x.id === d.id);
+    if (d.acao === "cancel-aprovar" || d.acao === "cancel-manter") {
+      t.disabled = true;
+      const mud = d.acao === "cancel-aprovar" ? { status: "cancelada" } : { cancelamento_pedido_em: null };
+      const { error } = await sb.from("reservas").update(mud).eq("id", d.id);
+      if (error) { t.disabled = false; toast(errText(error)); return; }
+      await carregar(); desenha(); toast(d.acao === "cancel-aprovar" ? "Reserva cancelada. Avise o hóspede sobre a devolução, se houver." : "Reserva mantida."); return;
+    }
+    if (d.acao === "aval-remover") {
+      if (d.certeza !== "1") { d.certeza = "1"; t.title = "Toque de novo para remover"; t.style.color = "var(--atraso)"; toast("Toque de novo na lixeira para remover a avaliação do site."); return; }
+      t.disabled = true; const { error } = await sb.from("avaliacoes").delete().eq("id", d.id);
+      if (error) { t.disabled = false; toast(errText(error)); return; }
+      await carregar(); desenha(); toast("Avaliação removida do site."); return;
+    }
     switch (d.acao) {
       case "filtro": S.menuFiltro = !S.menuFiltro; return desenha();
       case "baixar": return baixar();
@@ -955,7 +984,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   });
   document.addEventListener("submit", async e => {
     if (e.target.id !== "f-config") return; e.preventDefault(); const err = $("c-err"); err.hidden = true;
-    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), descricao: $("c-desc").value.trim(), whatsapp: $("c-zap").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00" };
+    const d = { nome: $("c-nome").value.trim(), cidade: $("c-cid").value.trim(), descricao: $("c-desc").value.trim(), whatsapp: $("c-zap").value.trim(), checkin_hora: $("c-ci").value || "14:00", checkout_hora: $("c-co").value || "12:00", cobranca: $("c-cob").value, politica: $("c-pol").value.trim() };
     if (d.nome.length < 2) { err.textContent = "Coloque o nome da pousada."; err.hidden = false; return; }
     const zd = d.whatsapp.replace(/\D/g, ""); if (zd && (zd.length < 10 || zd.length > 13)) { err.textContent = "O WhatsApp precisa ter DDD e número, por exemplo (41) 99999-0000."; err.hidden = false; return; }
     const res = await sb.from("pousadas").update(d).eq("id", S.pousada.id).select(COLS).single();

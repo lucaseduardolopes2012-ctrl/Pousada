@@ -38,7 +38,7 @@
     topo(c) {
       const { P, CASA, slug, esc, TEMA } = c, marca = TEMA && TEMA.motivo === "pinheiro" ? c.PINHEIRO : SOL_ICONE;
       return `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${marca}</i><span>${esc(P.nome)}</span></a>
-        <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${c.temSaber ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`;
+        <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (c.P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${c.temSaber ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`;
     },
 
     abertura(c) {
@@ -71,6 +71,7 @@
               <div class="hd-gente">
                 <label class="hd-c"><span>Adultos</span><span class="contador"><button type="button" data-conta="adultos" data-d="-1" aria-label="Menos um adulto">−</button><output id="o-adultos">${S.adultos}</output><button type="button" data-conta="adultos" data-d="1" aria-label="Mais um adulto">+</button></span></label>
                 <label class="hd-c"><span>Crianças</span><span class="contador"><button type="button" data-conta="criancas" data-d="-1" aria-label="Menos uma criança">−</button><output id="o-criancas">${S.criancas}</output><button type="button" data-conta="criancas" data-d="1" aria-label="Mais uma criança">+</button></span></label>
+                <div class="idades" id="idades" aria-live="polite"></div>
                 <p class="noites" id="b-noites" aria-live="polite"></p>
                 <svg class="hd-codigo" viewBox="0 0 150 30" aria-hidden="true" focusable="false">${codigoPinhos(P.nome)}</svg>
               </div>

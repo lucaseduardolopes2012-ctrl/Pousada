@@ -67,6 +67,11 @@ h1.nome { color: var(--titulo, inherit); font-family: var(--display); font-weigh
 .contador button { width: 34px; height: 34px; border-radius: 8px; border: 0; background: rgba(255, 255, 255, .12); color: #ffffff; font-size: 18px; font-weight: 700; cursor: pointer; display: grid; place-items: center; }
 .contador button:disabled { opacity: .35; cursor: default; }
 .contador output { font-family: var(--display); font-size: 19px; font-weight: 700; min-width: 2ch; text-align: center; }
+.idades { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; margin-top: 10px; }
+.idades:empty { display: none; }
+.idades label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: var(--c30-suave, inherit); }
+.idades select { height: 40px; padding: 0 8px; border-radius: 9px; border: 1px solid var(--borda); background: #fff; color: var(--tinta); font: inherit; font-size: 14px; }
+.idades .regra { grid-column: 1 / -1; font-size: 12px; font-weight: 500; opacity: .9; }
 .bilhete .noites { margin: 12px 0 0; font-size: 13.5px; color: var(--c30-suave); min-height: 1.5em; }
 .bilhete .btn--cheio { width: 100%; height: 48px; font-size: 15px; margin-top: 14px; }
 
@@ -502,7 +507,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     el.onload = el.onerror = ok; setTimeout(ok, 4000); document.head.appendChild(el);
   })));
   const MOD = MODELO !== "classico" && window.PG_MODELOS && window.PG_MODELOS[MODELO] || null;
-  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
+  const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0, idades: [] };
 
   /* ---------- peças do movimento ---------- */
   const MOV = !matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -561,7 +566,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     temSaber: !!(P.como_chegar || P.politica || (P.pagamentos || []).length) };
   raiz.innerHTML = `
   ${MOD ? MOD.topo(C) : `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${DESENHO.marca || esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
   <main id="inicio">
     ${MOD ? MOD.abertura(C) : `
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${DESENHO.topo}${DESENHO.agua}<div class="dentro">
@@ -580,6 +585,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         <div class="parte"><div class="gente">
           <label>Adultos<span class="contador"><button type="button" data-conta="adultos" data-d="-1" aria-label="Menos um adulto">−</button><output id="o-adultos">${S.adultos}</output><button type="button" data-conta="adultos" data-d="1" aria-label="Mais um adulto">+</button></span></label>
           <label>Crianças<span class="contador"><button type="button" data-conta="criancas" data-d="-1" aria-label="Menos uma criança">−</button><output id="o-criancas">${S.criancas}</output><button type="button" data-conta="criancas" data-d="1" aria-label="Mais uma criança">+</button></span></label></div>
+          <div class="idades" id="idades" aria-live="polite"></div>
           <p class="erro" id="b-erro" role="alert" hidden></p>
           <button class="btn btn--cheio" type="submit" id="b-ver">Ver quartos livres</button></div>
       </form>
@@ -655,11 +661,15 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   }
 
   function avaliacoes() {
-    if (!CASA || !(CASA.avaliacoes || []).length) return "";
+    const MES_A = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+    const doBanco = (P.avaliacoes || []).map(a => ({ t: a.texto, nota: a.nota, quando: [a.nome, a.quando ? `${MES_A[new Date(a.quando).getMonth()]} de ${new Date(a.quando).getFullYear()}` : ""].filter(Boolean).join(", ") }));
+    const todas = [...doBanco, ...((CASA && CASA.avaliacoes) || [])];
+    if (!todas.length) return "";
     const estrelas = n => `<span class="estrelas" role="img" aria-label="${n} de 5 estrelas">${"★".repeat(n)}</span>`;
     return `<section class="secao" id="avaliacoes"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Avaliações</h2><p>O que os hóspedes contam depois da estadia.</p></div>
-      <div class="avaliacoes">${CASA.avaliacoes.map(a => `<figure class="avaliacao"><blockquote>${esc(a.t)}</blockquote>${a.nota || a.quando ? `<figcaption>${a.nota ? estrelas(a.nota) : ""}${a.quando ? `<span>${esc(a.quando)}</span>` : ""}</figcaption>` : ""}</figure>`).join("")}</div></div></section>`;
+      <div class="avaliacoes">${todas.map(a => `<figure class="avaliacao">${a.t ? `<blockquote>${esc(a.t)}</blockquote>` : ""}${a.nota || a.quando ? `<figcaption>${a.nota ? estrelas(a.nota) : ""}${a.quando ? `<span>${esc(a.quando)}</span>` : ""}</figcaption>` : ""}</figure>`).join("")}</div></div></section>`;
   }
+
 
   function sobreCasa() {
     if (!CASA) return "";
@@ -679,6 +689,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     it.push(["Horários", `Entrada a partir das ${P.checkin_hora}.\nSaída até as ${P.checkout_hora}.`]);
     if (P.acesso || P.como_chegar) it.push(["Como chegar", [P.acesso && ACESSO[P.acesso], P.como_chegar].filter(Boolean).join(".\n")]);
     if ((P.pagamentos || []).length) it.push(["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `.\nSinal de ${P.sinal_percentual}% para confirmar.` : ".")]);
+    if (P.cobranca === "pessoa") it.push(["Crianças", "Até 5 anos não paga.\nAcima de 5 anos paga a diária inteira, como adulto."]);
     if (P.politica) it.push(["Cancelamento", P.politica]);
     return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2>${DESENHO.cab}</div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
   }
@@ -690,7 +701,18 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     document.querySelectorAll("[data-conta]").forEach(b => { const v = S[b.dataset.conta] + Number(b.dataset.d); b.disabled = v < (b.dataset.conta === "adultos" ? 1 : 0) || v > 20; });
     const n = S.entrada && S.saida && S.saida > S.entrada ? noites(S.entrada, S.saida) : 0;
     $("b-noites").textContent = n ? `${plural(n, "noite", "noites")}, de ${dia(S.entrada)} a ${dia(S.saida)}` : "";
+    desenhaIdades();
   }
+  // uma caixinha de idade por criança; só redesenha quando muda o número de crianças (para não perder o que já foi escolhido)
+  function desenhaIdades() {
+    const box = $("idades"); if (!box) return;
+    S.idades = S.idades.slice(0, S.criancas); while (S.idades.length < S.criancas) S.idades.push(null);
+    if (box.childElementCount === S.criancas + (S.criancas ? 1 : 0)) return;
+    const opcoes = v => `<option value="">Idade</option>${Array.from({ length: 18 }, (_, k) => `<option value="${k}" ${v === k ? "selected" : ""}>${k === 0 ? "Menos de 1 ano" : plural(k, "ano", "anos")}</option>`).join("")}`;
+    box.innerHTML = S.criancas ? S.idades.map((v, k) => `<label>Criança ${k + 1}<select data-idade="${k}" aria-label="Idade da criança ${k + 1}">${opcoes(v)}</select></label>`).join("")
+      + `<p class="regra">${P.cobranca === "pessoa" ? "Até 5 anos não paga. Acima de 5 anos paga a diária inteira." : "Informe a idade de cada criança."}</p>` : "";
+  }
+  document.addEventListener("change", e => { const s = e.target.closest("[data-idade]"); if (!s) return; S.idades[Number(s.dataset.idade)] = s.value === "" ? null : Number(s.value); limpaBusca(); });
   $("b-in").addEventListener("change", e => { S.entrada = e.target.value; if (!S.saida || S.saida <= S.entrada) { S.saida = addDias(S.entrada, 1); $("b-out").value = S.saida; } $("b-out").min = addDias(S.entrada, 1); limpaBusca(); });
   $("b-out").addEventListener("change", e => { S.saida = e.target.value; limpaBusca(); });
   // o barquinho atravessa de uma data à outra quando elas mudam
@@ -701,10 +723,10 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
   $("bilhete").addEventListener("submit", async e => {
     e.preventDefault(); const err = $("b-erro"); err.hidden = true;
-    const falha = !S.entrada || !S.saida ? "Escolha a data de entrada e a de saída." : S.entrada < hoje() ? "A entrada precisa ser a partir de hoje." : S.saida <= S.entrada ? "A saída precisa ser depois da entrada." : noites(S.entrada, S.saida) > 60 ? "Dá para pedir até 60 noites por vez." : "";
+    const falha = !S.entrada || !S.saida ? "Escolha a data de entrada e a de saída." : S.entrada < hoje() ? "A entrada precisa ser a partir de hoje." : S.saida <= S.entrada ? "A saída precisa ser depois da entrada." : noites(S.entrada, S.saida) > 60 ? "Dá para pedir até 60 noites por vez." : S.idades.some(v => v == null) ? "Escolha a idade de cada criança." : "";
     if (falha) { err.textContent = falha; err.hidden = false; return; }
     const btn = $("b-ver"); btn.disabled = true; btn.textContent = "Procurando quartos livres…"; btn.classList.add("procurando");
-    const { data, error } = await sb.rpc("quartos_disponiveis", { p_slug: slug, p_entrada: S.entrada, p_saida: S.saida });
+    const { data, error } = await sb.rpc("quartos_disponiveis", { p_slug: slug, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_idades: S.idades });
     btn.disabled = false; btn.textContent = "Ver quartos livres"; btn.classList.remove("procurando");
     if (error) { err.textContent = errText(error); err.hidden = false; return; }
     S.livres = new Map((data || []).map(r => [r.id, r])); S.quarto = null; S.buscaN++;
@@ -724,7 +746,8 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     $("grade-q").innerHTML = Q.map(q => {
       const livre = S.livres && S.livres.get(q.id), cabe = q.capacidade >= pessoas(), pode = livre && cabe;
       const situ = !S.livres ? "" : pode ? `<span class="situ livre">Livre</span>` : `<span class="situ">${livre ? `Cabem até ${q.capacidade}` : "Ocupado nessas datas"}</span>`;
-      const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${brl(q.diaria)} cada</span>` : `<b>${brl(q.diaria)}</b><span>por noite</span>`;
+      const pp = P.cobranca === "pessoa";
+      const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${pp ? `${plural(livre.pagantes || 1, "pagante", "pagantes")} a ${brl(q.diaria)}` : `${brl(q.diaria)} cada`}</span>` : `<b>${brl(q.diaria)}</b><span>${pp ? "por pessoa, por noite" : "por noite"}</span>`;
       const acao = !S.livres ? `<a class="btn btn--borda" href="#bilhete" data-datas>Escolher datas</a>` : pode ? `<button class="btn ${S.quarto === q.id ? "btn--cheio" : "btn--borda"}" data-escolher="${esc(q.id)}" aria-pressed="${S.quarto === q.id}">${S.quarto === q.id ? "Quarto escolhido" : "Escolher este quarto"}</button>` : "";
       const nomeCurto = q.nome.replace(/^quarto\s*/i, "") || q.nome;
       if (MOD && MOD.quarto) return MOD.quarto(C, q, { livre, pode, situ, preco, acao, nomeCurto, escolhido: S.quarto === q.id, pulsa: pulsa && !anima, fora: S.livres && !pode });
@@ -801,8 +824,9 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       </form>
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
-        <div><dt>Pessoas</dt><dd>${plural(S.adultos, "adulto", "adultos")}${S.criancas ? ` e ${plural(S.criancas, "criança", "crianças")}` : ""}</dd></div>
-        <div class="total"><dt>${plural(n, "noite", "noites")}</dt><dd>${brl(livre.total)}</dd></div></dl>
+        <div><dt>Pessoas</dt><dd>${plural(S.adultos, "adulto", "adultos")}${S.criancas ? ` e ${plural(S.criancas, "criança", "crianças")} (${S.idades.map(v => v === 0 ? "menos de 1 ano" : plural(v, "ano", "anos")).join(", ")})` : ""}</dd></div>
+        <div class="total"><dt>${plural(n, "noite", "noites")}${P.cobranca === "pessoa" ? `, ${plural(livre.pagantes || 1, "pagante", "pagantes")}` : ""}</dt><dd>${brl(livre.total)}</dd></div></dl>
+        ${P.politica ? `<p class="aviso"><b>Cancelamento:</b> ${esc(P.politica)}</p>` : ""}
         ${P.sinal_percentual ? `<p class="aviso">A pousada pede sinal de ${P.sinal_percentual}% para confirmar.</p>` : ""}
         <button class="mudar" type="button" data-mudar>Trocar quarto ou datas</button></aside></div>`;
     entra();
@@ -815,7 +839,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const falha = d.nome.length < 2 ? "Escreva seu nome completo." : dig.length < 10 || dig.length > 13 ? "Coloque o WhatsApp com DDD, por exemplo (41) 99999-0000." : d.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email) ? "Esse email não parece completo. Confira ou deixe em branco." : "";
       if (falha) { err.textContent = falha; err.hidden = false; return; }
       const btn = $("f-enviar"); btn.disabled = true; btn.textContent = "Enviando pedido…";
-      const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
+      const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_idades: S.idades, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
       if (error) { btn.disabled = false; btn.textContent = "Enviar pedido"; err.textContent = errText(error); err.hidden = false; return; }
       try { sessionStorage.setItem(`pg-tel-${slug}-${data}`, d.tel); } catch (er) {}
       let R = null; try { const rr = await sb.rpc("consultar_pedido", { p_slug: slug, p_codigo: data, p_telefone: d.tel }); R = rr.data || null; } catch (er) {}

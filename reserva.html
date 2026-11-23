@@ -97,6 +97,26 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 .rodape a { color: var(--sobre-preto); }
 [data-tema] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
 [data-tema] .rodape a { color: rgba(255, 255, 255, .78); }
+.bloco-extra { margin-top: 22px; padding: 20px 22px; border-radius: 16px; border: 1px solid var(--fio); background: #fff; display: grid; gap: 12px; }
+.bloco-extra h2 { font-family: var(--display); font-size: 20px; letter-spacing: -.01em; }
+.bloco-extra p { color: var(--sobre-preto); }
+.bloco-extra label { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+.bloco-extra label small { font-weight: 400; color: var(--sobre-preto); }
+.bloco-extra textarea { width: 100%; min-height: 80px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--borda); font: inherit; resize: vertical; }
+.bloco-extra form { display: grid; gap: 12px; margin-top: 12px; }
+.bloco-extra .btn { justify-self: start; }
+.bloco-extra .btn--cheio { background: var(--azul); color: #fff; box-shadow: none; }
+.bloco-extra .btn--cheio:hover { filter: brightness(.92); }
+.cancel details summary { list-style: none; cursor: pointer; display: inline-flex; }
+.cancel details summary::-webkit-details-marker { display: none; }
+.politica { font-size: 14px; }
+.nota-in { border: 0; margin: 0; padding: 0; display: inline-flex; flex-direction: row-reverse; justify-content: flex-end; gap: 2px; }
+.nota-in legend { width: 100%; margin-bottom: 4px; font-weight: 600; font-size: 14px; }
+.nota-in input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.nota-in label { font-size: 36px; line-height: 1; color: #d9d2cc; cursor: pointer; transition: color .15s, transform .15s; }
+.nota-in input:checked ~ label, .nota-in label:hover, .nota-in label:hover ~ label { color: #f5a623; }
+.nota-in input:focus-visible + label { outline: 2px solid var(--c10, #f5a623); outline-offset: 2px; border-radius: 6px; }
+.nota-in label:hover { transform: scale(1.12); }
 .nao-achei { min-height: 70vh; display: grid; place-items: center; text-align: center; padding: 24px; }
 .nao-achei p { color: var(--sobre-preto); }
 .carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
@@ -205,6 +225,26 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
           <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
           <div class="pix-copia"><input id="pix-cod" readonly aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
           <p class="pix-nota">O dinheiro vai direto para a conta da pousada. ${R.status === "aguardando_pagamento" ? "Assim que ela receber, seu pedido é aprovado e esta página muda sozinha." : "Quando ela conferir o pagamento, o valor recebido muda aqui."}</p></div>` : ""}${cartaoHtml}</section>` : "";
+    // cancelamento: o hóspede cancela (pedido ainda não confirmado) ou pede o cancelamento (reserva confirmada ou paga)
+    const politicaHtml = R.politica ? `<p class="politica"><b>Política de cancelamento:</b> ${esc(R.politica)}</p>` : "";
+    const podeCancelar = ["solicitada", "aguardando_pagamento", "confirmada"].includes(R.status);
+    const cancelaDireto = ["solicitada", "aguardando_pagamento"].includes(R.status) && pago <= 0;
+    const cancelHtml = R.cancelamento_pedido_em && podeCancelar
+      ? `<section class="bloco-extra cancel"><h2>Cancelamento pedido</h2><p>Você pediu o cancelamento em ${new Date(R.cancelamento_pedido_em).toLocaleDateString("pt-BR")}. A pousada vai responder e esta página muda quando ela decidir.</p>${politicaHtml}</section>`
+      : podeCancelar ? `<section class="bloco-extra cancel"><h2>Precisa cancelar?</h2>${politicaHtml}
+          <details id="cancel-det"><summary class="btn btn--borda">Cancelar este pedido</summary>
+          <form id="f-cancel" novalidate><p>${cancelaDireto ? "Como a pousada ainda não confirmou e nada foi pago, o pedido é cancelado na hora." : "Sua reserva já está confirmada ou paga: o pedido de cancelamento vai para a pousada, que responde por aqui ou pelo WhatsApp."}</p>
+            <label>Motivo <small>opcional</small><textarea id="c-motivo" maxlength="300"></textarea></label>
+            <p class="erro" id="c-erro" role="alert" hidden></p>
+            <button class="btn btn--perigo btn--grande" type="submit" id="c-enviar">${cancelaDireto ? "Cancelar o pedido" : "Pedir o cancelamento"}</button></form></details></section>`
+      : politicaHtml && !["cancelada", "no_show", "finalizada"].includes(R.status) ? `<section class="bloco-extra cancel">${politicaHtml}</section>` : "";
+    // avaliação: abre depois da saída, uma vez por estadia, e aparece direto no site
+    const avaliarHtml = R.avaliado ? `<section class="bloco-extra avaliar"><h2>Obrigado pela avaliação!</h2><p>Ela já aparece no site da ${esc(P.nome)}.</p></section>`
+      : R.pode_avaliar ? `<section class="bloco-extra avaliar"><h2>Como foi a sua estadia?</h2>
+          <form id="f-avaliar" novalidate><fieldset class="nota-in"><legend>Sua nota</legend>${[5, 4, 3, 2, 1].map(n => `<input type="radio" name="nota" id="nota-${n}" value="${n}"><label for="nota-${n}" title="${plural(n, "estrela", "estrelas")}" aria-label="${plural(n, "estrela", "estrelas")}">★</label>`).join("")}</fieldset>
+            <label>Conte como foi <small>opcional; aparece no site com o seu primeiro nome</small><textarea id="a-texto" maxlength="1000"></textarea></label>
+            <p class="erro" id="a-erro" role="alert" hidden></p>
+            <button class="btn btn--cheio btn--grande" type="submit" id="a-enviar">Enviar avaliação</button></form></section>` : "";
     const quando = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
     const aberto = $("estado-bloco");
     raiz.innerHTML = `
@@ -220,9 +260,11 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
         <div><dt>Quarto</dt><dd>${esc(R.quarto)}</dd></div>
         <div><dt>Entrada</dt><dd>${dia(R.entrada)}</dd></div>
         <div><dt>Saída</dt><dd>${dia(R.saida)}</dd></div>
-        <div><dt>Estadia</dt><dd>${plural(noites, "noite", "noites")}, ${plural(R.adultos, "adulto", "adultos")}${R.criancas ? ` e ${plural(R.criancas, "criança", "crianças")}` : ""}</dd></div>
+        <div><dt>Estadia</dt><dd>${plural(noites, "noite", "noites")}, ${plural(R.adultos, "adulto", "adultos")}${R.criancas ? ` e ${plural(R.criancas, "criança", "crianças")}${(R.criancas_idades || []).length ? ` (${R.criancas_idades.map(v => v === 0 ? "menos de 1 ano" : plural(v, "ano", "anos")).join(", ")})` : ""}` : ""}</dd></div>
       </dl>
       ${pagamento}
+      ${avaliarHtml}
+      ${cancelHtml}
       <div class="acoes">${R.status === "cancelada" || R.status === "no_show" || R.status === "finalizada" ? `<a class="btn btn--cheio btn--grande" href="${voltar}#bilhete">Fazer um novo pedido</a>` : ""}<a class="btn btn--borda btn--grande" href="${voltar}">Voltar para o site</a><button class="btn btn--borda btn--grande" type="button" id="outro">Ver outro pedido</button></div>
       <p class="atualizado" id="atualizado">${avisoAtualizado || `Atualizado às ${quando}.`}</p>
     </div></main>
@@ -230,6 +272,21 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     $("outro").onclick = () => { clearInterval(timer); pedeBusca(); };
     if (op.length) ligaPix(op);
     const bc = $("pagar-cartao"); if (bc) bc.onclick = () => pagarCartao(bc, $("cartao-erro"));
+    const recarrega = async aviso => { const r = await consulta(pedCod, pedTel); if (r.R) { atual = r.R; desenha(r.R, aviso); } };
+    const fc = $("f-cancel"); if (fc) fc.onsubmit = async e => {
+      e.preventDefault(); const er = $("c-erro"), b = $("c-enviar"); er.hidden = true; b.disabled = true;
+      const { data, error } = await sb.rpc("pedir_cancelamento", { p_slug: slug, p_codigo: pedCod, p_telefone: pedTel, p_motivo: $("c-motivo").value.trim() });
+      if (error) { b.disabled = false; er.textContent = errText(error); er.hidden = false; return; }
+      recarrega(data === "cancelada" ? "Pedido cancelado." : "Pedido de cancelamento enviado para a pousada.");
+    };
+    const fa = $("f-avaliar"); if (fa) fa.onsubmit = async e => {
+      e.preventDefault(); const er = $("a-erro"), b = $("a-enviar"); er.hidden = true;
+      const marcada = fa.querySelector('input[name="nota"]:checked'); if (!marcada) { er.textContent = "Escolha de 1 a 5 estrelas."; er.hidden = false; return; }
+      b.disabled = true;
+      const { error } = await sb.rpc("avaliar_estadia", { p_slug: slug, p_codigo: pedCod, p_telefone: pedTel, p_nota: Number(marcada.value), p_texto: $("a-texto").value.trim() });
+      if (error) { b.disabled = false; er.textContent = errText(error); er.hidden = false; return; }
+      recarrega("Avaliação enviada. Obrigado!");
+    };
     if (aberto && atual && atual.status !== R.status) $("estado-bloco").focus?.();
   }
 
