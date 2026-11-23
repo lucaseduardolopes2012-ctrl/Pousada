@@ -6,12 +6,12 @@
   const M = (window.PG_MODELOS = window.PG_MODELOS || {});
   if (!document.querySelector("link[data-hd-fonte]")) {
     const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.hdFonte = "1";
-    l.href = "https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap";
     document.head.appendChild(l);
   }
   const SOL_G = `<circle cx="20" cy="20" r="7.5"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 4v5M20 31v5M4 20h5M31 20h5M8.7 8.7l3.5 3.5M27.8 27.8l3.5 3.5M31.3 8.7l-3.5 3.5M12.2 27.8l-3.5 3.5"/></g>`;
   const SOL_ICONE = `<svg viewBox="0 0 40 40" aria-hidden="true" focusable="false">${SOL_G}</svg>`;
-  const PINHEIRO_D = "M30 4 L46 34 L38 34 L50 56 L40 56 L54 80 L6 80 L20 56 L10 56 L22 34 L14 34 Z M27 80 H33 V96 H27 Z";
+  const PINHEIRO_D = "M30 3 L45 33 Q30 28 15 33 Z M30 19 L50 55 Q30 49 10 55 Z M30 38 L55 80 Q30 73 5 80 Z M27 80 H33 V97 H27 Z";
   // onda que se repete a cada "per" unidades, num desenho de 2400 de largura (o dobro da tela), para correr em loop sem emenda
   const onda = (y, amp, per) => { let d = `M0 ${y}`; for (let x = 0; x < 2400; x += per) d += ` Q${x + per / 4} ${y - amp} ${x + per / 2} ${y} T${x + per} ${y}`; return d; };
   // o nome em duas partes: "Pousada" pequeno (se houver) e o resto grande, com a última palavra em itálico
@@ -98,8 +98,13 @@
     // o rodapé é o fim do dia: pinheiros contra o céu, o sol se pondo atrás deles e o mar embaixo
     rodape(c) {
       const { P, CASA, slug, esc, lugar } = c;
-      const pinhos = Array.from({ length: 30 }, (_, i) => { const s = (.62 + ((i * 37) % 9) / 14).toFixed(2), x = (i * 49 - 14 + ((i * 53) % 23)).toFixed(0); return `<path transform="translate(${x} ${(100 - 100 * s).toFixed(1)}) scale(${s})" d="${PINHEIRO_D}"/>`; }).join("");
-      return `<footer class="rodape hd-rodape">${bando(c, "hd-voo--pinhal")}<svg class="hd-pinhal" viewBox="0 0 1470 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${pinhos}</svg>
+      // pinheiros em duas fileiras (a de trás mais clara e baixa); cada árvore é um <g> com a posição e um <path> dentro, que é o que balança.
+      // A imagem tem folga em cima (altura 130) para a ponta dos mais altos não ser cortada.
+      const arvore = (x, s, cls) => `<g transform="translate(${x.toFixed(0)} ${(130 - 97 * s).toFixed(1)}) scale(${s.toFixed(2)})"><path class="${cls}" d="${PINHEIRO_D}"/></g>`;
+      const atras = Array.from({ length: 22 }, (_, i) => arvore(i * 72 + 14 + ((i * 41) % 17), .5 + ((i * 29) % 7) / 22, "b")).join("");
+      const frente = Array.from({ length: 24 }, (_, i) => arvore(i * 66 - 18 + ((i * 53) % 27), .6 + ((i * 37) % 9) / 18, "f")).join("");
+      const pinhos = atras + frente;
+      return `<footer class="rodape hd-rodape">${bando(c, "hd-voo--pinhal")}<svg class="hd-pinhal" viewBox="0 0 1470 130" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${pinhos}</svg>
         <div class="hd-mar"><div class="hd-ondas" aria-hidden="true"><svg viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="${onda(30, 14, 600)} L2400 60 L0 60 Z"/></svg><svg viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="${onda(34, 10, 400)} L2400 60 L0 60 Z"/></svg></div>
           <div class="dentro hd-rod"><span class="hd-rod-nome">${esc(P.nome)}${lugar ? `<small>${esc(lugar)}</small>` : ""}</span>
             <span class="hd-rod-links">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></div></footer>`;
