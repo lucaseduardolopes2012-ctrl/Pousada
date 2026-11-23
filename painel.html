@@ -334,8 +334,8 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 (async () => {
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
-  const S = { pousada: null, papel: "dono", quartos: [], est: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos";
+  const S = { pousada: null, papel: "dono", quartos: [], est: [], pend: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual";
   const TERMOS = "2026-11-16";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
@@ -475,14 +475,17 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       sb.from("quartos").select("*").eq("pousada_id", Pid),
       sb.from("reservas").select("*").eq("pousada_id", Pid).or(`saida.gte.${addDias(hoje(), -180)},status.in.(hospedado,confirmada)`).order("entrada").limit(2000),
     ]);
-    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); S.est = r.data || [];
+    S.quartos = (q.data || []).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); const todas = r.data || []; S.est = todas.filter(x => x.status !== "aguardando_pagamento"); S.pend = todas.filter(x => x.status === "aguardando_pagamento");
     if (q.error || r.error) toast(errText(q.error || r.error));
   }
   function assinar() {
     sb.channel("est-" + S.pousada.id).on("postgres_changes", { event: "*", schema: "public", table: "reservas", filter: `pousada_id=eq.${S.pousada.id}` }, p => {
-      const n = p.new, i = n && n.id ? S.est.findIndex(x => x.id === n.id) : -1;
-      if (p.eventType === "DELETE") S.est = S.est.filter(x => x.id !== (p.old || {}).id); else if (i >= 0) S.est[i] = n; else if (n && n.id) S.est.push(n);
+      const n = p.new, id = n && n.id ? n.id : (p.old || {}).id, antes = S.pend.find(x => x.id === id);
+      S.est = S.est.filter(x => x.id !== id); S.pend = S.pend.filter(x => x.id !== id);
+      if (p.eventType !== "DELETE" && n && n.id) (n.status === "aguardando_pagamento" ? S.pend : S.est).push(n);
       if (p.eventType === "INSERT" && n && n.status === "solicitada") { PG.ding(); toast(`Pedido novo do site: ${n.nome}.`); }
+      if (p.eventType === "INSERT" && n && n.status === "aguardando_pagamento") toast(`Novo pedido de ${n.nome}, aguardando o Pix do sinal.`);
+      if (antes && n && n.status === "confirmada") { PG.ding(); toast(`Sinal pago: reserva de ${n.nome} aprovada.`); }
       if (!S.gaveta) desenha();
     }).subscribe();
   }
@@ -508,10 +511,27 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const avisoTermos = S.papel === "dono" && S.pousada.termos_versao !== TERMOS ? `<section class="cartao bloco termos-aviso" role="region" aria-label="Termos de Uso"><div><h2>Aceite os Termos de Uso</h2><p>Eles explicam como o sistema funciona e como os dados dos seus hóspedes são protegidos, conforme a LGPD. Leia antes de aceitar.</p></div><div class="bts"><a class="btn btn--borda" href="termos.html" target="_blank" rel="noopener">Ler os termos</a><button class="btn btn--cheio" data-acao="aceitar-termos">Li e aceito</button></div></section>` : "";
     $("vista").innerHTML = avisoTermos + { geral: vGeral, quartos: vQuartos, quarto: vQuarto, estadias: vEstadias, hospedes: vHospedes, config: vConfig }[S.v]();
     if (S.v === "geral") desenhaGrafico();
-    if (S.v === "config") desenhaQR();
+    if (S.v === "config") { desenhaQR(); desenhaPixQR(); }
   }
   const urlSite = () => new URL(`site.html?p=${S.pousada.slug}`, location.href).href;
   function svgQR(cel) { if (!window.qrcode) return ""; const q = qrcode(0, "M"); q.addData(urlSite()); q.make(); return q.createSvgTag({ cellSize: cel, margin: 2, scalable: true }); }
+  const PIX_TIPOS = [["cpf_cnpj", "CPF ou CNPJ"], ["celular", "Celular"], ["email", "E-mail"], ["aleatoria", "Chave aleatória"]];
+  function cartaoPix(p) {
+    const cab = `<div class="bloco-cab" style="margin:0"><h2>Receber por Pix</h2><span class="suave" style="font-size:12px">${p.pix_chave ? "Chave cadastrada" : "Ainda sem chave"}</span></div>`;
+    const sobre = `<p class="suave" style="font-size:13px">Cadastre a chave Pix da pousada. No site, depois de enviar o pedido, o hóspede vê o QR code e o "Pix copia e cola" para pagar o sinal. O dinheiro cai direto na sua conta. O sistema não confirma o pagamento sozinho: confira no app do banco e registre o valor pago na reserva.</p>`;
+    if (S.papel !== "dono") return `<section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px">${cab}${sobre}<p class="suave" style="font-size:13px">Só o dono da pousada muda a chave Pix.</p></section>`;
+    const tipo = p.pix_chave ? PG.pixTipo(p.pix_chave) : "cpf_cnpj";
+    return `<section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px">${cab}${sobre}
+      <form id="f-pix" novalidate style="display:grid;gap:12px"><div class="campos">
+        <label>Tipo da chave<select id="px-tipo">${PIX_TIPOS.map(([v, t]) => `<option value="${v}"${v === tipo ? " selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label>Chave Pix<input id="px-chave" maxlength="77" autocomplete="off" value="${esc(p.pix_chave || "")}" placeholder="A mesma que está no app do banco"></label>
+        <label class="todo">Sinal para confirmar a reserva (%) <small>o hóspede escolhe entre pagar só o sinal ou o valor total. 0 = só o valor total</small><input id="px-sinal" type="number" min="0" max="100" step="1" inputmode="numeric" value="${esc(p.sinal_percentual || 0)}"></label></div>
+        <p class="erro" id="px-err" role="alert" hidden></p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn--cheio" type="submit">Salvar Pix</button>${p.pix_chave ? '<button class="btn btn--borda" type="button" data-acao="pix-remover">Remover chave</button>' : ""}</div></form>
+      ${p.pix_chave ? `<div class="qr"><div class="img" id="qr-pix" role="img" aria-label="QR code de teste do Pix"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">QR code de teste, de R$ 1,00. Aponte o app do seu banco para conferir se o nome e a chave estão certos. Não precisa pagar.</p><button class="btn btn--borda" type="button" data-acao="pix-copiar">Copiar Pix copia e cola</button></div></div>` : ""}</section>`;
+  }
+  const pixTeste = () => PG.pixPayload({ chave: S.pousada.pix_chave, valor: 1, nome: S.pousada.nome, cidade: S.pousada.cidade, txid: "TESTE" });
+  function desenhaPixQR() { const b = $("qr-pix"); if (!b || !S.pousada.pix_chave) return; if (!window.qrcode) { b.innerHTML = '<span class="suave" style="font-size:12px">QR code indisponível sem internet.</span>'; return; } const q = qrcode(0, "M"); q.addData(pixTeste()); q.make(); b.innerHTML = q.createSvgTag({ cellSize: 4, margin: 2, scalable: true }); }
   function desenhaQR() { const b = $("qr"); if (b) b.innerHTML = svgQR(4) || '<span class="suave" style="font-size:12px">QR code indisponível sem internet.</span>'; }
 
   /* ---------- visão geral ---------- */
@@ -530,6 +550,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const peds = S.est.filter(r => r.status === "solicitada").sort((a, b) => a.entrada.localeCompare(b.entrada));
     return `<div class="cab"><div><h1>${oi}</h1><p>${resumo}</p></div><div class="acoes-cab"><button class="btn btn--borda" data-acao="baixar">${ic("baixar")}Baixar planilha</button><button class="btn btn--cheio" data-nova-estadia>${ic("mais")}Registrar estadia</button></div></div>
       ${peds.length ? blocoPedidos(peds) : ""}
+      ${blocoAguardando()}
       <section class="numeros">
         ${num("cama", "Hospedados agora", hosp.length, `${plural(pessoas, "pessoa", "pessoas")} na pousada`)}
         ${num("saida", "Saem hoje", saem.length, `Até as ${esc(S.pousada.checkout_hora)} · ${at.toLowerCase()}`)}
@@ -546,9 +567,20 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   }
 
   function blocoPedidos(peds) {
-    return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">Confirme ou recuse</span></div>
+    const cobra = S.pousada.pix_chave && S.pousada.sinal_percentual > 0;
+    return `<section class="cartao bloco pedidos" id="pedidos"><div class="bloco-cab"><h2>${plural(peds.length, "pedido novo do site", "pedidos novos do site")}</h2><span class="pilula" style="background:var(--c10);color:var(--c10-tinta)">${cobra ? "Aceite ou recuse" : "Confirme ou recuse"}</span></div>
+      ${cobra ? `<p class="suave" style="font-size:13px;margin:0 0 10px">Ao aceitar, o quarto fica reservado e o hóspede recebe o QR code para pagar o sinal de ${S.pousada.sinal_percentual}%. Sem pagamento em 24 h, cancela sozinho e libera o quarto.</p>` : ""}
       ${peds.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${plural(r.adultos + r.criancas, "pessoa", "pessoas")}, ${brl(r.valor_total)}${r.telefone ? ` · <a href="https://wa.me/${esc(zapDe(r.telefone))}" target="_blank" rel="noopener">${esc(r.telefone)}</a>` : ""}${r.observacoes ? `<br>Recado: ${esc(r.observacoes)}` : ""}</p></div>
-        <div class="bts"><button class="btn btn--cheio" data-acao="confirmar" data-id="${esc(r.id)}">Confirmar</button><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Ver ou trocar o quarto" aria-label="Ver pedido de ${esc(r.nome)}">${ic("lapis")}</button><button class="btn btn--perigo" data-acao="recusar" data-id="${esc(r.id)}">Recusar</button></div></div>`).join("")}</section>`;
+        <div class="bts"><button class="btn btn--cheio" data-acao="${cobra ? "aceitar" : "confirmar"}" data-id="${esc(r.id)}">${cobra ? "Aceitar" : "Confirmar"}</button><button class="ic" data-acao="editar" data-id="${esc(r.id)}" title="Ver ou trocar o quarto" aria-label="Ver pedido de ${esc(r.nome)}">${ic("lapis")}</button><button class="btn btn--perigo" data-acao="recusar" data-id="${esc(r.id)}">Recusar</button></div></div>`).join("")}</section>`;
+  }
+  const sinalDe = r => Math.round(Number(r.valor_total || 0) * (S.pousada.sinal_percentual || 0)) / 100;
+  function blocoAguardando() {
+    const l = S.pend.filter(r => new Date(r.aguardando_desde || r.criado_em).getTime() + 864e5 > Date.now()).sort((a, b) => a.entrada.localeCompare(b.entrada));
+    if (!l.length) return "";
+    return `<section class="cartao bloco pedidos" id="aguardando"><div class="bloco-cab"><h2>${plural(l.length, "pedido aguardando o sinal", "pedidos aguardando o sinal")}</h2><span class="pilula" style="background:var(--linha);color:var(--tinta)">Aceitos, aguardando o sinal</span></div>
+      <p class="suave" style="font-size:13px;margin:0 0 10px">Você aceitou estes pedidos e o quarto está reservado. O hóspede recebeu o QR code do Pix. Quando o dinheiro cair na sua conta, toque em "Recebi" e a reserva é aprovada na hora. Quem não pagar em 24 horas é cancelado e o quarto é liberado.</p>
+      ${l.map(r => `<div class="pedido">${av(r.nome)}<div><b>${esc(r.nome)}</b><p>${esc(nomeQ(r.quarto_id))}, ${semana(r.entrada)} ${dm(r.entrada)} a ${semana(r.saida)} ${dm(r.saida)} (${plural(noites(r.entrada, r.saida), "noite", "noites")}), ${brl(r.valor_total)} · sinal de ${brl(sinalDe(r))}${r.telefone ? ` · ${esc(r.telefone)}` : ""}</p></div>
+        <div class="bts"><button class="btn btn--cheio" data-acao="recebi" data-id="${esc(r.id)}" data-valor="${sinalDe(r)}">Recebi ${brl(sinalDe(r))}</button><button class="btn btn--perigo" data-acao="cancelar-pend" data-id="${esc(r.id)}">Cancelar</button></div></div>`).join("")}</section>`;
   }
   const zapDe = t => { let d = String(t || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d; };
 
@@ -680,6 +712,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <p class="erro" id="c-err" role="alert" hidden></p>
         <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
         <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}. ${p.termos_aceitos_em ? `Termos de Uso (versão ${esc(p.termos_versao)}) aceitos em ${dmy(String(p.termos_aceitos_em).slice(0, 10))}.` : "Termos de Uso ainda não aceitos."} <a class="link" href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> · <a class="link" href="privacidade.html?p=${esc(p.slug)}" target="_blank" rel="noopener">Aviso de Privacidade dos hóspedes</a></p></form>
+      ${cartaoPix(p)}
       <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Site da pousada</h2><a class="link" href="${esc(urlSite())}" target="_blank" rel="noopener">Abrir o site</a></div>
         <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
         <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
@@ -785,9 +818,16 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       case "foto-capa": { const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); f.unshift(x); return salvaFotos(f, "Capa trocada."); }
       case "foto-remover": { if (d.certeza !== "1") { d.certeza = "1"; t.title = "Toque de novo para remover"; t.style.color = "var(--atraso)"; toast("Toque de novo na lixeira para remover a foto."); return; } const f = [...(S.pousada.fotos || [])], [x] = f.splice(Number(d.i), 1); await salvaFotos(f, "Foto removida."); const k = String(x).split("/object/public/fotos/")[1]; if (k) sb.storage.from("fotos").remove([k]); return; }
       case "aceitar-termos": { t.disabled = true; const { error } = await sb.rpc("aceitar_termos", { p_versao: TERMOS }); if (error) { t.disabled = false; toast(errText(error)); return; } const r2 = await sb.from("pousadas").select(COLS).eq("id", S.pousada.id).single(); if (r2.data) S.pousada = r2.data; toast("Termos aceitos. Obrigado."); return desenha(); }
+      case "pix-copiar": try { await navigator.clipboard.writeText(pixTeste()); toast("Pix copia e cola de teste copiado."); } catch (er) { toast("Não deu para copiar. Use o QR code."); } return;
+      case "pix-remover": { if (d.certeza !== "1") { d.certeza = "1"; toast("Toque de novo para remover a chave Pix."); return; } t.disabled = true; const res = await sb.from("pousadas").update({ pix_chave: "" }).eq("id", S.pousada.id).select(COLS).single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pousada = res.data; toast("Chave Pix removida."); return desenha(); }
       case "copiar-link": try { await navigator.clipboard.writeText(urlSite()); toast("Link copiado."); } catch (er) { $("c-link").select(); toast("Selecione e copie o link."); } return;
       case "imprimir-qr": { const w = open("", "_blank"); if (!w) { toast("Permita janelas novas para imprimir."); return; } w.document.write(`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>QR code ${esc(S.pousada.nome)}</title><body style="font-family:system-ui,sans-serif;text-align:center;padding:40px"><h1 style="font-size:34px;margin:0 0 6px">${esc(S.pousada.nome)}</h1><p style="font-size:20px;margin:0 0 24px">Aponte a câmera para ver os quartos e fazer sua ficha</p><div style="width:360px;margin:0 auto">${svgQR(8)}</div><p style="font-size:14px;color:#555;margin-top:18px">${esc(urlSite())}</p><script>onload=()=>print()<\/script></body></html>`); w.document.close(); return; }
-      case "confirmar": t.disabled = true; return muda(d.id, { status: "confirmada" }, x => `Reserva de ${x.nome} confirmada. Avise pelo WhatsApp.`);
+      case "recebi": { t.disabled = true; const r0 = S.pend.find(x => x.id === d.id), valor = Math.max(Number(r0 ? r0.sinal_pago : 0), Number(d.valor)); const res = await sb.from("reservas").update({ sinal_pago: valor }).eq("id", d.id).select().single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pend = S.pend.filter(x => x.id !== d.id); (res.data.status === "aguardando_pagamento" ? S.pend : S.est).push(res.data); toast(res.data.status === "aguardando_pagamento" ? "Valor registrado, mas ainda abaixo do sinal." : `Sinal registrado. Reserva de ${res.data.nome} aprovada.`); return desenha(); }
+      case "cancelar-pend": { if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } t.disabled = true; const res = await sb.from("reservas").update({ status: "cancelada" }).eq("id", d.id).select().single(); if (res.error) { t.disabled = false; toast(errText(res.error)); return; } S.pend = S.pend.filter(x => x.id !== d.id); S.est.push(res.data); toast(`Pedido de ${res.data.nome} cancelado.`); return desenha(); }
+      case "aceitar": { t.disabled = true; const res = await sb.from("reservas").update({ status: "aguardando_pagamento" }).eq("id", d.id).select().single();
+        if (res.error) { t.disabled = false; toast(/exclus|conflict|sobrep/i.test(res.error.message || "") ? "Esse quarto já está reservado nessas datas. Recuse este pedido ou troque o quarto." : errText(res.error)); return; }
+        S.est = S.est.filter(x => x.id !== d.id); S.pend.push(res.data); toast(`Pedido de ${res.data.nome} aceito. O hóspede vai pagar o sinal de ${brl(sinalDe(res.data))}.`); return desenha(); }
+      case "confirmar": t.disabled = true; return muda(d.id, { status: "confirmada" }, x => `Reserva de ${x.nome} confirmada.`);
       case "recusar": if (d.certeza !== "1") { d.certeza = "1"; t.textContent = "Toque de novo"; return; } return muda(d.id, { status: "cancelada" }, x => `Pedido de ${x.nome} recusado.`);
       case "saida": t.disabled = true; return muda(d.id, { status: "finalizada" }, x => `Saída de ${x.nome} registrada. Quarto livre.`);
       case "entrada": t.disabled = true; return muda(d.id, { status: "hospedado" }, x => `Entrada de ${x.nome} registrada.`);
@@ -843,6 +883,17 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       if (antiga) sb.storage.from("fotos").remove([antiga]);
       S.quartos[S.quartos.findIndex(x => x.id === q.id)] = res.data; toast("Foto salva."); desenha();
     } catch (err) { toast(err && err.message ? errText(err) : "Não deu para usar essa imagem. Tente uma foto JPG ou PNG."); desenha(); }
+  });
+  document.addEventListener("submit", async e => {
+    if (e.target.id !== "f-pix") return; e.preventDefault(); const err = $("px-err"); err.hidden = true;
+    const bruto = $("px-chave").value.trim(), sinal = Number($("px-sinal").value || 0);
+    if (!Number.isInteger(sinal) || sinal < 0 || sinal > 100) { err.textContent = "O sinal precisa ser um número de 0 a 100."; err.hidden = false; return; }
+    let chave = "";
+    if (bruto) { const r = PG.pixChave($("px-tipo").value, bruto); if (!r.ok) { err.textContent = r.erro; err.hidden = false; return; } chave = r.chave; }
+    else if (sinal > 0 && !S.pousada.pix_chave) { err.textContent = "Coloque a chave Pix para receber o sinal."; err.hidden = false; return; }
+    const res = await sb.from("pousadas").update({ pix_chave: chave, sinal_percentual: sinal }).eq("id", S.pousada.id).select(COLS).single();
+    if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+    S.pousada = res.data; toast(chave ? "Pix salvo. O site já mostra o QR code." : "Dados salvos."); desenha();
   });
   document.addEventListener("submit", async e => {
     if (e.target.id !== "f-config") return; e.preventDefault(); const err = $("c-err"); err.hidden = true;

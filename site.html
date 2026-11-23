@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="icon" type="image/png" href="img/favicon-guara.png">
 <link rel="stylesheet" href="app.css">
 <style>
 /* Site público da pousada. Paleta do dono: branco-gelo (fundo, 60%), azul-marinho (barra, bilhete, cartões e faixa da ficha, 30%), laranja (só ação e seleção, 10%).
@@ -189,17 +190,17 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
    Branco no fundo e vermelho vivo nas superfícies fortes, ~45% cada; marrom e preto (~10%) no texto e nos detalhes.
    Guarás em vetor, num vermelho mais escuro, voam na abertura e na ficha e um fica em pé nas ondas. */
 :root[data-tema="guara"] {
-  --g-vermelho: #dc1e2a; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
+  --g-vermelho: #ff2400; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
   --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
   --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
   --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
   --c30-suave: rgba(255, 255, 255, .86); --c30-clara: var(--g-fundo-foto);
   --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2);
   --titulo: var(--g-vermelho); --risco: var(--g-marrom); --barra: #ffffff; --vazia: var(--g-vermelho);
-  --claro-borda: rgba(220, 30, 42, .45); --sombra-bilhete: rgba(138, 15, 24, .7); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(138, 15, 24, .55);
+  --claro-borda: rgba(255, 36, 0, .45); --sombra-bilhete: rgba(138, 15, 24, .7); --sombra-topo: rgba(29, 21, 18, .55); --sombra-q: rgba(138, 15, 24, .55);
   --escolhido: #ffffff; --anel: var(--g-preto); --pulso: rgba(29, 21, 18, .8);
   --situ-fundo: rgba(29, 21, 18, .6); --livre-fundo: var(--g-preto); --livre-tinta: #ffffff; --feito-fundo: rgba(255, 255, 255, .2);
-  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(220, 30, 42, .55);
+  --onda-1: rgba(90, 59, 44, .22); --onda-2: rgba(90, 59, 44, .12); --onda-3: rgba(255, 36, 0, .55);
   --confete-1: var(--g-preto); --confete-3: var(--g-marrom);
 }
 [data-tema="guara"] :focus-visible { outline-color: var(--g-preto); }
@@ -224,7 +225,7 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 .ficha-faixa .dentro, .abertura .dentro { position: relative; z-index: 1; }
 .guara-agua { position: absolute; right: max(18px, 7vw); bottom: clamp(4px, 1.4vw, 18px); width: clamp(54px, 6vw, 84px); z-index: 0; pointer-events: none; }
 .guara-cab { width: 86px; align-self: center; }
-[data-tema="guara"] .topo .marca i { padding: 3px; }
+[data-tema="guara"] .topo .marca i { padding: 3px; background: var(--g-preto); }
 [data-tema="guara"] .topo .marca i .guara { width: 100%; height: 100%; fill: var(--g-vermelho); stroke: var(--g-vermelho); }
 @media (max-width: 920px) {
   .bando--topo { top: 6px; right: 8px; width: 200px; height: 100px; scale: .62; transform-origin: top right; }
@@ -254,6 +255,14 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 .ondas-topo svg + svg path { opacity: .3; }
 h1.nome .pal { display: inline-block; }
 h1.nome .le { display: inline-block; transform-origin: 0 100%; }
+/* logo do guará: "Pousada" em cima, GUARÁ embaixo, com o U trocado por uma meia-lua com o guará dentro */
+.guara-lockup { display: inline-flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .9; }
+.guara-lockup .lk-p { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 80, "opsz" 96; font-size: .36em; letter-spacing: .01em; margin-bottom: .06em; }
+.guara-lockup .lk-g { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; letter-spacing: -.035em; white-space: nowrap; display: inline-flex; align-items: baseline; }
+.guara-u { display: inline-block; width: .8em; height: .8em; margin: 0 .02em; overflow: visible; vertical-align: baseline; fill: currentColor; stroke: none; }
+.guara-u .ave { fill: var(--g-guara); stroke: var(--g-guara); }
+.guara-u .ave .tr { fill: none; stroke: var(--g-guara); stroke-linecap: round; stroke-linejoin: round; }
+.guara-u .ave .olho { fill: #fff; stroke: none; }
 .risco { display: block; width: min(340px, 62%); height: auto; margin: -8px 0 20px; color: var(--risco, var(--laranja)); overflow: visible; }
 .risco path { fill: none; stroke: currentColor; stroke-width: 4; stroke-linecap: round; stroke-dasharray: 1; }
 .fatos { position: relative; }
@@ -375,6 +384,45 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     .q:hover .f img { scale: 1.06; }
   }
 }
+/* pagamento por Pix */
+.pix { display: grid; gap: 12px; justify-items: start; max-width: 420px; margin: 20px 0; padding: 22px 24px; border: 1px solid var(--fio); border-radius: 18px; background: var(--c60, #fff); color: var(--tinta, inherit); }
+.pix h3 { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 20px; font-weight: 700; }
+.feito-ok .pix-valor, .pix-valor { margin: 0; font-family: var(--display); font-variation-settings: "wdth" 80; font-size: 40px; font-weight: 750; line-height: 1; color: var(--titulo, var(--azul)); }
+.feito-ok .pix-valor small, .pix-valor small { font: 500 14px/1 var(--f); color: var(--sobre-preto); }
+.pix-opcoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; width: 100%; }
+.pix-op { position: relative; display: block; cursor: pointer; }
+.pix-op input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.pix-op span { display: grid; gap: 2px; padding: 10px 12px; border: 1.5px solid var(--fio); border-radius: 12px; background: #fff; color: #1d1512; }
+.pix-op b { font-weight: 700; font-size: 14px; }
+.pix-op small { color: var(--sobre-preto); font-size: 13px; }
+.pix-op input:checked + span { border-color: var(--titulo, var(--azul)); box-shadow: 0 0 0 1px var(--titulo, var(--azul)); }
+.pix-op input:focus-visible + span { outline: 2px solid var(--g-preto, currentColor); outline-offset: 2px; }
+.pix-qr { width: min(240px, 100%); aspect-ratio: 1; padding: 8px; background: #fff; border-radius: 12px; border: 1px solid var(--fio); }
+.pix-qr svg { display: block; width: 100%; height: 100%; }
+.pix-sem { font-size: 13px; color: var(--sobre-preto); }
+.feito-ok .pix-ajuda, .feito-ok .pix-nota, .pix-ajuda, .pix-nota { margin: 0; color: var(--sobre-preto); font-size: 13.5px; }
+.pix-copia { display: flex; gap: 8px; width: 100%; }
+.pix-copia input { flex: 1; min-width: 0; height: 40px; padding: 0 10px; border: 1px solid var(--fio); border-radius: 10px; font: 500 12px/1 ui-monospace, monospace; background: #fff; color: #1d1512; }
+/* avaliações */
+.avaliacoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; align-items: start; }
+.avaliacao { margin: 0; padding: 22px 24px; border: 1px solid var(--fio); border-radius: 18px; background: var(--c60, #fff); display: grid; gap: 14px; }
+.avaliacao blockquote { margin: 0; color: var(--tinta, inherit); font-size: 15.5px; line-height: 1.6; }
+.avaliacao figcaption { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; color: var(--sobre-preto); font-size: 13.5px; }
+.estrelas { color: var(--titulo, var(--azul)); letter-spacing: .12em; font-size: 16px; }
+/* sobre a casa */
+.regras-casa { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); border-top: 1px solid var(--fio); }
+.regra { padding: 20px 24px 20px 0; border-bottom: 1px solid var(--fio); }
+.regra h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 19px; font-weight: 700; }
+.regra h3 span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--titulo, var(--azul)); color: #fff; font: 700 12px/1 var(--f); }
+.regras-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; color: var(--sobre-preto); }
+.regras-lista li { position: relative; padding-left: 24px; }
+.regras-lista li::before { content: "☆"; position: absolute; left: 0; top: 0; color: var(--titulo, currentColor); }
+.onde-casa { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px 28px; padding-top: 26px; }
+.onde-casa h3 { margin: 0 0 6px; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 19px; font-weight: 700; }
+.onde-casa address { font-style: normal; font-size: 17px; }
+.onde-casa p { margin: 4px 0 0; color: var(--sobre-preto); }
+.acoes-casa { display: flex; flex-wrap: wrap; gap: 10px; }
+.acoes-casa .btn { text-decoration: none; }
 </style>
 </head>
 <body>
@@ -383,6 +431,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (async () => {
   const { sb, esc, brl, hoje, addDias, noites, dmy, errText } = PG;
@@ -410,7 +459,28 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   document.querySelector('meta[name="description"]').content = P.descricao ? P.descricao.slice(0, 150) : `Quartos da ${P.nome}${lugar ? " em " + lugar : ""}. Veja os quartos livres e peça sua reserva.`;
 
   // tema de cores próprio de cada pousada (as outras ficam com o marinho e laranja padrão)
-  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#dc1e2a" } };
+  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
+  // texto da casa: regras, café, endereço e contato (por pousada)
+  const CASAS = {
+    "pousada-exemplo": {
+      endereco: "Rua Ferreira Lopes, 128 – Guaraqueçaba, PR",
+      mapa: "https://www.google.com/maps/place/Pousada+Guar%C3%A1+%2F+DoThon/@-25.2986895,-48.9382581,10z/data=!4m13!1m2!2m1!1spousada+guara+dothon!3m9!1s0x94db0b081e9cdd0d:0x4b2598d8a23c1f52!5m2!4m1!1i2!8m2!3d-25.2986895!4d-48.3285169!15sChRwb3VzYWRhIGd1YXJhIGRvbnRvbpIBA2lubuABAA!16s%2Fg%2F11h0mpwdxz?entry=ttu&g_ep=EgoyMDI2MTExNS4wIKXMDSoASAFQAw%3D%3D",
+      zap: "5541996336644", zapTexto: "(41) 99633-6644 (Thon)",
+      avaliacoes: [
+        { t: "Pousada bem agradável e tranquila, café da manhã simples e fresquinho. O café do Thon é sensacional! O Thon é um ótimo anfitrião, soube recomendar excelentes passeios e lugares para comer. Também recomendou o barqueiro Marcos que nos levou em passeios incríveis. Sem os conselhos do Thon acho que a viagem não teria sido tão legal e isso foi o diferencial da pousada. Quarto simples e banheiro bacana. Quiosque para sentar e relaxar ao ar livre. Lugar silencioso ao lado da pracinha do skate, pertinho do trapiche pra ir a pé." },
+        { t: "Excelente experiência! A pousada tem uma recepção muito acolhedora, com atendimento atencioso desde a chegada. O café da manhã é simples, porém, bem servido. Além disso, recebemos ótimas indicações de lugares para conhecer na região e tivemos conversas muito agradáveis com o Thon. O ambiente é tranquilo, organizado e com clima familiar. Com certeza voltaremos e recomendamos muito!" },
+        { t: "Tivemos uma experiência maravilhosa na Pousada Guará! 💚 Fomos muito bem acolhidos, com muita atenção e carinho durante toda a nossa estadia. O lugar é tranquilo, aconchegante e perfeito para quem busca descansar e recarregar as energias. Agradecemos por todo o cuidado e pela hospitalidade. Com certeza foi uma ótima escolha e esperamos voltar em breve! 🌿✨", nota: 5, quando: "Uma semana atrás, no Google" },
+        { t: "A melhor recepção de Guaraqueçaba! Super recomendamos! Que grata surpresa! Chegamos sem reserva e o Tom e seu pai nos receberam de braços abertos. Quartos limpinhos, cheirosos, toalhas super macias e um café da manhã delicioso, cheio de histórias boas. O Tom e a sua esposa são daquelas pessoas raras que a gente leva para a vida no coração. Já conhecíamos Guara, mas dessa vez levamos um casal de amigos que também se apaixonou pelo lugar. Com certeza voltaremos em breve para fazer os passeios de barco. Nota mil!", nota: 5 }
+      ],
+      blocos: [
+        ["Proibido", ["Fumar em áreas internas.", "Circular com trajes íntimos e de banho.", "Utilizar som alto."]],
+        ["Atenção", ["Não utilizar as toalhas de formas inadequadas, como para retirar maquiagem ou limpar calçados. Sujeito a cobrança de taxas."]],
+        ["Cuidados", ["Ao sair: apagar as luzes, desligar o ventilador e a TV, fechar as portas dos quartos e guardar as chaves.", "Ao entrar: depois das 22h, manter o silêncio e fechar o portão de acesso."]],
+        ["Café da manhã", ["Horário: das 07h às 09h.", "Horário extra pode ser combinado, com valor adicional por pessoa."]]
+      ]
+    }
+  };
+  const CASA = CASAS[slug];
   const GUARAS = TEMAS[slug] && TEMAS[slug].tema === "guara";
   if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
   const S = { entrada: hoje(), saida: addDias(hoje(), 1), adultos: 2, criancas: 0, livres: null, buscando: false, quarto: null, enviado: null, buscaN: 0 };
@@ -432,6 +502,14 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
     <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
     <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></svg>`;
+  // guará sobre a lua (como na logo): lua branca em crescente, guará vermelho pousado nela
+  const GUARA_LUA = `<svg class="guara" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+    <path fill="#fff" stroke="none" d="M14.3 29 A38 38 0 0 0 85.7 29 A35.7 35.7 0 0 1 14.3 29 Z"/>
+    <g transform="translate(24 4) scale(.6)">
+    <path d="M38 40 C44 31 62 31 74 39 L86 44 C77 46 72 50 66 54 C56 58 43 55 38 40 Z"/>
+    <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
+    <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
+    <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></g></svg>`;
   const GUARA_VOO = `<svg class="guara" viewBox="0 0 100 60" aria-hidden="true" focusable="false">
     <path class="asa" opacity=".5" d="M38 29 C39 18 47 9 59 5 C66 3 73 4 79 7 C73 9 70 13 68 18 C66 23 63 27 60 30 Z"/>
     <path d="M24 30 C36 23 60 23 75 29 C62 35 38 36 24 30 Z"/>
@@ -446,15 +524,15 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
   /* ---------- página ---------- */
   raiz.innerHTML = `
-  <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_PE : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
+  <header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${GUARAS ? GUARA_LUA : esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA && CASA.avaliacoes ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>
   <main id="inicio">
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${GUARAS ? bando("bando--topo") + `<div class="guara-agua" aria-hidden="true">${GUARA_PE}</div>` : ""}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
-        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${letreiro(P.nome)}</span></h1>
+        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${GUARAS ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUARÁ</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
-        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma pelo WhatsApp.`)}</p>
+        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
         ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
       </div>
@@ -478,9 +556,11 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
     <section class="ficha-faixa" id="ficha">${ONDAS_TOPO}${GUARAS ? bando("bando--ficha") : ""}<div class="dentro" id="ficha-dentro"></div></section>
 
+    ${avaliacoes()}
+    ${sobreCasa()}
     ${saber()}
   </main>
-  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
+  <footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
   const ajustaCorte = () => { const b = $("bilhete"), p = b.querySelector(".parte + .parte"); b.style.setProperty("--corte", `${p.offsetTop}px`); };
   ajustaCorte(); addEventListener("resize", ajustaCorte); document.fonts && document.fonts.ready.then(ajustaCorte);
@@ -535,6 +615,26 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       <dialog class="visor" id="visor" aria-label="Fotos da ${esc(P.nome)}"><img id="visor-img" alt=""><p class="conta" id="visor-conta" aria-live="polite"></p>
         <button type="button" class="vb fecha" data-visor="fechar" aria-label="Fechar">×</button>${F.length > 1 ? `<button type="button" class="vb ant" data-visor="-1" aria-label="Foto anterior">‹</button><button type="button" class="vb prox" data-visor="1" aria-label="Próxima foto">›</button>` : ""}</dialog></section>`;
   }
+
+  function avaliacoes() {
+    if (!CASA || !(CASA.avaliacoes || []).length) return "";
+    const estrelas = n => `<span class="estrelas" role="img" aria-label="${n} de 5 estrelas">${"★".repeat(n)}</span>`;
+    return `<section class="secao" id="avaliacoes"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Avaliações</h2><p>O que os hóspedes contam depois da estadia.</p></div>
+      <div class="avaliacoes">${CASA.avaliacoes.map(a => `<figure class="avaliacao"><blockquote>${esc(a.t)}</blockquote>${a.nota || a.quando ? `<figcaption>${a.nota ? estrelas(a.nota) : ""}${a.quando ? `<span>${esc(a.quando)}</span>` : ""}</figcaption>` : ""}</figure>`).join("")}</div></div></section>`;
+  }
+
+  function sobreCasa() {
+    if (!CASA) return "";
+    const lista = it => `<ul class="regras-lista">${it.map(t => `<li>${esc(t)}</li>`).join("")}</ul>`;
+    const acoes = [
+      CASA.mapa ? `<a class="btn btn--cheio" href="${esc(CASA.mapa)}" target="_blank" rel="noopener">Abrir no Google Maps</a>` : "",
+      CASA.zap ? `<a class="btn btn--claro" href="${linkZap0(CASA.zap, `Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""
+    ].join("");
+    return `<section class="secao" id="sobre"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Sobre a casa</h2><p>O que combinar antes de chegar, para a estadia ser boa para todo mundo.</p></div>
+      <div class="regras-casa">${CASA.blocos.map(([t, it], i) => `<div class="regra"><h3><span>${i + 1}</span>${esc(t)}</h3>${lista(it)}</div>`).join("")}</div>
+      <div class="onde-casa"><div><h3>Endereço e contato</h3><address>${esc(CASA.endereco)}</address>${CASA.zapTexto ? `<p>WhatsApp: ${esc(CASA.zapTexto)}</p>` : ""}</div><div class="acoes-casa">${acoes}</div></div></div></section>`;
+  }
+  function linkZap0(num, msg) { return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`; }
 
   function saber() {
     const it = [];
@@ -608,14 +708,40 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     const box = $("ficha-dentro");
     if (S.enviado) {
       const r = S.enviado, q = Q.find(x => x.id === r.quarto);
-      const msg = `Olá! Mandei o pedido ${r.cod} pelo site: ${q.nome}, de ${dmy(r.entrada)} a ${dmy(r.saida)}, ${plural(r.pessoas, "pessoa", "pessoas")}. Nome: ${r.nome}.`;
       const cores = ["var(--confete-1, var(--laranja))", "#ffffff", "var(--confete-3, #ffb27a)", "var(--c30-clara)"];
       const confete = MOV ? `<span class="confete" aria-hidden="true">${Array.from({ length: 28 }, (_, i) => { const a = (i / 28) * Math.PI * 2 + Math.random() * .4, d = 90 + Math.random() * 140;
         return `<i style="--x:${(Math.cos(a) * d).toFixed(0)}px;--y:${(Math.sin(a) * d * .7 - 60).toFixed(0)}px;--r:${(Math.random() * 720 - 360).toFixed(0)}deg;--t:${(Math.random() * .12).toFixed(2)}s;background:${cores[i % 4]}"></i>`; }).join("")}</span>` : "";
-      box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">Pedido enviado</h2><span class="cod">${esc(r.cod)}${confete}</span>
-        <p>A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A reserva só vale depois que a pousada confirmar${zap ? " pelo WhatsApp" : ""}. Guarde esse número.</p>
-        <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap">${zap ? `<a class="btn btn--cheio btn--grande" href="${linkZap(msg)}" target="_blank" rel="noopener">Avisar a pousada no WhatsApp</a>` : ""}<button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
+      const R = r.R, chave = R && R.status === "aguardando_pagamento" && R.pix_chave;
+      const cobra = !!(R && R.status === "aguardando_pagamento");
+      const pix = !chave ? null : (() => { const total = Number(R.valor_total) || 0, sinal = Number(R.sinal_exigido) || 0; if (!(total > 0)) return null;
+        const mk = (id, rotulo, valor) => ({ id, rotulo, valor, codigo: PG.pixPayload({ chave, valor, nome: P.nome, cidade: P.cidade, txid: "PED" + r.cod.replace(/\D/g, "") }) });
+        const op = []; if (sinal > 0 && sinal < total) op.push(mk("sinal", `Só o sinal de ${P.sinal_percentual}%`, sinal)); op.push(mk("total", sinal > 0 ? "Valor total" : "Pagar por Pix", total));
+        return { total, op }; })();
+      const valorPix = o => `${brl(o.valor)}${o.id === "sinal" ? ` <small>de ${brl(pix.total)}</small>` : ""}`;
+      const pixHtml = !pix ? "" : `<div class="pix" id="pix"><h3>Pague por Pix</h3>
+          ${pix.op.length > 1 ? `<div class="pix-opcoes" role="radiogroup" aria-label="Quanto pagar agora">${pix.op.map((o, k) => `<label class="pix-op"><input type="radio" name="pix-op" value="${o.id}"${k === 0 ? " checked" : ""}><span><b>${esc(o.rotulo)}</b><small>${brl(o.valor)}</small></span></label>`).join("")}</div>` : ""}
+          <p class="pix-valor" id="pix-valor" aria-live="polite">${valorPix(pix.op[0])}</p>
+          <div class="pix-qr" id="pix-qr" role="img" aria-label="QR code do Pix de ${brl(pix.op[0].valor)}"></div>
+          <p class="pix-ajuda">No app do seu banco, escolha Pix e leia o QR code. No celular, use o Pix copia e cola.</p>
+          <div class="pix-copia"><input id="pix-cod" readonly value="${esc(pix.op[0].codigo)}" aria-label="Pix copia e cola"><button class="btn btn--borda" type="button" id="pix-copiar">Copiar</button></div>
+          <p class="pix-nota">O dinheiro vai direto para a conta da pousada. ${cobra ? "Assim que a pousada receber, seu pedido é aprovado e o estado muda na página do pedido." : "Quando a pousada conferir o pagamento, o valor recebido muda na página do seu pedido."}</p></div>`;
+      box.innerHTML = `<div class="feito-ok" tabindex="-1" id="ok"><h2 class="titulo">${cobra ? "Falta pagar o sinal" : "Pedido enviado"}</h2><span class="cod">${esc(r.cod)}${confete}</span>
+        <p>${cobra ? `Seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}, está guardado por 24 horas. Ele só segue para a ${esc(P.nome)} depois que você pagar o sinal de <b>${brl(pix ? pix.op[0].valor : 0)}</b> por Pix, e é aprovado assim que o pagamento for recebido.` : `A ${esc(P.nome)} recebeu seu pedido para o ${esc(q.nome)}, de ${dia(r.entrada)} a ${dia(r.saida)}. A pousada vai analisar e confirmar.${P.cobra_sinal ? " Se aceitar, você paga o sinal por aqui para garantir a reserva." : ""}`} Guarde esse número: com ele e o seu telefone você acompanha o estado do pedido.</p>
+        ${pixHtml}
+        <div class="enviar" style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn btn--cheio btn--grande" href="reserva.html?p=${encodeURIComponent(slug)}&c=${r.num}">Acompanhar meu pedido</a><button class="btn btn--borda btn--grande" type="button" id="outro">Fazer outro pedido</button></div></div>`;
       $("outro").onclick = () => { S.enviado = null; S.livres = null; S.quarto = null; desenhaQuartos(); desenhaFicha(); $("bilhete").scrollIntoView({ behavior: "smooth" }); };
+      if (pix) {
+        let atual = pix.op[0];
+        const pinta = o => {
+          atual = o; $("pix-valor").innerHTML = valorPix(o); $("pix-cod").value = o.codigo; $("pix-qr").setAttribute("aria-label", `QR code do Pix de ${brl(o.valor)}`);
+          if (window.qrcode) { const qr = qrcode(0, "M"); qr.addData(o.codigo); qr.make(); $("pix-qr").innerHTML = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true }); }
+          else $("pix-qr").innerHTML = '<span class="pix-sem">QR code indisponível. Use o Pix copia e cola.</span>';
+        };
+        pinta(atual);
+        box.querySelectorAll('input[name="pix-op"]').forEach(inp => inp.addEventListener("change", () => pinta(pix.op.find(o => o.id === inp.value))));
+        $("pix-copiar").onclick = async () => { try { await navigator.clipboard.writeText(atual.codigo); $("pix-copiar").textContent = "Copiado"; } catch (er) { $("pix-cod").select(); $("pix-copiar").textContent = "Selecionado"; } setTimeout(() => { const b = $("pix-copiar"); if (b) b.textContent = "Copiar"; }, 2200); };
+        $("pix-cod").addEventListener("focus", e => e.target.select());
+      }
       $("ok").focus(); return;
     }
     const q = S.quarto && Q.find(x => x.id === S.quarto), livre = q && S.livres.get(q.id), n = noites(S.entrada, S.saida);
@@ -632,7 +758,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         <label class="todo">Email <small>opcional</small><input id="f-email" type="email" inputmode="email" maxlength="120" autocomplete="email"></label>
         <label class="todo">Recado para a pousada <small>opcional: horário de chegada, se vem de barco. Não coloque dados de saúde.</small><textarea id="f-obs" maxlength="500"></textarea></label></div>
         <p class="erro" id="f-erro" role="alert" hidden></p>
-        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>Você ainda não paga nada. A pousada confirma ${zap ? "pelo WhatsApp" : "pelo telefone"}. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
+        <div class="enviar"><button class="btn btn--cheio" type="submit" id="f-enviar">Enviar pedido</button><small>${P.cobra_sinal ? "Depois de enviar, você paga o sinal por Pix e o pedido é aprovado." : P.aceita_pix ? "Depois de enviar, você pode pagar por Pix." : "Você ainda não paga nada."} A pousada confirma e você acompanha o estado do pedido numa página. Ao enviar, você confirma que tem 18 anos ou mais e que leu o <a href="privacidade.html?p=${encodeURIComponent(slug)}" target="_blank" rel="noopener">Aviso de Privacidade</a>.</small></div>
       </form>
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
@@ -652,7 +778,9 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const btn = $("f-enviar"); btn.disabled = true; btn.textContent = "Enviando pedido…";
       const { data, error } = await sb.rpc("pedir_estadia", { p_slug: slug, p_quarto: q.id, p_entrada: S.entrada, p_saida: S.saida, p_adultos: S.adultos, p_criancas: S.criancas, p_nome: d.nome, p_telefone: d.tel, p_documento: d.doc, p_email: d.email, p_obs: d.obs });
       if (error) { btn.disabled = false; btn.textContent = "Enviar pedido"; err.textContent = errText(error); err.hidden = false; return; }
-      S.enviado = { cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
+      try { sessionStorage.setItem(`pg-tel-${slug}-${data}`, d.tel); } catch (er) {}
+      let R = null; try { const rr = await sb.rpc("consultar_pedido", { p_slug: slug, p_codigo: data, p_telefone: d.tel }); R = rr.data || null; } catch (er) {}
+      S.enviado = { num: data, R, total: livre.total, cod: "#" + String(data).padStart(5, "0"), quarto: q.id, entrada: S.entrada, saida: S.saida, pessoas: pessoas(), nome: d.nome };
       desenhaFicha();
     });
   }
