@@ -1,0 +1,8 @@
+# O que não vai para o site quando a Vercel publicar direto do GitHub
+*.sql
+supabase/
+deploy.py
+*.md
+.impeccable/
+pinheiros/
+img/pousada-pinheiros/
