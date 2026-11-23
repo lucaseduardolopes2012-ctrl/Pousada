@@ -163,7 +163,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 
   // Pagamento por cartão (Stripe). Desligado por padrão: só aparece com ?cartao=1 ou quando
   // CARTAO_ATIVO=true (ligue junto com as chaves de PRODUÇÃO da Stripe). Em modo teste, deixe false.
-  const CARTAO_ATIVO = true;   // cartão visível para todos
+  const CARTAO_ATIVO = false;  // cartão online desligado: o cartão é combinado pelo WhatsApp (veja cartaoHtml)
   const CARTAO_TESTE = true;   // em modo de teste (mude para false ao ir para produção com chaves sk_live)
   const mostrarCartao = CARTAO_ATIVO || params.get("cartao") === "1";
   const FN_CARTAO = (window.PG_CONFIG.supabaseUrl || "").replace(/\/+$/, "") + "/functions/v1/criar-pagamento-cartao";
@@ -187,13 +187,14 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
     const pagavel = R.pix_chave && (R.status === "aguardando_pagamento" || R.status === "confirmada");
     const op = pagavel ? opcoesPix(R) : [];
     const passos = passoIdx >= 0 ? `<ol class="passos" aria-label="Etapas do pedido">${PASSOS(cobra).map((t, i) => `<li class="${i < passoIdx ? "feito" : i === passoIdx ? "agora" : ""}" ${i === passoIdx ? 'aria-current="step"' : ""}>${t}</li>`).join("")}</ol>` : "";
-    const podeCartao = mostrarCartao && R.status === "aguardando_pagamento" && R.pix_chave && op.length;
-    const cartaoHtml = podeCartao ? `<div class="cartao" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--fio);display:grid;gap:8px;max-width:420px">
-          <p class="pix-ajuda">Prefere cartão? Pague o sinal no cartão de crédito:</p>
-          <button type="button" id="pagar-cartao" class="btn btn--borda btn--grande" style="justify-self:start">Pagar com cartão</button>
-          ${CARTAO_TESTE ? `<p class="pix-ajuda">Pagamento com cartão em modo de teste.</p>` : ""}
-          <p class="pix-ajuda" id="cartao-erro" role="alert" hidden></p></div>` : "";
-    const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada");
+    // cartão de crédito: a pousada combina direto com o hóspede pelo WhatsApp (o pagamento online por cartão está desligado)
+    const zapPousada = (() => { let d = String(P.whatsapp || "").replace(/\D/g, ""); if (d.length === 10 || d.length === 11) d = "55" + d; return d.length >= 12 ? d : ""; })();
+    const devePagar = (R.status === "aguardando_pagamento" || R.status === "confirmada") && total > pago;
+    const msgCartao = `Olá! Sobre o pedido ${cod(R.codigo || pedCod)}: queria pagar com cartão de crédito.`;
+    const cartaoHtml = devePagar && zapPousada ? `<div class="cartao" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--fio);display:grid;gap:8px;max-width:420px">
+          <p class="pix-ajuda">Pagamento com cartão de crédito: fale com a pousada pelo WhatsApp e ela combina com você.</p>
+          <a class="btn btn--grande" style="justify-self:start;background:#1f9e57;color:#fff" href="https://wa.me/${zapPousada}?text=${encodeURIComponent(msgCartao)}" target="_blank" rel="noopener">Pagar com cartão: chamar no WhatsApp</a></div>` : "";
+    const mostraPag = total > 0 && (pagavel || pago > 0 || R.status === "hospedado" || R.status === "finalizada" || (devePagar && !!zapPousada));
     const pagamento = mostraPag ? `<section class="pagamento" aria-label="Pagamento"><h2>Pagamento</h2>
         <div class="barra" role="img" aria-label="${pc}% pago"><i style="--pc:${pc}%"></i></div>
         <p>${pago > 0 ? `Recebido: <b>${brl(pago)}</b> de ${brl(total)}.` : `Nada recebido ainda. Valor da estadia: <b>${brl(total)}</b>.`}${pagavel && R.status !== "aguardando_pagamento" && P.sinal_percentual && pago <= 0 && P.sinal_percentual < 100 ? ` A pousada pede sinal de ${P.sinal_percentual}% para confirmar.` : ""}</p>

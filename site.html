@@ -551,7 +551,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     ? { marca: PINHEIRO, topo: "", agua: `<div class="pinhal-agua" aria-hidden="true">${PINHAL}</div>`, ficha: `<div class="pinhal-ficha" aria-hidden="true">${PINHAL}</div>`, cab: `<span class="pinho-cab" aria-hidden="true">${PINHEIRO}</span>` }
     : { marca: "", topo: "", agua: "", ficha: "", cab: "" };
   // a logo com "Pousada" pequeno em cima e o nome grande embaixo é só da Pousada Guará
-  const LOGO_GUARA = GUARAS && /\bguar[aá]\b/i.test(P.nome);
+  const LOGO_GUARA = GUARAS && /guar[aá]/i.test(P.nome); // sem \b: o "á" não conta como letra para o \b do JavaScript
   const RISCO = `<svg class="risco" viewBox="0 0 340 16" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 10 Q 23 2 44 9 T 86 9 T 128 9 T 170 9 T 212 9 T 254 9 T 296 9 T 338 8"/></svg>`;
   const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
   const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
