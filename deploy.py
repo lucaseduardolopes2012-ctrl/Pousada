@@ -1,6 +1,8 @@
 import base64, glob, json, subprocess, sys
 files = ["vercel.json", "404.html", "index.html", "comecar.html", "painel.html", "site.html", "reserva.html", "termos.html", "privacidade.html", "app.js", "app.css", "config.js", "img/favicon-guara.png"]
-files += sorted(glob.glob("img/**/*.jpg", recursive=True))  # fotos das pousadas publicadas junto com o site
+files += sorted(glob.glob("modelos/*.css") + glob.glob("modelos/*.js"))  # modelos de página (cada pousada escolhe o seu no painel)
+NAO_PUBLICAR = ["img/pousada-pinheiros/"]  # fotos de pousada que ainda não aprovou o site: ficam no git, mas não vão ao ar
+files += [f for f in sorted(glob.glob("img/**/*.jpg", recursive=True)) if not f.startswith(tuple(NAO_PUBLICAR))]  # fotos das pousadas publicadas junto com o site
 body = {"name": "pousada-gestao", "target": "production",
         "files": [{"file": f, "data": base64.b64encode(open(f, "rb").read()).decode(), "encoding": "base64"} for f in files],
         "projectSettings": {"framework": None, "buildCommand": None, "outputDirectory": None, "installCommand": None}}

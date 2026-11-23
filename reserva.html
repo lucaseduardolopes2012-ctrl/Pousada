@@ -13,14 +13,14 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="app.css">
 <style>
-/* Acompanhar pedido: mesma paleta do site da pousada (o tema do guará vem do ?p=). */
+/* Acompanhar pedido: mesma paleta do site da pousada (as cores da pousada vêm do banco). */
 :root { --display: "Bricolage Grotesque", "Plus Jakarta Sans", system-ui, sans-serif; --sobre-preto: rgba(19, 41, 75, .72); --fio: rgba(19, 41, 75, .14); --ok: #1f7a3d; --espera: #9a5b00; --nao: #b3121d; }
-:root[data-tema="guara"] {
-  --g-vermelho: #ff2400; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512; --g-fundo-foto: #fdeced;
+:root[data-tema] {
+  --g-vermelho: #c8302b; --g-marrom: #5a3b2c; --g-preto: #1d1512;
   --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --laranja: #ffffff; --dourado: #ffffff;
-  --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: #6b5a52;
-  --c10: #ffffff; --c10-esc: #fde3e4; --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
-  --sobre-preto: rgba(29, 21, 18, .74); --fio: rgba(90, 59, 44, .2); --titulo: var(--g-vermelho);
+  --gelo: #ffffff; --c60: #ffffff; --c60-texto: var(--g-preto); --tinta: var(--g-preto); --suave: color-mix(in srgb, var(--g-preto) 65%, #fff);
+  --c10: #ffffff; --c10-esc: color-mix(in srgb, var(--g-vermelho) 12%, #fff); --c10-tinta: var(--g-vermelho); --c10-clara: rgba(255, 255, 255, .5);
+  --sobre-preto: color-mix(in srgb, var(--g-preto) 74%, transparent); --fio: color-mix(in srgb, var(--g-marrom) 20%, transparent); --titulo: var(--g-vermelho);
 }
 body { font-size: 15px; line-height: 1.55; }
 .dentro { width: min(860px, 100% - 40px); margin-inline: auto; }
@@ -95,8 +95,8 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
 .rodape { padding: 30px 0 calc(30px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--fio); color: var(--sobre-preto); font-size: 13.5px; }
 .rodape .dentro { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 20px; }
 .rodape a { color: var(--sobre-preto); }
-[data-tema="guara"] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
-[data-tema="guara"] .rodape a { color: rgba(255, 255, 255, .78); }
+[data-tema] .rodape { background: var(--g-preto); color: rgba(255, 255, 255, .78); border-top: 0; }
+[data-tema] .rodape a { color: rgba(255, 255, 255, .78); }
 .nao-achei { min-height: 70vh; display: grid; place-items: center; text-align: center; padding: 24px; }
 .nao-achei p { color: var(--sobre-preto); }
 .carregando { min-height: 70vh; display: grid; place-items: center; color: var(--sobre-preto); }
@@ -122,8 +122,7 @@ h2 { font-family: var(--display); font-weight: 750; font-variation-settings: "wd
   if (error) return naoAchei("Não deu para abrir a página", errText(error) + " Recarregue a página.");
   if (!P) return naoAchei("Pousada não encontrada", "Esse link não leva a nenhuma pousada. Confira se ele foi copiado inteiro.");
 
-  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#ff2400" } };
-  if (TEMAS[slug]) { document.documentElement.dataset.tema = TEMAS[slug].tema; document.querySelector('meta[name="theme-color"]').content = TEMAS[slug].cor; }
+  PG.aplicaTema(P.tema); // cores da pousada, escolhidas no painel
   document.title = `Acompanhar pedido | ${P.nome}`;
 
   const SEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"], MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];

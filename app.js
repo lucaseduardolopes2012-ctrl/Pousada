@@ -84,5 +84,31 @@
   const pixTipo = c => { const t = String(c || ""); return t.includes("@") ? "email" : t.startsWith("+") ? "celular" : UUID.test(t) ? "aleatoria" : "cpf_cnpj"; };
   // @pix-fim
 
-  window.PG = { pixPayload, pixChave, pixTipo, sb, esc, brl, hoje, addDias, noites, dm, dmy, STATUS, ORIGEM, errText, aplicaCor, ding, toast, COMODIDADES, PAGAMENTOS, CORES, ACESSO };
+  // @tema-inicio
+  // Tema por pousada: 3 cores (principal, apoio, escuro) e um desenho (motivo). O resto sai dessas cores no CSS.
+  // Vazio = o padrão do sistema (azul-marinho e laranja). Quem usa: site.html, reserva.html e painel.html.
+  const HEX = /^#[0-9a-fA-F]{6}$/;
+  const MOTIVOS = { nenhum: "Sem desenho", guara: "Guarás", pinheiro: "Pinheiros" };
+  // modelo = o desenho da página inteira (não só as cores): "classico" ou um dos que ficam na pasta modelos/
+  const MODELOS = { classico: "Clássico (cabeçalho, bilhete de datas e cartões)", horadourada: "Hora dourada (céu que escurece, sol que desce, quartos em lista)" };
+  const TEMA_PADRAO = { principal: "#c8302b", apoio: "#5a3b2c", escuro: "#1d1512", motivo: "nenhum", modelo: "classico" };
+  const luz = h => { const [r, g, b] = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16) / 255).map(v => v <= .03928 ? v / 12.92 : Math.pow((v + .055) / 1.055, 2.4)); return .2126 * r + .7152 * g + .0722 * b; };
+  // contraste entre duas cores (1 a 21). Letra branca sobre a cor principal precisa de pelo menos 3 para ler bem.
+  const contraste = (a, b) => { const x = luz(a), y = luz(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+  function temaValido(t) {
+    if (!t || typeof t !== "object" || !HEX.test(t.principal || "")) return null;
+    return { principal: t.principal.toLowerCase(), apoio: HEX.test(t.apoio || "") ? t.apoio.toLowerCase() : TEMA_PADRAO.apoio, escuro: HEX.test(t.escuro || "") ? t.escuro.toLowerCase() : TEMA_PADRAO.escuro, motivo: MOTIVOS[t.motivo] ? t.motivo : "nenhum", modelo: MODELOS[t.modelo] ? t.modelo : "classico" };
+  }
+  // põe o tema na página; devolve o tema aplicado, ou null quando fica o padrão
+  function aplicaTema(t) {
+    const r = document.documentElement, x = temaValido(t), meta = document.querySelector('meta[name="theme-color"]');
+    if (!meta.dataset.padrao) meta.dataset.padrao = meta.content;
+    if (!x) { delete r.dataset.tema; delete r.dataset.motivo; delete r.dataset.modelo; ["--g-vermelho", "--g-marrom", "--g-preto"].forEach(v => r.style.removeProperty(v)); meta.content = meta.dataset.padrao; return null; }
+    r.dataset.tema = "pousada"; r.dataset.motivo = x.motivo; r.dataset.modelo = x.modelo;
+    r.style.setProperty("--g-vermelho", x.principal); r.style.setProperty("--g-marrom", x.apoio); r.style.setProperty("--g-preto", x.escuro);
+    meta.content = x.principal; return x;
+  }
+  // @tema-fim
+
+  window.PG = { aplicaTema, temaValido, contraste, MOTIVOS, MODELOS, TEMA_PADRAO, pixPayload, pixChave, pixTipo, sb, esc, brl, hoje, addDias, noites, dm, dmy, STATUS, ORIGEM, errText, aplicaCor, ding, toast, COMODIDADES, PAGAMENTOS, CORES, ACESSO };
 })();

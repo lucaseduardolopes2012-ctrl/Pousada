@@ -252,38 +252,59 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 .entrar .marca { padding: 0; }
 
 /* ---------- tema por pousada ----------
-   Pousada Guará: as cores do logo. Menu em vermelho vivo e área de trabalho branca (45% cada); marrom e preto nos detalhes (10%).
-   Guarás em vetor, num vermelho mais escuro. As outras pousadas seguem com o marinho e laranja padrão. */
-:root[data-tema="guara"] {
-  --g-vermelho: #dc1e2a; --g-vermelho-esc: #a8121c; --g-guara: #8a0f18; --g-marrom: #5a3b2c; --g-preto: #1d1512;
+   Cada pousada escolhe em Configurações 3 cores (principal, apoio, escuro) e um desenho (guarás, pinheiros ou nenhum).
+   O painel usa a principal no menu (45%) e deixa a área de trabalho branca (45%); apoio e escuro (~10%) nos detalhes.
+   Sem tema, vale o azul-marinho e laranja do sistema. */
+:root[data-tema] {
+  --g-vermelho: #c8302b; --g-marrom: #5a3b2c; --g-preto: #1d1512;
+  --g-vermelho-esc: color-mix(in srgb, var(--g-vermelho) 74%, #000); --g-guara: color-mix(in srgb, var(--g-vermelho) 60%, #000);
   --marinho: var(--g-vermelho); --azul: var(--g-vermelho); --dourado: #ffffff; --laranja: var(--g-vermelho);
-  --c30-esc: var(--g-vermelho-esc); --c30-clara: #fdeced;
-  --c10: var(--g-vermelho); --c10-esc: var(--g-vermelho-esc); --c10-tinta: #ffffff; --c10-clara: #fdeced; --c10-texto: #b3121d;
-  --salvia: var(--g-marrom); --salvia-esc: #3d2619; --salvia-clara: #f6efea; --salvia-tinta: #ffffff;
-  --c60: #ffffff; --c60-funda: #f7f1ee; --c60-linha: rgba(90, 59, 44, .16); --c60-suave: rgba(29, 21, 18, .66);
-  --tinta: var(--g-preto); --suave: #6b5a52; --campo: #fbf7f5; --borda: #e8dfda; --linha: #f1e9e5;
-  --chega: var(--g-marrom); --chega-bg: #f6efea; --chega-borda: #dccbbd;
-  --sombra: 0 1px 2px rgba(90, 59, 44, .08);
+  --c30-esc: var(--g-vermelho-esc); --c30-clara: color-mix(in srgb, var(--g-vermelho) 8%, #fff);
+  --c10: var(--g-vermelho); --c10-esc: var(--g-vermelho-esc); --c10-tinta: #ffffff; --c10-clara: color-mix(in srgb, var(--g-vermelho) 8%, #fff); --c10-texto: color-mix(in srgb, var(--g-vermelho) 78%, #000);
+  --salvia: var(--g-marrom); --salvia-esc: color-mix(in srgb, var(--g-marrom) 70%, #000); --salvia-clara: color-mix(in srgb, var(--g-marrom) 8%, #fff); --salvia-tinta: #ffffff;
+  --c60: #ffffff; --c60-funda: color-mix(in srgb, var(--g-marrom) 6%, #fff); --c60-linha: color-mix(in srgb, var(--g-marrom) 16%, transparent); --c60-suave: color-mix(in srgb, var(--g-preto) 66%, transparent);
+  --tinta: var(--g-preto); --suave: color-mix(in srgb, var(--g-preto) 65%, #fff); --campo: color-mix(in srgb, var(--g-marrom) 4%, #fff); --borda: color-mix(in srgb, var(--g-marrom) 14%, #fff); --linha: color-mix(in srgb, var(--g-marrom) 8%, #fff);
+  --chega: var(--g-marrom); --chega-bg: color-mix(in srgb, var(--g-marrom) 8%, #fff); --chega-borda: color-mix(in srgb, var(--g-marrom) 25%, #fff);
+  --sombra: 0 1px 2px color-mix(in srgb, var(--g-marrom) 8%, transparent);
 }
-[data-tema="guara"] .btn--cheio { box-shadow: 0 6px 16px -10px rgba(168, 18, 28, .9); }
-[data-tema="guara"] .btn--sec:hover { background: var(--g-vermelho-esc); }
-[data-tema="guara"] .nav-item[aria-current="page"] { background: #ffffff; color: var(--g-vermelho); }
-[data-tema="guara"] .nav-item[aria-current="page"] svg.i { color: var(--g-vermelho); }
-[data-tema="guara"] .nav-item .n { background: var(--g-preto); }
-[data-tema="guara"] .nav-item .n.v { background: #ffffff; color: var(--g-vermelho); }
-[data-tema="guara"] .marca i { background: #ffffff; color: var(--g-vermelho); padding: 3px; }
-[data-tema="guara"] .marca i .guara { width: 100%; height: 100%; fill: var(--g-vermelho); stroke: var(--g-vermelho); }
-[data-tema="guara"] .grafico rect.barra-g { fill: var(--g-marrom); }
-[data-tema="guara"] .usuario .av { background: var(--g-marrom) !important; }
-[data-tema="guara"] .lateral { box-shadow: none; }
-[data-tema="guara"] :focus-visible { outline-color: var(--g-preto); }
+[data-tema] .btn--cheio { box-shadow: 0 6px 16px -10px color-mix(in srgb, var(--g-vermelho-esc) 90%, transparent); }
+[data-tema] .btn--sec:hover { background: var(--g-vermelho-esc); }
+[data-tema] .nav-item[aria-current="page"] { background: #ffffff; color: var(--g-vermelho); }
+[data-tema] .nav-item[aria-current="page"] svg.i { color: var(--g-vermelho); }
+[data-tema] .nav-item .n { background: var(--g-preto); }
+[data-tema] .nav-item .n.v { background: #ffffff; color: var(--g-vermelho); }
+[data-tema] .marca i { background: #ffffff; color: var(--g-vermelho); padding: 3px; }
+[data-tema] .marca i .guara, [data-tema] .marca i .pinheiro { width: 100%; height: 100%; fill: var(--g-vermelho); stroke: var(--g-vermelho); }
+[data-tema] .grafico rect.barra-g { fill: var(--g-marrom); }
+[data-tema] .usuario .av { background: var(--g-marrom) !important; }
+[data-tema] .lateral { box-shadow: none; }
+[data-tema] :focus-visible { outline-color: var(--g-preto); }
 .guara { display: block; fill: var(--g-guara); stroke: var(--g-guara); overflow: visible; }
 .guara .tr { fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .guara .olho { fill: #ffffff; stroke: none; }
 .guara-lateral { margin: auto auto 6px; width: 78px; opacity: .95; pointer-events: none; }
-[data-tema="guara"] .lateral .fim { margin-top: 0; }
+[data-tema] .lateral .fim { margin-top: 0; }
+.pinheiro { display: block; fill: var(--g-guara); stroke: none; overflow: visible; }
+.pinhal-lateral { margin: auto auto 6px; width: 96px; pointer-events: none; }
+/* editor do visual (Configurações) */
+.cores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 520px) { .cores { grid-template-columns: 1fr; } }
+.cores label { display: grid; gap: 6px; font-size: 12.5px; font-weight: 600; }
+.cores label small { font-weight: 400; color: var(--suave); }
+.cores input[type="color"] { width: 100%; height: 44px; padding: 3px; cursor: pointer; }
+.previa-tema { border: 1px solid var(--borda); border-radius: 12px; overflow: hidden; background: #fff; color: var(--e); font-size: 12.5px; }
+.previa-tema .pv-topo { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; background: var(--p); color: #fff; font-weight: 700; }
+.previa-tema .pv-btn { background: #fff; color: var(--p); border-radius: 7px; padding: 4px 10px; font-weight: 700; }
+.previa-tema .pv-corpo { display: flex; align-items: center; gap: 10px; padding: 14px; flex-wrap: wrap; }
+.previa-tema .pv-corpo b { color: var(--p); font-size: 15px; }
+.previa-tema .pv-chip { background: var(--e); color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: 600; }
+.previa-tema .pv-barra { height: 8px; width: 90px; border-radius: 999px; background: var(--a); }
+.previa-tema .pv-rodape { padding: 8px 14px; background: var(--e); color: rgba(255, 255, 255, .8); font-size: 11.5px; }
 @media (prefers-reduced-motion: no-preference) {
   @keyframes m-bica { 0%, 78%, 100% { transform: rotate(0deg); } 84%, 90% { transform: rotate(28deg); } 87% { transform: rotate(24deg); } }
+  @keyframes m-balanca { to { transform: rotate(var(--ang, 2.2deg)); } }
+  .pinhal .p { transform-box: fill-box; transform-origin: 50% 100%; animation: m-balanca var(--bal, 5s) ease-in-out var(--atr, 0s) infinite alternate; }
+  .pinhal .p:nth-child(2) { --ang: -2.6deg; --bal: 6.4s; --atr: -2s; } .pinhal .p:nth-child(3) { --ang: 1.8deg; --bal: 4.6s; --atr: -1s; }
   .guara-lateral .cabeca { transform-box: view-box; transform-origin: 42px 44px; animation: m-bica 8s ease-in-out 2s infinite; }
 }
 </style>
@@ -335,7 +356,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
   const S = { pousada: null, papel: "dono", quartos: [], est: [], pend: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual";
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual,tema";
   const TERMOS = "2026-11-16";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
@@ -371,24 +392,26 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   /* ---------- utilidades ---------- */
   const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
   const iniciais = s => String(s || "?").replace(/[^\p{L}\p{N}\s]/gu, "").trim().split(/\s+/).slice(0, 2).map(x => x[0] || "").join("").toUpperCase() || "?";
-  const AVS_PADRAO = [["#e4e9f1", "#13294b"], ["#ffe9d8", "#b84d05"]], AVS_GUARA = [["#fdeced", "#a8121c"], ["#f6efea", "#5a3b2c"]];
+  // cores dos avatares: no padrão, azul e laranja; com tema, saem das cores da pousada
+  const AVS_PADRAO = [["#e4e9f1", "#13294b"], ["#ffe9d8", "#b84d05"]], AVS_TEMA = [["color-mix(in srgb, var(--g-vermelho) 10%, #fff)", "var(--c10-texto)"], ["color-mix(in srgb, var(--g-marrom) 10%, #fff)", "var(--g-marrom)"]];
   let AVS = AVS_PADRAO;
-  // tema de cores próprio de cada pousada; o último usado fica guardado para a tela de entrar já nascer na cor certa
-  const TEMAS = { "pousada-exemplo": { tema: "guara", cor: "#dc1e2a" } };
+  // pinheiro e guará em vetor (o guará bica de vez em quando); o pinhal são três pinheiros que balançam de leve
   const GUARA_PE = `<svg class="guara" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
     <path d="M38 40 C44 31 62 31 74 39 L86 44 C77 46 72 50 66 54 C56 58 43 55 38 40 Z"/>
     <path class="tr" stroke-width="2.4" d="M54 55 L52 73 L55 92 M61 55 L63 73 L60 92 M55 92 L48 93 M60 92 L67 93"/>
     <g class="cabeca"><path class="tr" stroke-width="7" d="M42 44 C34 35 37 27 31 19"/><circle cx="30.5" cy="17" r="5.6"/>
     <path class="tr" stroke-width="2.8" d="M26 16 C18 18 12 24 8 34"/><circle class="olho" cx="29.6" cy="15.6" r="1.1"/></g></svg>`;
-  const temaDe = slug => TEMAS[slug] || null;
-  function aplicaTema(slug) {
-    const t = temaDe(slug), raiz = document.documentElement;
-    if (t) raiz.dataset.tema = t.tema; else delete raiz.dataset.tema;
-    document.querySelector('meta[name="theme-color"]').content = t ? t.cor : "#13294b";
-    AVS = t && t.tema === "guara" ? AVS_GUARA : AVS_PADRAO;
-    try { t ? localStorage.setItem("pg-tema", slug) : localStorage.removeItem("pg-tema"); } catch (e) {}
+  const PINHEIRO_D = "M30 4 L46 34 L38 34 L50 56 L40 56 L54 80 L6 80 L20 56 L10 56 L22 34 L14 34 Z M27 80 H33 V96 H27 Z";
+  const PINHEIRO = `<svg class="pinheiro" viewBox="0 0 60 100" aria-hidden="true" focusable="false"><path d="${PINHEIRO_D}"/></svg>`;
+  const PINHAL = `<svg class="pinheiro pinhal" viewBox="0 0 150 100" aria-hidden="true" focusable="false">
+    <g class="p"><path transform="translate(0 16) scale(.84)" d="${PINHEIRO_D}"/></g><g class="p"><path transform="translate(44 0)" d="${PINHEIRO_D}"/></g><g class="p"><path transform="translate(98 26) scale(.74)" d="${PINHEIRO_D}"/></g></svg>`;
+  // aplica o tema da pousada (cores e desenho) e guarda o último para a tela de entrar já nascer nas cores certas
+  function aplicaTema(t) {
+    const x = PG.aplicaTema(t); AVS = x ? AVS_TEMA : AVS_PADRAO;
+    try { x ? localStorage.setItem("pg-tema", JSON.stringify(x)) : localStorage.removeItem("pg-tema"); } catch (e) {}
+    return x;
   }
-  try { const g = localStorage.getItem("pg-tema"); if (g && temaDe(g)) aplicaTema(g); } catch (e) {}
+  try { const g = JSON.parse(localStorage.getItem("pg-tema") || "null"); if (g) { PG.aplicaTema(g); AVS = AVS_TEMA; } } catch (e) {}
   const av = (nome, cls = "av") => { let h = 0; for (const c of String(nome)) h = (h * 31 + c.charCodeAt(0)) >>> 0; const [b, t] = AVS[h % AVS.length]; return `<span class="${cls}" style="--av-bg:${b};--av-t:${t}">${esc(iniciais(nome))}</span>`; };
   const minutosBR = () => { const p = new Intl.DateTimeFormat("pt-BR", { timeZone: "America/Sao_Paulo", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(new Date()); return Number(p.find(x => x.type === "hour").value) % 24 * 60 + Number(p.find(x => x.type === "minute").value); };
   const agoraTxt = () => { const m = minutosBR(); return `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`; };
@@ -455,7 +478,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const { data: m } = await sb.from("membros").select(`papel, pousada:pousadas(${COLS})`).limit(1);
     if (!m || !m.length) { location.replace("comecar.html"); return; }
     S.pousada = m[0].pousada; S.papel = m[0].papel;
-    aplicaTema(S.pousada.slug);
+    aplicaTema(S.pousada.tema);
     marca();
     const nomeU = S.email.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\p{L}/gu, c => c.toUpperCase());
     $("u-nome").textContent = nomeU; $("u-papel").textContent = S.papel === "dono" ? "Dono" : "Recepção"; $("u-av").outerHTML = av(nomeU).replace('class="av"', 'class="av" id="u-av"');
@@ -464,10 +487,11 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
   }
   function marca() {
-    const guara = (temaDe(S.pousada.slug) || {}).tema === "guara";
-    $("m-nome").textContent = S.pousada.nome; $("m-ini").innerHTML = guara ? GUARA_PE : esc(iniciais(S.pousada.nome));
-    const lat = $("lateral"), velho = lat.querySelector(".guara-lateral"); if (velho) velho.remove();
-    if (guara) lat.querySelector(".fim").insertAdjacentHTML("beforebegin", `<div class="guara-lateral" aria-hidden="true">${GUARA_PE}</div>`);
+    const motivo = (PG.temaValido(S.pousada.tema) || {}).motivo;
+    $("m-nome").textContent = S.pousada.nome; $("m-ini").innerHTML = motivo === "guara" ? GUARA_PE : motivo === "pinheiro" ? PINHEIRO : esc(iniciais(S.pousada.nome));
+    const lat = $("lateral"), velho = lat.querySelector(".guara-lateral, .pinhal-lateral"); if (velho) velho.remove();
+    if (motivo === "guara") lat.querySelector(".fim").insertAdjacentHTML("beforebegin", `<div class="guara-lateral" aria-hidden="true">${GUARA_PE}</div>`);
+    if (motivo === "pinheiro") lat.querySelector(".fim").insertAdjacentHTML("beforebegin", `<div class="pinhal-lateral" aria-hidden="true">${PINHAL}</div>`);
     document.title = `${S.pousada.nome} · Painel`; }
   async function carregar() {
     const Pid = S.pousada.id;
@@ -699,6 +723,39 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   }
 
   /* ---------- configurações ---------- */
+  /* ---------- visual: cores e desenho da pousada ---------- */
+  const previaTema = t => `<div class="previa-tema" id="t-previa" style="--p:${t.principal};--a:${t.apoio};--e:${t.escuro}"><div class="pv-topo"><span>${esc(S.pousada.nome)}</span><span class="pv-btn">Pedir reserva</span></div>
+    <div class="pv-corpo"><b>Quartos</b><span>Texto do site</span><span class="pv-chip">Livre</span><span class="pv-barra"></span></div><div class="pv-rodape">Rodapé do site</div></div>`;
+  function cartaoVisual(p) {
+    if (S.papel !== "dono") return "";
+    const atual = PG.temaValido(p.tema), t = atual || PG.TEMA_PADRAO;
+    return `<form class="cartao bloco" id="f-tema" novalidate style="max-width:620px;margin-top:14px;display:grid;gap:14px">
+      <div class="bloco-cab" style="margin:0"><h2>Cores do site e do painel</h2><span class="suave" style="font-size:12px">${atual ? "Cores da pousada" : "Cores padrão do sistema"}</span></div>
+      <p class="suave" style="font-size:13px">Escolha as cores da sua pousada. O site, a página de acompanhar pedido e este painel passam a usá-las. Pode mudar quando quiser.</p>
+      <div class="cores">
+        <label>Cor principal<input type="color" id="t-principal" value="${esc(t.principal)}"><small>Topo, bilhete, cartões e menu</small></label>
+        <label>Cor de apoio<input type="color" id="t-apoio" value="${esc(t.apoio)}"><small>Gráficos e detalhes</small></label>
+        <label>Cor escura<input type="color" id="t-escuro" value="${esc(t.escuro)}"><small>Textos e rodapé</small></label></div>
+      <label class="todo" style="display:grid;gap:6px;font-size:12.5px;font-weight:600">Modelo da página do site<select id="t-modelo">${Object.entries(PG.MODELOS).map(([k, v]) => `<option value="${k}" ${t.modelo === k ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></label>
+      <label class="todo" style="display:grid;gap:6px;font-size:12.5px;font-weight:600">Desenho (pinheiros, guarás...)<select id="t-motivo">${Object.entries(PG.MOTIVOS).map(([k, v]) => `<option value="${k}" ${t.motivo === k ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></label>
+      ${previaTema(t)}
+      <p class="erro" id="t-err" role="alert" hidden></p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn--cheio btn--grande" type="submit">Salvar cores</button>${atual ? '<button class="btn btn--borda btn--grande" type="button" id="t-padrao">Voltar ao padrão</button>' : ""}</div>
+    </form>`;
+  }
+  const lerTema = () => ({ principal: $("t-principal").value, apoio: $("t-apoio").value, escuro: $("t-escuro").value, motivo: $("t-motivo").value, modelo: $("t-modelo").value });
+  // avisos de contraste: letra branca sobre a cor principal e letra escura sobre o branco precisam ler bem
+  const avisoTema = t => PG.contraste(t.principal, "#ffffff") < 3 ? "Essa cor principal é clara demais: as letras brancas não ficam legíveis. Escolha uma mais escura." : PG.contraste(t.escuro, "#ffffff") < 4.5 ? "A cor escura está clara demais para ler textos sobre o fundo branco. Escolha uma mais escura." : "";
+  document.addEventListener("input", e => { if (!e.target.closest("#f-tema")) return; const t = lerTema(), pv = $("t-previa"); pv.style.setProperty("--p", t.principal); pv.style.setProperty("--a", t.apoio); pv.style.setProperty("--e", t.escuro); const m = avisoTema(t), err = $("t-err"); err.textContent = m; err.hidden = !m; });
+  async function salvaTema(tema, msg) {
+    const err = $("t-err"); err.hidden = true;
+    const res = await sb.from("pousadas").update({ tema }).eq("id", S.pousada.id).select(COLS).single();
+    if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+    S.pousada = res.data; aplicaTema(S.pousada.tema); marca(); toast(msg); desenha();
+  }
+  document.addEventListener("submit", e => { if (e.target.id !== "f-tema") return; e.preventDefault(); const t = lerTema(), m = avisoTema(t), err = $("t-err"); if (m) { err.textContent = m; err.hidden = false; return; } salvaTema(t, "Cores salvas. O site já usa elas."); });
+  document.addEventListener("click", e => { if (e.target.id === "t-padrao" && confirm("Voltar às cores padrão do sistema (azul-marinho e laranja)?")) salvaTema({}, "Cores padrão de volta."); });
+
   function vConfig() {
     const p = S.pousada;
     return `<div class="cab"><div><h1>Configurações</h1><p>O horário de saída define quando uma estadia fica atrasada.</p></div></div>
@@ -713,6 +770,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <div><button class="btn btn--cheio btn--grande" type="submit">Salvar configurações</button></div>
         <p class="suave" style="font-size:12.5px;border-top:1px solid var(--linha);padding-top:12px">Conectado como ${esc(S.email)}. ${p.termos_aceitos_em ? `Termos de Uso (versão ${esc(p.termos_versao)}) aceitos em ${dmy(String(p.termos_aceitos_em).slice(0, 10))}.` : "Termos de Uso ainda não aceitos."} <a class="link" href="termos.html" target="_blank" rel="noopener">Termos de Uso</a> · <a class="link" href="privacidade.html?p=${esc(p.slug)}" target="_blank" rel="noopener">Aviso de Privacidade dos hóspedes</a></p></form>
       ${cartaoPix(p)}
+      ${cartaoVisual(p)}
       <section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Site da pousada</h2><a class="link" href="${esc(urlSite())}" target="_blank" rel="noopener">Abrir o site</a></div>
         <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
         <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
