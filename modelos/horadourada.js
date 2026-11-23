@@ -6,7 +6,7 @@
   const M = (window.PG_MODELOS = window.PG_MODELOS || {});
   if (!document.querySelector("link[data-hd-fonte]")) {
     const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.hdFonte = "1";
-    l.href = "https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=Unbounded:wght@300..800&display=swap";
     document.head.appendChild(l);
   }
   const SOL_G = `<circle cx="20" cy="20" r="7.5"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 4v5M20 31v5M4 20h5M31 20h5M8.7 8.7l3.5 3.5M27.8 27.8l3.5 3.5M31.3 8.7l-3.5 3.5M12.2 27.8l-3.5 3.5"/></g>`;
