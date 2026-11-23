@@ -6,7 +6,7 @@
   const M = (window.PG_MODELOS = window.PG_MODELOS || {});
   if (!document.querySelector("link[data-hd-fonte]")) {
     const l = document.createElement("link"); l.rel = "stylesheet"; l.dataset.hdFonte = "1";
-    l.href = "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap";
+    l.href = "https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&display=swap";
     document.head.appendChild(l);
   }
   const SOL_G = `<circle cx="20" cy="20" r="7.5"/><g stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 4v5M20 31v5M4 20h5M31 20h5M8.7 8.7l3.5 3.5M27.8 27.8l3.5 3.5M31.3 8.7l-3.5 3.5M12.2 27.8l-3.5 3.5"/></g>`;
@@ -31,6 +31,9 @@
     return out;
   }
 
+  // guarás voando (cinco, de tamanhos diferentes); c.GUARA_VOO vem do site.html
+  const bando = (c, cls) => `<div class="hd-voo ${cls}" aria-hidden="true">${[1, 2, 3, 4, 5].map(() => `<span>${c.GUARA_VOO}</span>`).join("")}</div>`;
+
   M.horadourada = {
     topo(c) {
       const { P, CASA, slug, esc, TEMA } = c, marca = TEMA && TEMA.motivo === "pinheiro" ? c.PINHEIRO : SOL_ICONE;
@@ -44,7 +47,7 @@
       const arco = fotos.length
         ? `<button type="button" class="hd-arco" data-foto="0" aria-label="Ver as fotos da ${esc(P.nome)} em tela cheia"><img src="${esc(fotos[0])}" alt="Foto da ${esc(P.nome)}" fetchpriority="high"></button>`
         : `<div class="hd-arco hd-arco--vazio" aria-hidden="true">${c.PINHAL}</div>`;
-      return `<section class="abertura hd-hero"><div class="dentro">
+      return `<section class="abertura hd-hero">${bando(c, "hd-voo--ceu")}<div class="dentro">
         <div class="hd-txt">
           ${lugar ? `<p class="onde">${c.ICONE_LOCAL}${esc(lugar)}</p>` : ""}
           <h1 class="nome hd-nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${nome(P, esc)}</span></h1>
@@ -96,7 +99,7 @@
     rodape(c) {
       const { P, CASA, slug, esc, lugar } = c;
       const pinhos = Array.from({ length: 30 }, (_, i) => { const s = (.62 + ((i * 37) % 9) / 14).toFixed(2), x = (i * 49 - 14 + ((i * 53) % 23)).toFixed(0); return `<path transform="translate(${x} ${(100 - 100 * s).toFixed(1)}) scale(${s})" d="${PINHEIRO_D}"/>`; }).join("");
-      return `<footer class="rodape hd-rodape"><svg class="hd-pinhal" viewBox="0 0 1470 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${pinhos}</svg>
+      return `<footer class="rodape hd-rodape">${bando(c, "hd-voo--pinhal")}<svg class="hd-pinhal" viewBox="0 0 1470 100" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">${pinhos}</svg>
         <div class="hd-mar"><div class="hd-ondas" aria-hidden="true"><svg viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="${onda(30, 14, 600)} L2400 60 L0 60 Z"/></svg><svg viewBox="0 0 2400 60" preserveAspectRatio="none"><path d="${onda(34, 10, 400)} L2400 60 L0 60 Z"/></svg></div>
           <div class="dentro hd-rod"><span class="hd-rod-nome">${esc(P.nome)}${lugar ? `<small>${esc(lugar)}</small>` : ""}</span>
             <span class="hd-rod-links">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></div></footer>`;

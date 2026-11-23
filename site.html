@@ -557,7 +557,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
 
   /* ---------- página ---------- */
-  const C = { P, Q, S, slug, CASA, TEMA, lugar, zap, linkZap, precoMin, esc, brl, plural, hoje, addDias, iniciais, PINHEIRO, PINHAL, ICONE_LOCAL, ICONE_BARCO, fotos: (P.fotos || []).filter(u => /^https:\/\//.test(u)),
+  const C = { P, Q, S, slug, CASA, TEMA, lugar, zap, linkZap, precoMin, esc, brl, plural, hoje, addDias, iniciais, PINHEIRO, PINHAL, GUARA_VOO, ICONE_LOCAL, ICONE_BARCO, fotos: (P.fotos || []).filter(u => /^https:\/\//.test(u)),
     temSaber: !!(P.como_chegar || P.politica || (P.pagamentos || []).length) };
   raiz.innerHTML = `
   ${MOD ? MOD.topo(C) : `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${DESENHO.marca || esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>

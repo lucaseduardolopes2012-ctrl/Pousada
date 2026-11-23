@@ -3,7 +3,7 @@
 :root[data-modelo="horadourada"] {
   --p: var(--g-vermelho); --a: var(--g-marrom); --e: var(--g-preto);
   --papel: color-mix(in srgb, var(--p) 4%, #fffaf1); --papel-2: color-mix(in srgb, var(--p) 9%, #fff3e2);
-  --serif: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --serif: "Outfit", "Plus Jakarta Sans", system-ui, sans-serif;
   --sol: 0; --suave: color-mix(in srgb, var(--e) 62%, var(--papel));
   --sobre-preto: color-mix(in srgb, var(--e) 78%, transparent); --fio: color-mix(in srgb, var(--e) 16%, transparent);
   --titulo: var(--e); --risco: var(--p); --barra: var(--a);
@@ -23,7 +23,7 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .topo { position: sticky; background: transparent; color: var(--e); transition: background .5s, box-shadow .5s, backdrop-filter .5s; }
 [data-modelo="horadourada"] .topo.rolou { background: color-mix(in srgb, var(--papel) 84%, transparent); backdrop-filter: blur(14px) saturate(1.35); -webkit-backdrop-filter: blur(14px) saturate(1.35); box-shadow: 0 14px 34px -26px color-mix(in srgb, var(--e) 70%, transparent); }
 [data-modelo="horadourada"] .topo::after { background: var(--a); height: 2px; }
-[data-modelo="horadourada"] .topo .marca { font-family: var(--serif); font-weight: 500; font-size: 19px; letter-spacing: -.01em; }
+[data-modelo="horadourada"] .topo .marca { font-family: var(--serif); font-weight: 600; font-size: 18px; letter-spacing: -.02em; }
 [data-modelo="horadourada"] .topo .marca i { background: var(--p); color: #fff; padding: 6px; border-radius: 50%; width: 34px; height: 34px; }
 [data-modelo="horadourada"] .topo .marca i svg { width: 100%; height: 100%; fill: #fff; stroke: #fff; }
 [data-modelo="horadourada"] .topo .marca i .pinheiro { fill: #fff; stroke: none; }
@@ -41,19 +41,19 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .abertura { overflow: visible; padding: clamp(18px, 4vw, 54px) 0 clamp(36px, 5vw, 64px); }
 [data-modelo="horadourada"] .hd-hero .dentro { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: clamp(20px, 4vw, 56px) clamp(24px, 5vw, 72px); align-items: center; }
 [data-modelo="horadourada"] .hd-txt { min-width: 0; }
-[data-modelo="horadourada"] .hd-nome { font-family: var(--serif); font-weight: 420; font-variation-settings: "opsz" 144, "SOFT" 100; font-size: clamp(52px, 8.6vw, 124px); line-height: .9; letter-spacing: -.035em; margin: 14px 0 22px; color: var(--e); text-wrap: balance; }
+[data-modelo="horadourada"] .hd-nome { font-family: var(--serif); font-weight: 300; font-size: clamp(50px, 8.2vw, 118px); line-height: .92; letter-spacing: -.045em; margin: 14px 0 22px; color: var(--e); text-wrap: balance; }
 [data-modelo="horadourada"] .hd-nome > span { display: block; }
-[data-modelo="horadourada"] .hd-l1 { display: block; font-size: .36em; font-style: italic; font-weight: 400; letter-spacing: -.01em; line-height: 1.1; margin-bottom: .1em; color: var(--p); }
+[data-modelo="horadourada"] .hd-l1 { display: block; font-size: .27em; font-weight: 600; letter-spacing: .3em; text-transform: uppercase; line-height: 1.1; margin-bottom: .34em; color: var(--p); }
 [data-modelo="horadourada"] .hd-l2 { display: block; }
 [data-modelo="horadourada"] .hd-pal { display: inline-block; overflow: hidden; vertical-align: top; padding: .06em .04em .1em; margin: -.06em -.04em -.1em; }
 [data-modelo="horadourada"] .hd-pal > span { display: inline-block; }
-[data-modelo="horadourada"] .hd-it { font-style: italic; font-weight: 380; color: var(--p); }
+[data-modelo="horadourada"] .hd-it { font-weight: 700; letter-spacing: -.05em; color: var(--p); }
 [data-modelo="horadourada"] .sobre { font-size: 17.5px; max-width: 31em; }
 [data-modelo="horadourada"] .fatos::before { display: none; }
 [data-modelo="horadourada"] .fatos { border-top: 0; gap: 8px; margin-top: 22px; }
 [data-modelo="horadourada"] .fatos div { display: flex; align-items: baseline; gap: 8px; padding: 7px 14px; margin: 0; border: 0; border-radius: 999px; background: color-mix(in srgb, var(--papel) 70%, transparent); box-shadow: inset 0 0 0 1px var(--fio); }
 [data-modelo="horadourada"] .fatos dt { font-size: 12.5px; }
-[data-modelo="horadourada"] .fatos dd { margin: 0; font-family: var(--serif); font-variation-settings: "opsz" 40; font-size: 19px; font-weight: 500; letter-spacing: -.01em; }
+[data-modelo="horadourada"] .fatos dd { margin: 0; font-family: var(--serif); font-size: 18px; font-weight: 600; letter-spacing: -.02em; }
 [data-modelo="horadourada"] .hd-visual { position: relative; display: grid; justify-items: end; min-width: 0; }
 [data-modelo="horadourada"] .hd-arco { display: block; width: min(100%, 380px); aspect-ratio: 4 / 4.55; border: 0; padding: 0; cursor: zoom-in; border-radius: 999px 999px 30px 30px; overflow: hidden; background: color-mix(in srgb, var(--a) 22%, var(--papel)); box-shadow: 0 50px 70px -44px color-mix(in srgb, var(--e) 75%, transparent), 0 0 0 8px color-mix(in srgb, var(--papel) 70%, transparent); }
 [data-modelo="horadourada"] .hd-arco img { width: 100%; height: 100%; object-fit: cover; object-position: 38% 50%; }
@@ -83,7 +83,7 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .hd-rota { display: grid; grid-template-columns: auto minmax(110px, 1fr) auto; align-items: end; gap: clamp(8px, 2vw, 22px); margin: 18px 0 12px; }
 [data-modelo="horadourada"] .hd-d { display: grid; gap: 0; min-width: 0; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--suave); }
 [data-modelo="horadourada"] .hd-d--fim { text-align: right; justify-items: end; }
-[data-modelo="horadourada"] .hd-d input[type="date"] { height: auto; padding: 0; border: 0; background: transparent; box-shadow: none; font-family: var(--serif); font-variation-settings: "opsz" 144, "SOFT" 100; font-size: clamp(24px, 2.8vw, 36px); font-weight: 450; letter-spacing: -.02em; color: var(--e); text-transform: none; min-width: 0; }
+[data-modelo="horadourada"] .hd-d input[type="date"] { height: auto; padding: 0; border: 0; background: transparent; box-shadow: none; font-family: var(--serif); font-size: clamp(22px, 2.5vw, 32px); font-weight: 500; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--e); text-transform: none; min-width: 0; }
 [data-modelo="horadourada"] .hd-d input:focus { box-shadow: none; outline: 2px solid color-mix(in srgb, var(--a) 70%, transparent); outline-offset: 4px; border-radius: 6px; }
 [data-modelo="horadourada"] .hd-trilha { display: block; width: 100%; height: 56px; overflow: visible; align-self: center; margin-bottom: 4px; }
 [data-modelo="horadourada"] .hd-trilha-linha { fill: none; stroke: color-mix(in srgb, var(--e) 38%, transparent); stroke-width: 1.6; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -93,7 +93,7 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .hd-c { display: flex; align-items: center; gap: 12px; font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--suave); }
 [data-modelo="horadourada"] .hd-c .contador { height: 36px; border: 0 !important; padding: 0; gap: 10px; text-transform: none; letter-spacing: 0; }
 [data-modelo="horadourada"] .hd-c .contador button { width: 32px; height: 32px; border-radius: 50%; background: color-mix(in srgb, var(--p) 11%, transparent); color: var(--p); font-size: 19px; }
-[data-modelo="horadourada"] .hd-c .contador output { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--e); min-width: 1.3ch; }
+[data-modelo="horadourada"] .hd-c .contador output { font-family: var(--serif); font-size: 24px; font-weight: 600; color: var(--e); min-width: 1.3ch; }
 [data-modelo="horadourada"] .hd-gente .noites { margin: 0; min-height: 0; flex: 1 1 300px; color: var(--suave); font-size: 13px; }
 [data-modelo="horadourada"] .hd-d input[type="date"]::-webkit-calendar-picker-indicator { width: 20px; height: 20px; padding: 0; margin-left: 6px; cursor: pointer; opacity: .55; filter: sepia(1) saturate(4) hue-rotate(-18deg); }
 [data-modelo="horadourada"] .hd-codigo { width: 118px; height: 24px; margin-left: auto; fill: color-mix(in srgb, var(--e) 78%, transparent); }
@@ -101,8 +101,8 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
   background: radial-gradient(120% 120% at 100% 0%, color-mix(in srgb, #ffc07a 55%, var(--p)) 0%, var(--p) 55%, color-mix(in srgb, var(--e) 40%, var(--p)) 100%); }
 [data-modelo="horadourada"] .hd-canhoto::before { content: ""; position: absolute; left: -1px; top: 20px; bottom: 20px; width: 2px; background: repeating-linear-gradient(180deg, var(--papel) 0 7px, transparent 7px 14px); }
 [data-modelo="horadourada"] .hd-cn { display: flex; align-items: baseline; gap: 10px; justify-content: center; }
-[data-modelo="horadourada"] .hd-cn b { font-family: var(--serif); font-variation-settings: "opsz" 144, "SOFT" 100; font-size: clamp(52px, 5.4vw, 74px); font-weight: 380; line-height: .9; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-[data-modelo="horadourada"] .hd-cn i { font-family: var(--serif); font-size: 21px; opacity: .92; }
+[data-modelo="horadourada"] .hd-cn b { font-family: var(--serif); font-size: clamp(52px, 5.4vw, 74px); font-weight: 300; line-height: .9; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+[data-modelo="horadourada"] .hd-cn i { font-family: var(--serif); font-style: normal; font-size: 19px; font-weight: 500; opacity: .92; }
 [data-modelo="horadourada"] .hd-canhoto .btn--cheio { width: 100%; height: 50px; margin: 0; border-radius: 16px; background: #fff; color: var(--p); font-size: 15px; }
 [data-modelo="horadourada"] .hd-canhoto .btn--cheio:hover { background: color-mix(in srgb, var(--p) 8%, #fff); }
 [data-modelo="horadourada"] .hd-canhoto .erro { margin: 0; background: rgba(255, 255, 255, .94); }
@@ -137,18 +137,18 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 
 /* seções viram folhas de papel sobre o céu */
 [data-modelo="horadourada"] .secao { width: min(1240px, 100% - 24px); margin: clamp(16px, 2.6vw, 30px) auto; background: var(--papel); border: 0; border-radius: clamp(26px, 3.4vw, 46px); padding: clamp(32px, 5vw, 76px) 0; box-shadow: 0 50px 90px -70px color-mix(in srgb, var(--e) 65%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--e) 6%, transparent); }
-[data-modelo="horadourada"] h2.titulo { font-family: var(--serif); font-weight: 420; font-variation-settings: "opsz" 144, "SOFT" 100; font-size: clamp(38px, 5.4vw, 74px); line-height: .96; letter-spacing: -.03em; color: var(--e); }
+[data-modelo="horadourada"] h2.titulo { font-family: var(--serif); font-weight: 400; font-size: clamp(36px, 5vw, 68px); line-height: 1; letter-spacing: -.04em; color: var(--e); }
 [data-modelo="horadourada"] .secao-cab p { color: var(--sobre-preto); }
 [data-modelo="horadourada"] .grade-q { display: block; counter-reset: hd; border-top: 1px solid var(--fio); }
 [data-modelo="horadourada"] .hd-q { counter-increment: hd; position: relative; display: grid; grid-template-columns: 70px minmax(0, 1fr) auto; gap: 8px 30px; align-items: center; padding: 28px 10px; border: 0; border-bottom: 1px solid var(--fio); border-radius: 0; background: transparent; color: var(--e); box-shadow: none; transform: none; transition: background .5s, padding .5s; }
 [data-modelo="horadourada"] .hd-q:has(.hd-qf) { grid-template-columns: 70px 104px minmax(0, 1fr) auto; }
-[data-modelo="horadourada"] .hd-n::before { content: counter(hd, decimal-leading-zero); font-family: var(--serif); font-style: italic; font-weight: 380; font-size: 32px; color: var(--p); }
+[data-modelo="horadourada"] .hd-n::before { content: counter(hd, decimal-leading-zero); font-family: var(--serif); font-weight: 300; font-size: 34px; letter-spacing: -.02em; color: var(--p); }
 [data-modelo="horadourada"] .hd-qf { width: 104px; height: 104px; border-radius: 999px 999px 18px 18px; object-fit: cover; }
-[data-modelo="horadourada"] .hd-q h3 { font-family: var(--serif); font-variation-settings: "opsz" 96, "SOFT" 100; font-size: clamp(26px, 3vw, 38px); font-weight: 450; line-height: 1.02; letter-spacing: -.02em; color: var(--e); }
+[data-modelo="horadourada"] .hd-q h3 { font-family: var(--serif); font-size: clamp(24px, 2.7vw, 34px); font-weight: 500; line-height: 1.05; letter-spacing: -.03em; color: var(--e); }
 [data-modelo="horadourada"] .hd-q .tipo { color: var(--suave); margin-top: 6px; font-size: 14px; }
 [data-modelo="horadourada"] .hd-q .desc { color: var(--sobre-preto); margin-top: 6px; max-width: 42em; font-size: 14.5px; }
 [data-modelo="horadourada"] .hd-qp { display: grid; justify-items: end; gap: 10px; text-align: right; }
-[data-modelo="horadourada"] .hd-q .preco b { display: block; font-family: var(--serif); font-variation-settings: "opsz" 60; font-size: 30px; font-weight: 500; letter-spacing: -.02em; color: var(--e); }
+[data-modelo="horadourada"] .hd-q .preco b { display: block; font-family: var(--serif); font-size: 28px; font-weight: 600; letter-spacing: -.03em; color: var(--e); }
 [data-modelo="horadourada"] .hd-q .preco span { color: var(--suave); font-size: 12.5px; }
 [data-modelo="horadourada"] .hd-q .btn { height: 42px; padding: 0 20px; }
 [data-modelo="horadourada"] .hd-q .btn--borda { background: transparent; color: var(--e); border-color: color-mix(in srgb, var(--e) 28%, transparent); }
@@ -178,8 +178,8 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .ficha-faixa .btn--cheio { background: #fff; color: var(--p); }
 [data-modelo="horadourada"] .ficha-faixa .btn--cheio:hover { background: color-mix(in srgb, var(--p) 8%, #fff); }
 [data-modelo="horadourada"] .avaliacao { background: var(--papel-2); border-color: transparent; border-radius: 24px; }
-[data-modelo="horadourada"] .avaliacao blockquote { font-family: var(--serif); font-variation-settings: "opsz" 20; font-size: 17px; line-height: 1.55; }
-[data-modelo="horadourada"] .regra h3, [data-modelo="horadourada"] .saber dt { font-family: var(--serif); font-variation-settings: "opsz" 40, "SOFT" 100; font-weight: 500; }
+[data-modelo="horadourada"] .avaliacao blockquote { font-size: 16px; line-height: 1.6; }
+[data-modelo="horadourada"] .regra h3, [data-modelo="horadourada"] .saber dt { font-family: var(--serif); font-weight: 500; }
 [data-modelo="horadourada"] .regra h3 span { background: var(--p); }
 [data-modelo="horadourada"] .regras-lista li::before { color: var(--p); }
 
@@ -192,12 +192,29 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
 [data-modelo="horadourada"] .hd-ondas svg:first-child path { fill: var(--e); }
 [data-modelo="horadourada"] .hd-ondas svg:last-child path { fill: color-mix(in srgb, var(--e) 62%, var(--a)); opacity: .55; }
 [data-modelo="horadourada"] .hd-rod { display: flex; justify-content: space-between; align-items: end; gap: 18px 32px; flex-wrap: wrap; }
-[data-modelo="horadourada"] .hd-rod-nome { font-family: var(--serif); font-variation-settings: "opsz" 96, "SOFT" 100; font-size: clamp(26px, 3.4vw, 40px); font-weight: 420; letter-spacing: -.02em; color: #fff; }
+[data-modelo="horadourada"] .hd-rod-nome { font-family: var(--serif); font-size: clamp(24px, 3vw, 36px); font-weight: 400; letter-spacing: -.04em; color: #fff; }
 [data-modelo="horadourada"] .hd-rod-nome small { display: block; margin-top: 4px; font-family: var(--f); font-size: 13.5px; font-weight: 500; letter-spacing: 0; color: rgba(255, 255, 255, .7); }
 [data-modelo="horadourada"] .hd-rod-links { display: flex; gap: 8px 22px; flex-wrap: wrap; font-size: 13.5px; }
 [data-modelo="horadourada"] .rodape a { color: rgba(255, 255, 255, .86); }
 [data-modelo="horadourada"] .rodape a:hover { color: #fff; }
 [data-modelo="horadourada"] [data-modelo] .rodape { background: transparent; }
+
+/* guarás voando por cima dos pinheiros (rodapé) e cruzando o céu da abertura; voam para a esquerda */
+[data-modelo="horadourada"] .hd-voo { position: absolute; left: 0; right: 0; top: calc(-1 * clamp(70px, 9vw, 128px)); height: clamp(70px, 9vw, 128px); overflow: hidden; pointer-events: none; }
+[data-modelo="horadourada"] .hd-voo--ceu { top: clamp(48px, 5vw, 64px); bottom: auto; height: clamp(54px, 6vw, 84px); z-index: 0; }
+[data-modelo="horadourada"] .hd-hero { position: relative; }
+[data-modelo="horadourada"] .hd-voo > span { position: absolute; left: 0; top: var(--y); width: var(--w); translate: 110vw 0; }
+[data-modelo="horadourada"] .hd-voo .guara { fill: color-mix(in srgb, var(--p) 58%, #ffd6a0); stroke: color-mix(in srgb, var(--p) 58%, #ffd6a0); }
+[data-modelo="horadourada"] .hd-voo--ceu > span { width: calc(var(--w) * .62); }
+[data-modelo="horadourada"] .hd-voo--ceu .guara { fill: var(--g-guara); stroke: var(--g-guara); opacity: .9; }
+[data-modelo="horadourada"] .hd-voo > span:nth-child(1) { --y: 34%; --w: 84px; }
+[data-modelo="horadourada"] .hd-voo > span:nth-child(2) { --y: 6%; --w: 64px; }
+[data-modelo="horadourada"] .hd-voo > span:nth-child(3) { --y: 50%; --w: 52px; }
+[data-modelo="horadourada"] .hd-voo > span:nth-child(4) { --y: 20%; --w: 74px; }
+[data-modelo="horadourada"] .hd-voo > span:nth-child(5) { --y: 58%; --w: 58px; }
+[data-modelo="horadourada"] .rodape { margin-top: clamp(86px, 11vw, 150px); }
+html[data-modelo="horadourada"]:not(.anima) .hd-voo > span { translate: 0 0; }
+html[data-modelo="horadourada"]:not(.anima) .hd-voo > span:nth-child(1) { left: 64%; } html[data-modelo="horadourada"]:not(.anima) .hd-voo > span:nth-child(2) { left: 72%; } html[data-modelo="horadourada"]:not(.anima) .hd-voo > span:nth-child(3) { left: 82%; } html[data-modelo="horadourada"]:not(.anima) .hd-voo > span:nth-child(4) { left: 28%; } html[data-modelo="horadourada"]:not(.anima) .hd-voo > span:nth-child(5) { left: 40%; }
 
 /* movimento: o nome sobe palavra por palavra, o arco se abre como uma íris, o selo gira, o sol pulsa, as ondas correm */
 @media (prefers-reduced-motion: no-preference) {
@@ -221,5 +238,11 @@ html[data-modelo="horadourada"] { background: var(--papel); scroll-behavior: smo
   html.anima[data-modelo="horadourada"] .hd-pinhal path { transform-box: fill-box; transform-origin: 50% 100%; animation: m-balanca 6s ease-in-out infinite alternate; --ang: 1.6deg; }
   html.anima[data-modelo="horadourada"] .hd-pinhal path:nth-child(3n) { animation-duration: 7.4s; animation-delay: -2s; --ang: -1.9deg; }
   html.anima[data-modelo="horadourada"] .hd-pinhal path:nth-child(3n+1) { animation-duration: 5.2s; animation-delay: -1s; }
+  @keyframes hd-voa { from { translate: 110vw 0; } to { translate: -20vw 0; } }
+  @keyframes hd-bobo { 50% { transform: translateY(var(--bobo, -10px)); } }
+  html.anima[data-modelo="horadourada"] .hd-voo > span { animation: hd-voa var(--dur, 46s) linear var(--atr, -10s) infinite; }
+  html.anima[data-modelo="horadourada"] .hd-voo > span .guara { animation: hd-bobo 5s ease-in-out infinite; }
+  html.anima[data-modelo="horadourada"] .hd-voo > span:nth-child(1) { --dur: 52s; --atr: -6s; } html.anima[data-modelo="horadourada"] .hd-voo > span:nth-child(2) { --dur: 44s; --atr: -17s; --bate: .5s; }
+  html.anima[data-modelo="horadourada"] .hd-voo > span:nth-child(3) { --dur: 58s; --atr: -31s; --bate: .62s; } html.anima[data-modelo="horadourada"] .hd-voo > span:nth-child(4) { --dur: 49s; --atr: -24s; } html.anima[data-modelo="horadourada"] .hd-voo > span:nth-child(5) { --dur: 62s; --atr: -40s; --bate: .58s; }
   @keyframes m-balanca { to { transform: rotate(var(--ang, 2.2deg)); } }
 }
