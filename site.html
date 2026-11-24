@@ -275,6 +275,15 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 .guara-lockup { display: inline-flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .9; font-size: 1.3em; }
 .guara-lockup .lk-p { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 80, "opsz" 96; font-size: .42em; letter-spacing: .01em; margin-bottom: .06em; }
 .guara-lockup .lk-r { position: relative; display: inline-block; }
+/* logo da Guará na abertura: grande, ocupando a coluna, com "Pousada" e "DoThon" inclinados como um carimbo */
+[data-motivo="guara"] .guara-lockup { font-size: min(2.05em, 31vw) !important; line-height: .82; margin-top: -.08em; }
+[data-motivo="guara"] .guara-lockup .lk-p { font-size: .3em; transform: rotate(-5deg); transform-origin: left bottom; margin: 0 0 -.06em .04em; position: relative; z-index: 1; }
+[data-motivo="guara"] .guara-lockup .lk-sob { transform: translateX(-50%) rotate(-5deg) !important; font-size: .3em !important; margin-top: .05em !important; }
+[data-motivo="guara"] .guara-lockup:has(.lk-sob) { padding-bottom: .34em !important; }
+[data-motivo="guara"] .abertura { padding-top: clamp(16px, 3vw, 40px); }
+[data-motivo="guara"] .abertura .dentro { align-items: center; }
+[data-motivo="guara"] h1.nome { margin: 4px 0 14px; }
+[data-motivo="guara"] .risco { width: min(560px, 82%); }
 .guara-lockup .lk-sob { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: .02em; font-family: var(--display); font-variation-settings: "wdth" 78, "opsz" 96; font-size: .36em; font-weight: 750; letter-spacing: -.02em; line-height: 1; white-space: nowrap; color: var(--g-preto, currentColor); }
 .guara-lockup:has(.lk-sob) { padding-bottom: .4em; }
 .guara-lockup .lk-g { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; letter-spacing: -.035em; white-space: nowrap; display: inline-flex; align-items: baseline; }
@@ -585,7 +594,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
         <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${LOGO_GUARA ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUA<span class="lk-r">R${SOBRENOME ? `<span class="lk-sob">${esc(SOBRENOME)}</span>` : ""}</span>Á</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
-        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
+        <p class="sobre">${esc((/\p{L}/u.test(P.descricao || "") && P.descricao) || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
         ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
       </div>
