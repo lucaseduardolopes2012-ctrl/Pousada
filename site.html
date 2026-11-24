@@ -274,6 +274,9 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 .topo .marca i.com-logo img { width: 100%; height: 100%; object-fit: cover; }
 .guara-lockup { display: inline-flex; flex-direction: column; align-items: flex-start; font-weight: 400; line-height: .9; }
 .guara-lockup .lk-p { font-family: var(--display); font-weight: 800; font-variation-settings: "wdth" 80, "opsz" 96; font-size: .36em; letter-spacing: .01em; margin-bottom: .06em; }
+.guara-lockup .lk-r { position: relative; display: inline-block; }
+.guara-lockup .lk-sob { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: .04em; font-family: var(--f); font-size: .2em; font-weight: 800; letter-spacing: .04em; line-height: 1; white-space: nowrap; color: var(--g-preto, currentColor); }
+.guara-lockup:has(.lk-sob) { padding-bottom: .28em; }
 .guara-lockup .lk-g { font-family: var(--display); font-weight: 750; font-variation-settings: "wdth" 78, "opsz" 96; letter-spacing: -.035em; white-space: nowrap; display: inline-flex; align-items: baseline; }
 .guara-u { display: inline-block; width: .8em; height: .8em; margin: 0 .02em; overflow: visible; vertical-align: baseline; fill: currentColor; stroke: none; }
 .guara-u .ave { fill: var(--g-guara); stroke: var(--g-guara); }
@@ -562,7 +565,9 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   // logos enviadas pelas pousadas (imagem inteira para a abertura e o recorte do símbolo para o topo)
   const LOGOS = { "pousada-exemplo": { inteira: "img/pousada-exemplo/logo.jpg?v=1", icone: "img/pousada-exemplo/logo-icone.jpg?v=1" } };
   const LOGO = LOGOS[slug] || null;
-  const LOGO_GUARA = GUARAS && /guar[aá]/i.test(P.nome); // sem \b: o "á" não conta como letra para o \b do JavaScript
+  const LOGO_GUARA = GUARAS && /guar[aá]/i.test(P.nome);
+  // o que vem depois de "Guará" no nome (ex.: "DoThon") vai escrito pequeno, embaixo do R da logo
+  const SOBRENOME = ((String(P.nome).match(/guar[aá]\s+(.+)$/i) || [])[1] || "").replace(/\s+/g, ""); // sem \b: o "á" não conta como letra para o \b do JavaScript
   const RISCO = `<svg class="risco" viewBox="0 0 340 16" aria-hidden="true" focusable="false"><path pathLength="1" d="M2 10 Q 23 2 44 9 T 86 9 T 128 9 T 170 9 T 212 9 T 254 9 T 296 9 T 338 8"/></svg>`;
   const precoMin = Q.length ? Math.min(...Q.map(q => Number(q.diaria) || 0).filter(v => v > 0)) : 0;
   const ACESSO = { estrada: "De carro ou ônibus", barco: "Só de barco", ambos: "Pela estrada ou de barco" };
@@ -578,7 +583,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${DESENHO.topo}${DESENHO.agua}<div class="dentro">
       <div>
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
-        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${LOGO_GUARA ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUARÁ</span></span>` : letreiro(P.nome)}</span></h1>
+        <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${LOGO_GUARA ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUA<span class="lk-r">R${SOBRENOME ? `<span class="lk-sob">${esc(SOBRENOME)}</span>` : ""}</span>Á</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
         <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
