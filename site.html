@@ -617,7 +617,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     temSaber: !!(P.como_chegar || P.politica || (P.pagamentos || []).length) };
   raiz.innerHTML = `
   ${MOD ? MOD.topo(C) : `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i class="${LOGO ? "com-logo" : ""}">${LOGO ? `<img src="${LOGO.icone}" alt="">` : DESENHO.marca || esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}<a class="l" href="#duvidas">Dúvidas</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}<a class="l" href="#duvidas">Dúvidas</a><a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
   <main id="inicio">
     ${MOD ? MOD.abertura(C) : `
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${DESENHO.topo}${DESENHO.agua}<div class="dentro">
@@ -654,7 +654,6 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     ${avaliacoes()}
     ${sobreCasa()}
     ${duvidas()}
-    ${saber()}
   </main>
   ${MOD && MOD.rodape ? MOD.rodape(C) : `<footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`}`;
   // o recorte do bilhete fica na linha pontilhada, onde quer que ela esteja
@@ -710,7 +709,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       else if (dd.dataset.num) { const n = Number(dd.dataset.num); conta(dd, n, dd.hasAttribute("data-reais") ? v => brl(Math.round(v)) : v => String(Math.round(v)), atraso); }
     });
     revela(document.querySelectorAll(".mosaico .tile"), .12, "rv-corte");
-    document.querySelectorAll("#quartos h2.titulo, #saber h2.titulo").forEach(h => revela([mascara(h)], 0, "rv-titulo"));
+    document.querySelectorAll("#quartos h2.titulo, #duvidas h2.titulo").forEach(h => revela([mascara(h)], 0, "rv-titulo"));
     revela([$("q-legenda")]);
     revela(document.querySelectorAll(".saber div"), .1);
     // cartões inclinam na direção do ponteiro, com um brilho que acompanha
@@ -772,26 +771,18 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     if (wifi) add(/wi-?fi|internet/i, "Tem Wi-Fi?", gratis ? "Sim, Wi-Fi grátis." : "Sim, os quartos têm Wi-Fi.");
     const chegar = [P.acesso && ACESSO[P.acesso], P.como_chegar, CASA && CASA.endereco].filter(Boolean).join(". ");
     if (chegar) add(/cheg|endere/i, "Como chego?", chegar + ".", CASA && CASA.mapa ? { href: CASA.mapa, txt: "Abrir no Google Maps" } : null);
-    if (P.aceita_pix || (P.pagamentos || []).length) add(/pagamento|pagar|\bpix\b/i, "Como posso pagar?", [(P.pagamentos || []).length ? P.pagamentos.join(", ") + "." : "", P.aceita_pix ? "O Pix aparece na página do pedido, depois que você envia a ficha." : ""].filter(Boolean).join(" "));
+    if (P.aceita_pix || (P.pagamentos || []).length) add(/pagamento|pagar|\bpix\b/i, "Como posso pagar?", [(P.pagamentos || []).length ? P.pagamentos.join(", ") + "." : "", P.sinal_percentual ? `A pousada pede sinal de ${P.sinal_percentual}% para confirmar a reserva.` : "", P.aceita_pix ? "O Pix aparece na página do pedido, depois que você envia a ficha." : ""].filter(Boolean).join(" "));
     if (P.politica) add(/cancel/i, "Posso cancelar?", P.politica + " Para pedir o cancelamento, abra o seu pedido em Acompanhar pedido.");
     if (zap) add(/whats|falar|contato/i, "Como falo com a pousada?", "Pelo WhatsApp, é só chamar.", { href: linkZap(`Olá! Vim pelo site da ${P.nome} e tenho uma dúvida.`), txt: "Chamar no WhatsApp" });
     return lista.slice(0, 15);
   }
   function duvidas() {
     const l = perguntas(); if (!l.length) return "";
-    return `<section class="secao" id="duvidas"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Dúvidas</h2><p>O que os hóspedes mais perguntam antes de reservar.</p></div>
+    return `<section class="secao" id="duvidas"><div class="dentro"><div class="secao-cab"><div><h2 class="titulo">Dúvidas</h2><p>O que os hóspedes mais perguntam antes de reservar.</p></div>${DESENHO.cab}</div>
       <div class="faq">${l.map((x, i) => `<details class="faq-i"${i === 0 ? " open" : ""}><summary><span>${esc(x.p)}</span><i aria-hidden="true"></i></summary><div class="faq-r"><p>${esc(x.r)}</p>${x.link ? `<a class="btn btn--borda" href="${esc(x.link.href)}" target="_blank" rel="noopener">${esc(x.link.txt)}</a>` : ""}</div></details>`).join("")}</div></div></section>`;
   }
 
-  function saber() {
-    const it = [];
-    it.push(["Horários", `Entrada a partir das ${P.checkin_hora}.\nSaída até as ${P.checkout_hora}.`]);
-    if (P.acesso || P.como_chegar) it.push(["Como chegar", [P.acesso && ACESSO[P.acesso], P.como_chegar].filter(Boolean).join(".\n")]);
-    if ((P.pagamentos || []).length) it.push(["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `.\nSinal de ${P.sinal_percentual}% para confirmar.` : ".")]);
-    if (P.cobranca === "pessoa") it.push(["Crianças", "Até 4 anos não paga.\nDe 5 a 12 anos paga 50% da diária.\nA partir de 13 anos paga a diária inteira, como adulto."]);
-    if (P.politica) it.push(["Cancelamento", P.politica]);
-    return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2>${DESENHO.cab}</div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
-  }
+
 
   /* ---------- bilhete ---------- */
   const pessoas = () => S.adultos + S.criancas;

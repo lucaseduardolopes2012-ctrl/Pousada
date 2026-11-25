@@ -38,7 +38,7 @@
     topo(c) {
       const { P, CASA, slug, esc, TEMA } = c, marca = TEMA && TEMA.motivo === "pinheiro" ? c.PINHEIRO : SOL_ICONE;
       return `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i>${marca}</i><span>${esc(P.nome)}</span></a>
-        <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (c.P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${c.temSaber ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`;
+        <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (c.P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}<a class="l" href="#duvidas">Dúvidas</a><a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`;
     },
 
     abertura(c) {
