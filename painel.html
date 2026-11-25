@@ -475,13 +475,13 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     const { data: { session } } = await sb.auth.getSession();
     if (!session) { $("tela-entrar").hidden = false; $("app").hidden = true; document.title = "Entrar · Painel de quartos"; return; }
     S.email = session.user.email || "";
-    const { data: m } = await sb.from("membros").select(`papel, pousada:pousadas(${COLS})`).limit(1);
+    const { data: m } = await sb.from("membros").select(`papel, dev, pousada:pousadas(${COLS})`).eq("user_id", session.user.id).limit(1);
     if (!m || !m.length) { location.replace("comecar.html"); return; }
-    S.pousada = m[0].pousada; S.papel = m[0].papel;
+    S.pousada = m[0].pousada; S.papel = m[0].papel; S.dev = !!m[0].dev;
     aplicaTema(S.pousada.tema);
     marca();
     const nomeU = S.email.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\p{L}/gu, c => c.toUpperCase());
-    $("u-nome").textContent = nomeU; $("u-papel").textContent = S.papel === "dono" ? "Dono" : "Recepção"; $("u-av").outerHTML = av(nomeU).replace('class="av"', 'class="av" id="u-av"');
+    $("u-nome").textContent = nomeU; $("u-papel").textContent = S.dev ? "Desenvolvedor" : S.papel === "dono" ? "Dono" : "Recepção"; $("u-av").outerHTML = av(nomeU).replace('class="av"', 'class="av" id="u-av"');
     $("tela-entrar").hidden = true; $("app").hidden = false;
     await carregar(); assinar(); rota();
     setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
