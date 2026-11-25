@@ -445,6 +445,27 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 .onde-casa p { margin: 4px 0 0; color: var(--sobre-preto); }
 .acoes-casa { display: flex; flex-wrap: wrap; gap: 10px; }
 .acoes-casa .btn { text-decoration: none; }
+
+/* celular: título enche a largura, fatos em 2 colunas, bilhete e cartões sem aperto */
+@media (max-width: 560px) {
+  h1.nome { margin: 12px 0 18px; }
+  h1.nome .guara-lockup { font-size: min(34vw, 170px); }
+  .fatos { display: grid; grid-template-columns: 1fr 1fr; row-gap: 4px; margin-top: 22px; }
+  .fatos div { margin: 0; padding: 12px 10px 4px 0; border-right: 0; min-width: 0; }
+  .fatos div:nth-child(even) { padding-left: 16px; border-left: 1px solid var(--fio); }
+  .fatos dd { font-size: 22px; }
+  .sobre { font-size: 16px; }
+  .q .f:has(.vazia) { aspect-ratio: 16 / 7; }
+  .q .f .vazia { font-size: 38px; }
+}
+@media (max-width: 380px) {
+  .topo .dentro { gap: 10px; }
+  .topo .marca { font-size: 14px; }
+  .topo nav .btn { padding: 0 12px; font-size: 13px; }
+  .bilhete .rota { grid-template-columns: 1fr 1fr; }
+  .bilhete .rota .barco { display: none; }
+  .bilhete input[type="date"] { font-size: 14px; padding: 0 4px; }
+}
 </style>
 </head>
 <body>
@@ -585,7 +606,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         ${lugar ? `<p class="onde">${ICONE_LOCAL}${esc(lugar)}</p>` : ""}
         <h1 class="nome" id="nome" aria-label="${esc(P.nome)}"><span aria-hidden="true">${LOGO_GUARA ? `<span class="guara-lockup"><span class="lk-p">Pousada</span><span class="lk-g">GUA<span class="lk-r">R${SOBRENOME ? `<span class="lk-sob">${esc(SOBRENOME)}</span>` : ""}</span>Á</span></span>` : letreiro(P.nome)}</span></h1>
         ${RISCO}
-        <p class="sobre">${esc(P.descricao || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
+        <p class="sobre">${esc((/\p{L}{3}/u.test(P.descricao || "") ? P.descricao : "") || `${plural(Q.length, "quarto", "quartos")}${lugar ? " em " + lugar : ""}. Escolha as datas, veja o que está livre e mande seu pedido. A pousada confirma e você acompanha o estado do pedido numa página.`)}</p>
         <dl class="fatos"><div><dt>Entrada a partir das</dt><dd data-hora>${esc(P.checkin_hora)}</dd></div><div><dt>Saída até as</dt><dd data-hora>${esc(P.checkout_hora)}</dd></div><div><dt>Quartos</dt><dd data-num="${Q.length}">${Q.length}</dd></div>${precoMin ? `<div><dt>Diárias a partir de</dt><dd data-num="${precoMin}" data-reais>${brl(precoMin)}</dd></div>` : ""}</dl>
         ${zap || P.instagram ? `<div class="contato">${zap ? `<a class="btn btn--claro" href="${linkZap(`Olá! Vi o site da ${P.nome} e queria saber mais.`)}" target="_blank" rel="noopener">Falar no WhatsApp</a>` : ""}${P.instagram ? `<a class="btn btn--claro" href="https://instagram.com/${esc(P.instagram)}" target="_blank" rel="noopener">@${esc(P.instagram)}</a>` : ""}</div>` : ""}
       </div>
