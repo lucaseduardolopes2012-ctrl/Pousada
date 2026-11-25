@@ -71,6 +71,8 @@ h1.nome { color: var(--titulo, inherit); font-family: var(--display); font-weigh
 .idades:empty { display: none; }
 .idades label { display: grid; gap: 4px; font-size: 12px; font-weight: 600; color: var(--c30-suave, inherit); }
 .idades select { height: 40px; padding: 0 8px; border-radius: 9px; border: 1px solid var(--borda); background: #fff; color: var(--tinta); font: inherit; font-size: 14px; }
+.aviso-criancas { margin: 12px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(255, 255, 255, .14); font-size: 13px; line-height: 1.4; }
+.aviso-criancas b { display: block; font-size: 14.5px; }
 .idades .regra { grid-column: 1 / -1; font-size: 12px; font-weight: 500; opacity: .9; }
 .bilhete .noites { margin: 12px 0 0; font-size: 13.5px; color: var(--c30-suave); min-height: 1.5em; }
 .bilhete .btn--cheio { width: 100%; height: 48px; font-size: 15px; margin-top: 14px; }
@@ -617,6 +619,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
         <div class="parte"><div class="gente">
           <label>Adultos<span class="contador"><button type="button" data-conta="adultos" data-d="-1" aria-label="Menos um adulto">−</button><output id="o-adultos">${S.adultos}</output><button type="button" data-conta="adultos" data-d="1" aria-label="Mais um adulto">+</button></span></label>
           <label>Crianças<span class="contador"><button type="button" data-conta="criancas" data-d="-1" aria-label="Menos uma criança">−</button><output id="o-criancas">${S.criancas}</output><button type="button" data-conta="criancas" data-d="1" aria-label="Mais uma criança">+</button></span></label></div>
+          ${P.cobranca === "pessoa" ? `<p class="aviso-criancas"><b>Crianças de 5 a 12 anos pagam 50%.</b> Até 4 anos não paga; a partir de 13, paga como adulto.</p>` : ""}
           <div class="idades" id="idades" aria-live="polite"></div>
           <p class="erro" id="b-erro" role="alert" hidden></p>
           <button class="btn btn--cheio" type="submit" id="b-ver">Ver quartos livres</button></div>
@@ -721,13 +724,18 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     it.push(["Horários", `Entrada a partir das ${P.checkin_hora}.\nSaída até as ${P.checkout_hora}.`]);
     if (P.acesso || P.como_chegar) it.push(["Como chegar", [P.acesso && ACESSO[P.acesso], P.como_chegar].filter(Boolean).join(".\n")]);
     if ((P.pagamentos || []).length) it.push(["Pagamento", P.pagamentos.join(", ") + (P.sinal_percentual ? `.\nSinal de ${P.sinal_percentual}% para confirmar.` : ".")]);
-    if (P.cobranca === "pessoa") it.push(["Crianças", "Até 5 anos não paga.\nAcima de 5 anos paga a diária inteira, como adulto."]);
+    if (P.cobranca === "pessoa") it.push(["Crianças", "Até 4 anos não paga.\nDe 5 a 12 anos paga 50% da diária.\nA partir de 13 anos paga a diária inteira, como adulto."]);
     if (P.politica) it.push(["Cancelamento", P.politica]);
     return `<section class="secao" id="saber"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Bom saber</h2>${DESENHO.cab}</div><dl class="saber">${it.map(([t, v]) => `<div><dt>${esc(t)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl></div></section>`;
   }
 
   /* ---------- bilhete ---------- */
   const pessoas = () => S.adultos + S.criancas;
+  // quem paga na cobrança por pessoa: adultos e maiores de 12 inteira, 5 a 12 anos meia, até 4 grátis
+  function quemPaga() {
+    const ids = S.idades.slice(0, S.criancas), meia = ids.filter(i => i >= 5 && i <= 12).length, inteira = S.adultos + ids.filter(i => i > 12).length, gratis = ids.filter(i => i <= 4).length;
+    return [plural(inteira, "inteira", "inteiras"), meia && `${meia} meia (50%)`.replace("meia (", meia > 1 ? "meias (" : "meia ("), gratis && `${gratis} grátis`].filter(Boolean).join(" + ");
+  }
   function atualizaBilhete() {
     $("o-adultos").value = S.adultos; $("o-criancas").value = S.criancas;
     document.querySelectorAll("[data-conta]").forEach(b => { const v = S[b.dataset.conta] + Number(b.dataset.d); b.disabled = v < (b.dataset.conta === "adultos" ? 1 : 0) || v > 20; });
@@ -742,7 +750,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     if (box.childElementCount === S.criancas + (S.criancas ? 1 : 0)) return;
     const opcoes = v => `<option value="">Idade</option>${Array.from({ length: 18 }, (_, k) => `<option value="${k}" ${v === k ? "selected" : ""}>${k === 0 ? "Menos de 1 ano" : plural(k, "ano", "anos")}</option>`).join("")}`;
     box.innerHTML = S.criancas ? S.idades.map((v, k) => `<label>Criança ${k + 1}<select data-idade="${k}" aria-label="Idade da criança ${k + 1}">${opcoes(v)}</select></label>`).join("")
-      + `<p class="regra">${P.cobranca === "pessoa" ? "Até 5 anos não paga. Acima de 5 anos paga a diária inteira." : "Informe a idade de cada criança."}</p>` : "";
+      + (P.cobranca === "pessoa" ? "" : `<p class="regra">Informe a idade de cada criança.</p>`) : "";
   }
   document.addEventListener("change", e => { const s = e.target.closest("[data-idade]"); if (!s) return; S.idades[Number(s.dataset.idade)] = s.value === "" ? null : Number(s.value); limpaBusca(); });
   $("b-in").addEventListener("change", e => { S.entrada = e.target.value; if (!S.saida || S.saida <= S.entrada) { S.saida = addDias(S.entrada, 1); $("b-out").value = S.saida; } $("b-out").min = addDias(S.entrada, 1); limpaBusca(); });
@@ -779,7 +787,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       const livre = S.livres && S.livres.get(q.id), cabe = q.capacidade >= pessoas(), pode = livre && cabe;
       const situ = !S.livres ? "" : pode ? `<span class="situ livre">Livre</span>` : `<span class="situ">${livre ? `Cabem até ${q.capacidade}` : "Ocupado nessas datas"}</span>`;
       const pp = P.cobranca === "pessoa";
-      const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${pp ? `${plural(livre.pagantes || 1, "pagante", "pagantes")} a ${brl(q.diaria)}` : `${brl(q.diaria)} cada`}</span>` : `<b>${brl(q.diaria)}</b><span>${pp ? "por pessoa, por noite" : "por noite"}</span>`;
+      const preco = pode ? `<b>${brl(livre.total)}</b><span>${plural(n, "noite", "noites")}, ${pp ? `${quemPaga()}, ${brl(q.diaria)} por pessoa` : `${brl(q.diaria)} cada`}</span>` : `<b>${brl(q.diaria)}</b><span>${pp ? "por pessoa, por noite" : "por noite"}</span>`;
       const acao = !S.livres ? `<a class="btn btn--borda" href="#bilhete" data-datas>Escolher datas</a>` : pode ? `<button class="btn ${S.quarto === q.id ? "btn--cheio" : "btn--borda"}" data-escolher="${esc(q.id)}" aria-pressed="${S.quarto === q.id}">${S.quarto === q.id ? "Quarto escolhido" : "Escolher este quarto"}</button>` : "";
       const nomeCurto = q.nome.replace(/^quarto\s*/i, "") || q.nome;
       if (MOD && MOD.quarto) return MOD.quarto(C, q, { livre, pode, situ, preco, acao, nomeCurto, escolhido: S.quarto === q.id, pulsa: pulsa && !anima, fora: S.livres && !pode });
@@ -857,7 +865,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       <aside class="resumo" aria-label="Resumo do pedido"><h3>${esc(q.nome)}</h3>
         <dl><div><dt>Entrada</dt><dd>${dia(S.entrada)}, a partir das ${esc(P.checkin_hora)}</dd></div><div><dt>Saída</dt><dd>${dia(S.saida)}, até as ${esc(P.checkout_hora)}</dd></div>
         <div><dt>Pessoas</dt><dd>${plural(S.adultos, "adulto", "adultos")}${S.criancas ? ` e ${plural(S.criancas, "criança", "crianças")} (${S.idades.map(v => v === 0 ? "menos de 1 ano" : plural(v, "ano", "anos")).join(", ")})` : ""}</dd></div>
-        <div class="total"><dt>${plural(n, "noite", "noites")}${P.cobranca === "pessoa" ? `, ${plural(livre.pagantes || 1, "pagante", "pagantes")}` : ""}</dt><dd>${brl(livre.total)}</dd></div></dl>
+        <div class="total"><dt>${plural(n, "noite", "noites")}${P.cobranca === "pessoa" ? `, ${quemPaga()}` : ""}</dt><dd>${brl(livre.total)}</dd></div></dl>
         ${P.politica ? `<p class="aviso"><b>Cancelamento:</b> ${esc(P.politica)}</p>` : ""}
         ${P.sinal_percentual ? `<p class="aviso">A pousada pede sinal de ${P.sinal_percentual}% para confirmar.</p>` : ""}
         <button class="mudar" type="button" data-mudar>Trocar quarto ou datas</button></aside></div>`;
