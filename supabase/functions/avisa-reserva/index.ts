@@ -34,20 +34,29 @@ async function tokenGoogle(conta: { client_email: string; private_key: string })
   return cache.token;
 }
 
+// chave do Firebase: segredo FCM_CONTA da função ou, se não houver, o cofre (Vault) do banco
+async function contaFirebase(): Promise<string | null> {
+  const env = Deno.env.get("FCM_CONTA");
+  if (env) return env;
+  const { data } = await sb.rpc("fcm_conta");
+  return typeof data === "string" && data ? data : null;
+}
+
 const data = (d: string) => d.split("-").reverse().slice(0, 2).join("/");
 
 Deno.serve(async (req) => {
   try {
     const corpoReq = await req.json().catch(() => ({}));
     if (corpoReq.diagnostico) { // só diz se o segredo está configurado; nunca mostra o conteúdo
-      const b = Deno.env.get("FCM_CONTA");
-      let ok = false; try { const c = JSON.parse(b ?? ""); ok = !!(c.project_id && c.client_email && c.private_key); } catch { /* inválido */ }
-      return new Response(!b ? "segredo ausente" : ok ? "segredo ok" : "segredo com formato errado");
+      const b = await contaFirebase();
+      if (!b) return new Response("segredo ausente");
+      try { await tokenGoogle(JSON.parse(b)); return new Response("segredo ok, Google aceitou"); }
+      catch (e) { return new Response("segredo com problema: " + String(e).slice(0, 200)); }
     }
     const { id } = corpoReq;
     if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return new Response("id?", { status: 400 });
 
-    const bruto = Deno.env.get("FCM_CONTA");
+    const bruto = await contaFirebase();
     if (!bruto) return new Response("falta o segredo FCM_CONTA", { status: 500 });
 
     // marca como avisado antes de enviar: dois disparos do mesmo pedido não geram dois avisos
