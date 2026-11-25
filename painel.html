@@ -485,6 +485,14 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     $("tela-entrar").hidden = true; $("app").hidden = false;
     await carregar(); assinar(); rota();
     setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
+    registraCelular();
+  }
+  // No app Android do painel: cadastra este celular para receber aviso de pedido novo
+  function registraCelular(tentativa = 0) {
+    if (!window.PainelApp || !PainelApp.token) return;
+    const t = PainelApp.token();
+    if (!t) { if (tentativa < 20) setTimeout(() => registraCelular(tentativa + 1), 3000); return; }
+    sb.rpc("salvar_push_token", { p_token: t }).then(({ error }) => { if (error) console.warn("aviso no celular:", error.message); });
   }
   function marca() {
     const motivo = (PG.temaValido(S.pousada.tema) || {}).motivo;
@@ -878,7 +886,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     S.est[S.est.findIndex(x => x.id === id)] = data; toast(msg(data)); desenha();
   }
   document.addEventListener("click", async e => {
-    if (e.target.closest("[data-sair]")) { await sb.auth.signOut(); location.replace("painel.html"); return; }
+    if (e.target.closest("[data-sair]")) { if (window.PainelApp && PainelApp.token && PainelApp.token()) await sb.rpc("remover_push_token", { p_token: PainelApp.token() }); await sb.auth.signOut(); location.replace("painel.html"); return; }
     if (S.menuFiltro && !e.target.closest(".filtro-caixa")) { S.menuFiltro = false; desenha(); }
     const t = e.target.closest("button, a"); if (!t) return; const d = t.dataset;
     if (d.fecha !== undefined) return fechaGaveta();

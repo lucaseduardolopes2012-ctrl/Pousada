@@ -11,6 +11,7 @@ import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
+import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -62,6 +63,37 @@ public class MainActivity extends Activity {
 
         if (salvo != null) web.restoreState(salvo);
         else web.loadUrl(PAINEL);
+
+        preparaAvisos();
+    }
+
+    /** Avisos de pedido novo: cria o canal, pede permissão (Android 13+) e pega o endereço deste celular no Firebase. */
+    private void preparaAvisos() {
+        Avisos.criaCanal(this);
+        if (android.os.Build.VERSION.SDK_INT >= 33
+                && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 7);
+        }
+        try {
+            com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken().addOnSuccessListener(t ->
+                    getSharedPreferences(Avisos.PREFS, MODE_PRIVATE).edit().putString("token", t).apply());
+        } catch (Exception e) {
+            // app gerado sem o google-services.json: funciona, só não recebe avisos
+        }
+    }
+
+    /** O painel pergunta o endereço do celular por aqui e cadastra no banco (salvar_push_token). */
+    private class Ponte {
+        @JavascriptInterface
+        public String token() {
+            return getSharedPreferences(Avisos.PREFS, MODE_PRIVATE).getString("token", "");
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) {
+        super.onNewIntent(i);
+        if (web != null && !mostrandoErro) web.reload(); // tocou no aviso: mostra o pedido novo
     }
 
     private int dp(int v) { return Math.round(v * getResources().getDisplayMetrics().density); }
@@ -138,6 +170,7 @@ public class MainActivity extends Activity {
             public void onCloseWindow(WebView v) { if (v == janela) fechaJanela(); }
         });
 
+        if (w == web) w.addJavascriptInterface(new Ponte(), "PainelApp");
         w.setDownloadListener((url, ua, cd, tipo, tam) -> abreFora(Uri.parse(url)));
     }
 

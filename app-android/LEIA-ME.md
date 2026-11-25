@@ -11,3 +11,8 @@ Como o app carrega o painel do site, toda mudança publicada no painel já apare
 4. `gradle assembleRelease` → `app/build/outputs/apk/release/app-release.apk`.
 
 Para atualizar um app já instalado, use SEMPRE a mesma chave (.jks) e aumente `versionCode` em app/build.gradle.
+
+## Avisos de pedido novo (Firebase)
+- Coloque o `google-services.json` do projeto Firebase em `app-android/app/` e gere o APK de novo.
+- No Supabase → Edge Functions → Secrets, crie `FCM_CONTA` com o JSON inteiro da conta de serviço do Firebase.
+- O banco (migracao_v19.sql) chama a função `avisa-reserva` (supabase/functions) a cada pedido vindo do site.
