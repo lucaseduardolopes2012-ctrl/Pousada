@@ -38,8 +38,17 @@ const data = (d: string) => d.split("-").reverse().slice(0, 2).join("/");
 
 Deno.serve(async (req) => {
   try {
-    const { id } = await req.json().catch(() => ({}));
+    const corpoReq = await req.json().catch(() => ({}));
+    if (corpoReq.diagnostico) { // só diz se o segredo está configurado; nunca mostra o conteúdo
+      const b = Deno.env.get("FCM_CONTA");
+      let ok = false; try { const c = JSON.parse(b ?? ""); ok = !!(c.project_id && c.client_email && c.private_key); } catch { /* inválido */ }
+      return new Response(!b ? "segredo ausente" : ok ? "segredo ok" : "segredo com formato errado");
+    }
+    const { id } = corpoReq;
     if (typeof id !== "string" || !/^[0-9a-f-]{36}$/i.test(id)) return new Response("id?", { status: 400 });
+
+    const bruto = Deno.env.get("FCM_CONTA");
+    if (!bruto) return new Response("falta o segredo FCM_CONTA", { status: 500 });
 
     // marca como avisado antes de enviar: dois disparos do mesmo pedido não geram dois avisos
     const desde = new Date(Date.now() - 10 * 60_000).toISOString();
@@ -51,8 +60,6 @@ Deno.serve(async (req) => {
     const { data: tokens } = await sb.from("push_tokens").select("token").eq("pousada_id", r.pousada_id);
     if (!tokens?.length) return new Response("sem celular cadastrado");
 
-    const bruto = Deno.env.get("FCM_CONTA");
-    if (!bruto) return new Response("falta o segredo FCM_CONTA", { status: 500 });
     const conta = JSON.parse(bruto);
     const acesso = await tokenGoogle(conta);
 
