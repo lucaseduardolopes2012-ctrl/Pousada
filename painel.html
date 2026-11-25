@@ -230,6 +230,10 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 .obs { padding: 10px 12px; border-radius: 10px; border: 1px dashed var(--borda); font-size: 12.5px; color: var(--suave); }
 .agora .acoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; }
 .agora .acoes .btn { flex: 1; }
+.faq-ed { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 10px; align-items: start; padding: 12px; border: 1px solid var(--linha); border-radius: 12px; }
+.faq-ed label { grid-column: 1; display: grid; gap: 4px; font-size: 12.5px; font-weight: 600; }
+.faq-ed textarea { min-height: 70px; }
+.faq-ed .ic { grid-column: 2; grid-row: 1; }
 .linha-lista { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--linha); }
 .linha-lista:last-child { border-bottom: 0; }
 .linha-lista b { font-weight: 600; font-size: 13px; }
@@ -356,7 +360,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   const { sb, esc, brl, hoje, addDias, noites, dm, dmy, errText, toast } = PG;
   const $ = id => document.getElementById(id);
   const S = { pousada: null, papel: "dono", quartos: [], est: [], pend: [], v: "geral", qid: null, filtro: "todos", menuFiltro: false, aba: "andamento", busca: "", gaveta: null, email: "", periodo: 7 };
-  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual,tema,politica,cobranca";
+  const COLS = "id,slug,nome,cidade,descricao,whatsapp,checkin_hora,checkout_hora,termos_versao,termos_aceitos_em,fotos,pix_chave,sinal_percentual,tema,politica,cobranca,faq";
   const TERMOS = "2026-11-16";
 
   /* ---------- ícones (traço fino, como na referência) ---------- */
@@ -484,7 +488,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     $("u-nome").textContent = nomeU; $("u-papel").textContent = S.dev ? "Desenvolvedor" : S.papel === "dono" ? "Dono" : "Recepção"; $("u-av").outerHTML = av(nomeU).replace('class="av"', 'class="av" id="u-av"');
     $("tela-entrar").hidden = true; $("app").hidden = false;
     await carregar(); assinar(); rota();
-    setInterval(() => { if (!S.gaveta) desenha(); }, 60000);
+    setInterval(() => { if (!S.gaveta && S.v !== "config") desenha(); }, 60000);
     registraCelular();
   }
   // No app Android do painel: cadastra este celular para receber aviso de pedido novo
@@ -775,6 +779,49 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
   document.addEventListener("submit", e => { if (e.target.id !== "f-tema") return; e.preventDefault(); const t = lerTema(), m = avisoTema(t), err = $("t-err"); if (m) { err.textContent = m; err.hidden = false; return; } salvaTema(t, "Cores salvas. O site já usa elas."); });
   document.addEventListener("click", e => { if (e.target.id === "t-padrao" && confirm("Voltar às cores padrão do sistema (azul-marinho e laranja)?")) salvaTema({}, "Cores padrão de volta."); });
 
+  /* ---------- perguntas frequentes do site ---------- */
+  const linhaFaq = (x = {}) => `<div class="faq-ed"><label>Pergunta<input data-faq-p maxlength="140" value="${esc(x.p || "")}" placeholder="Ex.: Aceitam animais?"></label><label>Resposta<textarea data-faq-r maxlength="600" placeholder="Ex.: Sim, cães de pequeno porte, com aviso antes.">${esc(x.r || "")}</textarea></label><button class="ic" type="button" data-faq="tirar" aria-label="Tirar esta pergunta" title="Tirar">${ic("lixo")}</button></div>`;
+  function cartaoFaq(p) {
+    const l = Array.isArray(p.faq) ? p.faq : [];
+    return `<form class="cartao bloco" id="f-faq" novalidate style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Dúvidas no site</h2><span class="suave" style="font-size:12px">${l.length} de 15</span></div>
+      <p class="suave" style="font-size:13px">O site já responde sozinho horários, reserva, crianças, café, Wi-Fi, como chegar, pagamento, cancelamento e WhatsApp, com o que está cadastrado. Escreva aqui o que mais perguntam (animais, estacionamento, roupa de cama…). Se repetir um assunto, vale a sua resposta.</p>
+      <div id="faq-lista" style="display:grid;gap:12px">${l.map(linhaFaq).join("")}</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn--borda" type="button" data-faq="mais">Adicionar pergunta</button><button class="btn btn--cheio" type="submit">Salvar dúvidas</button></div>
+      <p class="erro" id="faq-err" role="alert" hidden></p></form>`;
+  }
+  function cartaoSenha() {
+    return `<form class="cartao bloco" id="f-senha" novalidate style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Trocar senha</h2></div>
+      <div class="campos"><label>Nova senha<input id="s-nova" type="password" autocomplete="new-password" minlength="8" maxlength="72"></label><label>Repita a nova senha<input id="s-rep" type="password" autocomplete="new-password" maxlength="72"></label></div>
+      <p class="erro" id="s-err" role="alert" hidden></p>
+      <div><button class="btn btn--cheio" type="submit">Trocar senha</button></div></form>`;
+  }
+  document.addEventListener("click", e => {
+    const b = e.target.closest("[data-faq]"); if (!b) return;
+    if (b.dataset.faq === "mais") { const box = $("faq-lista"); if (box.children.length >= 15) { toast("Até 15 perguntas."); return; } box.insertAdjacentHTML("beforeend", linhaFaq()); box.lastElementChild.querySelector("input").focus(); }
+    if (b.dataset.faq === "tirar") b.closest(".faq-ed").remove();
+  });
+  document.addEventListener("submit", async e => {
+    if (e.target.id === "f-faq") {
+      e.preventDefault(); const err = $("faq-err"); err.hidden = true;
+      const faq = [...document.querySelectorAll("#faq-lista .faq-ed")].map(r => ({ p: r.querySelector("[data-faq-p]").value.trim(), r: r.querySelector("[data-faq-r]").value.trim() })).filter(x => x.p || x.r);
+      if (faq.some(x => !x.p || !x.r)) { err.textContent = "Cada pergunta precisa de uma resposta (e cada resposta, de uma pergunta)."; err.hidden = false; return; }
+      const btn = e.target.querySelector('[type="submit"]'); btn.disabled = true;
+      const res = await sb.from("pousadas").update({ faq }).eq("id", S.pousada.id).select(COLS).single(); btn.disabled = false;
+      if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
+      S.pousada = res.data; toast("Dúvidas salvas. Já aparecem no site."); desenha();
+    }
+    if (e.target.id === "f-senha") {
+      e.preventDefault(); const err = $("s-err"); err.hidden = true;
+      const nova = $("s-nova").value, rep = $("s-rep").value;
+      if (nova.length < 8) { err.textContent = "A senha precisa ter pelo menos 8 caracteres."; err.hidden = false; return; }
+      if (nova !== rep) { err.textContent = "As duas senhas não são iguais."; err.hidden = false; return; }
+      const btn = e.target.querySelector('[type="submit"]'); btn.disabled = true;
+      const { error } = await sb.auth.updateUser({ password: nova }); btn.disabled = false;
+      if (error) { err.textContent = /different|same/i.test(error.message) ? "A nova senha precisa ser diferente da atual." : /weak|short|least/i.test(error.message) ? "Senha fraca. Use pelo menos 8 caracteres, misturando letras e números." : errText(error); err.hidden = false; return; }
+      $("s-nova").value = ""; $("s-rep").value = ""; toast("Senha trocada. Use a nova na próxima vez que entrar.");
+    }
+  });
+
   function vConfig() {
     const p = S.pousada;
     return `<div class="cab"><div><h1>Configurações</h1><p>O horário de saída define quando uma estadia fica atrasada.</p></div></div>
@@ -796,6 +843,8 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <p class="suave" style="font-size:13px">Mande este link no WhatsApp ou imprima o QR code para o balcão. O hóspede escolhe as datas e o quarto e preenche a ficha. O pedido aparece aqui para você confirmar.</p>
         <div class="site-link"><input id="c-link" readonly value="${esc(urlSite())}" aria-label="Link do site"><button class="btn btn--borda" type="button" data-acao="copiar-link">Copiar link</button></div>
         <div class="qr"><div class="img" id="qr" role="img" aria-label="QR code do site da pousada"></div><div style="display:grid;gap:8px;justify-items:start"><p class="suave" style="font-size:13px">Aponte a câmera do celular para testar.</p><button class="btn btn--cheio" type="button" data-acao="imprimir-qr">Imprimir QR code</button></div></div></section>
+      ${S.papel === "dono" ? cartaoFaq(p) : ""}
+      ${cartaoSenha()}
       ${S.papel === "dono" ? `<section class="cartao bloco" style="max-width:620px;margin-top:14px;display:grid;gap:12px"><div class="bloco-cab" style="margin:0"><h2>Avaliações dos hóspedes</h2><span class="suave" style="font-size:12px">${(S.aval || []).length}</span></div>
         <p class="suave" style="font-size:13px">O hóspede avalia pela página do pedido depois da saída, e a avaliação aparece direto no site. Se alguma for ofensiva, remova aqui.</p>
         ${(S.aval || []).length ? (S.aval || []).map(a => `<div class="linha-lista"><div><b style="color:#e0a100">${"★".repeat(a.nota)}<span style="color:var(--linha)">${"★".repeat(5 - a.nota)}</span></b> <span class="d" style="display:inline">${esc(a.nome)} · ${dmy(String(a.criado_em).slice(0, 10))}</span>${a.texto ? `<span class="d">${esc(a.texto)}</span>` : ""}</div><button class="ic" type="button" data-acao="aval-remover" data-id="${esc(a.id)}" aria-label="Remover avaliação de ${esc(a.nome)}" title="Remover">${ic("lixo")}</button></div>`).join("") : '<p class="vazio">Nenhuma avaliação ainda.</p>'}</section>` : ""}
@@ -999,7 +1048,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
     if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
     S.pousada = res.data; marca(); toast("Configurações salvas."); desenha();
   });
-  document.addEventListener("visibilitychange", async () => { if (!document.hidden && S.pousada && !S.gaveta) { await carregar(); desenha(); } });
+  document.addEventListener("visibilitychange", async () => { if (!document.hidden && S.pousada && !S.gaveta) { await carregar(); if (S.v !== "config") desenha(); } });
   iniciar();
 })();
 </script>

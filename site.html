@@ -177,6 +177,23 @@ h2.titulo { font-variation-settings: "wdth" 80, "opsz" 72; font-size: clamp(34px
 .visor .prox { right: 14px; top: 50%; transform: translateY(-50%); }
 
 /* bom saber */
+.faq { display: grid; gap: 10px; max-width: 860px; }
+.faq-i { border: 1px solid var(--fio); border-radius: 14px; background: var(--c60, #fff); transition: border-color .2s; }
+.faq-i[open] { border-color: var(--titulo, var(--azul)); }
+.faq-i summary { list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 18px; font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 18px; font-weight: 700; }
+.faq-i summary::-webkit-details-marker { display: none; }
+.faq-i summary i { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--titulo, var(--azul)); position: relative; transition: transform .25s; }
+.faq-i summary i::before, .faq-i summary i::after { content: ""; position: absolute; left: 50%; top: 50%; width: 11px; height: 2px; background: #fff; border-radius: 2px; transform: translate(-50%, -50%); }
+.faq-i summary i::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform .25s; }
+.faq-i[open] summary i::after { transform: translate(-50%, -50%) rotate(0deg); }
+.faq-i summary:focus-visible { outline: 2px solid var(--titulo, var(--azul)); outline-offset: 2px; border-radius: 12px; }
+.faq-r { padding: 0 18px 18px; color: var(--sobre-preto); display: grid; gap: 12px; justify-items: start; }
+.faq-r p { margin: 0; }
+.zap-flutua { position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 35; display: inline-flex; align-items: center; gap: 8px; height: 52px; padding: 0 18px 0 14px; border-radius: 26px; background: #1fa855; color: #fff; font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 10px 24px -8px rgba(0, 0, 0, .45); transform: translateY(90px); opacity: 0; transition: transform .35s, opacity .35s; }
+.zap-flutua.ve { transform: none; opacity: 1; }
+.zap-flutua svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 560px) { .zap-flutua span { display: none; } .zap-flutua { padding: 0; width: 54px; justify-content: center; } }
+@media print { .zap-flutua { display: none; } }
 .saber { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0; border-top: 1px solid var(--fio); }
 .saber div { padding: 20px 24px 20px 0; border-bottom: 1px solid var(--fio); }
 .saber dt { font-family: var(--display); font-variation-settings: "wdth" 85; font-size: 19px; font-weight: 700; margin-bottom: 6px; }
@@ -600,7 +617,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
     temSaber: !!(P.como_chegar || P.politica || (P.pagamentos || []).length) };
   raiz.innerHTML = `
   ${MOD ? MOD.topo(C) : `<header class="topo"><div class="dentro"><a class="marca" href="#inicio"><i class="${LOGO ? "com-logo" : ""}">${LOGO ? `<img src="${LOGO.icone}" alt="">` : DESENHO.marca || esc(iniciais(P.nome))}</i><span>${esc(P.nome)}</span></a>
-    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
+    <nav><a class="l" href="#quartos">Quartos</a><a class="l" href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${(CASA && CASA.avaliacoes) || (P.avaliacoes || []).length ? '<a class="l" href="#avaliacoes">Avaliações</a>' : ""}${CASA ? '<a class="l" href="#sobre">Sobre a casa</a>' : ""}<a class="l" href="#duvidas">Dúvidas</a>${P.como_chegar || P.politica || (P.pagamentos || []).length ? '<a class="l" href="#saber">Bom saber</a>' : ""}<a class="btn btn--cheio" href="#bilhete">Pedir reserva</a></nav></div></header>`}
   <main id="inicio">
     ${MOD ? MOD.abertura(C) : `
     <section class="abertura" style="--n:${Math.min(Array.from(String(P.nome)).length, 30)}">${MAR}${DESENHO.topo}${DESENHO.agua}<div class="dentro">
@@ -636,6 +653,7 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
 
     ${avaliacoes()}
     ${sobreCasa()}
+    ${duvidas()}
     ${saber()}
   </main>
   ${MOD && MOD.rodape ? MOD.rodape(C) : `<footer class="rodape"><div class="dentro"><span>${esc(P.nome)}${lugar ? ", " + esc(lugar) : ""}</span><span style="display:flex;gap:16px;flex-wrap:wrap">${P.email ? `<a href="mailto:${esc(P.email)}">${esc(P.email)}</a>` : ""}<a href="reserva.html?p=${encodeURIComponent(slug)}">Acompanhar pedido</a>${CASA ? '<a href="#sobre">Sobre a casa</a>' : ""}<a href="privacidade.html?p=${encodeURIComponent(slug)}">Aviso de Privacidade</a></span></div></footer>`}`;
@@ -646,6 +664,26 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
   /* ---------- movimento: rolagem, revelações e números ---------- */
   const topo = document.querySelector(".topo"); let rolPedido = false;
   const rola = () => { rolPedido = false; const h = document.documentElement.scrollHeight - innerHeight; topo.style.setProperty("--rol", h > 0 ? Math.min(1, scrollY / h).toFixed(4) : 0); topo.classList.toggle("rolou", scrollY > 8); };
+  // botão flutuante do WhatsApp: aparece depois que a pessoa rola um pouco
+  if (zap) {
+    document.body.insertAdjacentHTML("beforeend", `<a class="zap-flutua" href="${esc(linkZap(`Olá! Vim pelo site da ${P.nome} e tenho uma dúvida.`))}" target="_blank" rel="noopener" aria-label="Falar com a pousada no WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.6 7.4L3.5 20.5l1.5-4.3A8.5 8.5 0 1 1 20.5 11.6z"/><path d="M9 9.2c.3 2.4 2.4 4.6 4.9 5"/></svg><span>WhatsApp</span></a>`);
+    const zf = document.querySelector(".zap-flutua"); let zPed = false;
+    const zMostra = () => { zPed = false; zf.classList.toggle("ve", scrollY > innerHeight * .7); };
+    addEventListener("scroll", () => { if (!zPed) { zPed = true; requestAnimationFrame(zMostra); } }, { passive: true }); zMostra();
+  }
+  // dados para o Google entender a página (hospedagem + perguntas frequentes)
+  try {
+    const foto = (P.fotos || []).find(u => /^https:\/\//.test(u));
+    const hosp = { "@context": "https://schema.org", "@type": "LodgingBusiness", name: P.nome, url: location.origin + location.pathname + "?p=" + encodeURIComponent(slug),
+      checkinTime: P.checkin_hora, checkoutTime: P.checkout_hora,
+      address: { "@type": "PostalAddress", addressLocality: P.cidade || undefined, streetAddress: (CASA && CASA.endereco) || undefined, addressCountry: "BR" } };
+    if (P.descricao && /\p{L}{3}/u.test(P.descricao)) hosp.description = P.descricao;
+    if (zap) hosp.telephone = "+" + zap;
+    if (foto) hosp.image = foto;
+    if (precoMin) hosp.priceRange = `A partir de ${brl(precoMin)}`;
+    const faqLd = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: perguntas().map(x => ({ "@type": "Question", name: x.p, acceptedAnswer: { "@type": "Answer", text: x.r } })) };
+    const ld = document.createElement("script"); ld.type = "application/ld+json"; ld.textContent = JSON.stringify([hosp, faqLd]).replace(/</g, "\\u003c"); document.head.appendChild(ld);
+  } catch (e) { /* só enfeite para buscadores: se falhar, a página segue */ }
   if (MOD && MOD.fim) MOD.fim(C, MOV);
   addEventListener("scroll", () => { if (!rolPedido) { rolPedido = true; requestAnimationFrame(rola); } }, { passive: true }); rola();
 
@@ -718,6 +756,32 @@ h1.nome .le { display: inline-block; transform-origin: 0 100%; }
       <div class="onde-casa"><div><h3>Endereço e contato</h3><address>${esc(CASA.endereco)}</address>${CASA.zapTexto ? `<p>WhatsApp: ${esc(CASA.zapTexto)}</p>` : ""}</div><div class="acoes-casa">${acoes}</div></div></div></section>`;
   }
   function linkZap0(num, msg) { return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`; }
+
+  /* ---------- perguntas frequentes: as da pousada (painel) + as que o site monta com o que já sabe ---------- */
+  function perguntas() {
+    const lista = (Array.isArray(P.faq) ? P.faq : []).filter(x => x && x.p && x.r).map(x => ({ p: String(x.p), r: String(x.r) }));
+    const tem = re => lista.some(x => re.test(x.p));
+    const add = (re, p, r, link) => { if (r && !tem(re)) lista.push({ p, r, link }); };
+    add(/reserv/i, "Como faço a reserva?", "Escolha as datas no bilhete, toque em Ver quartos livres, escolha o quarto e envie sua ficha. A pousada confirma e você acompanha o pedido pelo número que aparece no fim, em Acompanhar pedido."
+      + (P.cobra_sinal ? ` Para confirmar, a pousada pede um sinal de ${P.sinal_percentual}% por Pix.` : ""));
+    add(/hor[aá]rio|entrada|sa[ií]da|check/i, "Que horas é a entrada e a saída?", `A entrada é a partir das ${P.checkin_hora} e a saída até as ${P.checkout_hora}.`);
+    if (P.cobranca === "pessoa") add(/crian/i, "Criança paga?", "Até 4 anos não paga. De 5 a 12 anos paga 50% da diária. A partir de 13 anos paga a diária inteira, como adulto.");
+    const cafe = CASA && (CASA.blocos || []).find(b => /caf[eé]/i.test(b[0]));
+    if (cafe) add(/caf[eé]/i, "Tem café da manhã?", "Sim. " + cafe[1].join(" "));
+    const wifi = Q.some(q => /wi-?fi/i.test(q.descricao || "")), gratis = Q.some(q => /wi-?fi gr[aá]tis/i.test(q.descricao || ""));
+    if (wifi) add(/wi-?fi|internet/i, "Tem Wi-Fi?", gratis ? "Sim, Wi-Fi grátis." : "Sim, os quartos têm Wi-Fi.");
+    const chegar = [P.acesso && ACESSO[P.acesso], P.como_chegar, CASA && CASA.endereco].filter(Boolean).join(". ");
+    if (chegar) add(/cheg|endere/i, "Como chego?", chegar + ".", CASA && CASA.mapa ? { href: CASA.mapa, txt: "Abrir no Google Maps" } : null);
+    if (P.aceita_pix || (P.pagamentos || []).length) add(/pagamento|pagar|\bpix\b/i, "Como posso pagar?", [(P.pagamentos || []).length ? P.pagamentos.join(", ") + "." : "", P.aceita_pix ? "O Pix aparece na página do pedido, depois que você envia a ficha." : ""].filter(Boolean).join(" "));
+    if (P.politica) add(/cancel/i, "Posso cancelar?", P.politica + " Para pedir o cancelamento, abra o seu pedido em Acompanhar pedido.");
+    if (zap) add(/whats|falar|contato/i, "Como falo com a pousada?", "Pelo WhatsApp, é só chamar.", { href: linkZap(`Olá! Vim pelo site da ${P.nome} e tenho uma dúvida.`), txt: "Chamar no WhatsApp" });
+    return lista.slice(0, 15);
+  }
+  function duvidas() {
+    const l = perguntas(); if (!l.length) return "";
+    return `<section class="secao" id="duvidas"><div class="dentro"><div class="secao-cab"><h2 class="titulo">Dúvidas</h2><p>O que os hóspedes mais perguntam antes de reservar.</p></div>
+      <div class="faq">${l.map((x, i) => `<details class="faq-i"${i === 0 ? " open" : ""}><summary><span>${esc(x.p)}</span><i aria-hidden="true"></i></summary><div class="faq-r"><p>${esc(x.r)}</p>${x.link ? `<a class="btn btn--borda" href="${esc(x.link.href)}" target="_blank" rel="noopener">${esc(x.link.txt)}</a>` : ""}</div></details>`).join("")}</div></div></section>`;
+  }
 
   function saber() {
     const it = [];
