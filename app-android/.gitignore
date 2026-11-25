@@ -1,0 +1,6 @@
+assinatura.properties
+local.properties
+*.jks
+.gradle/
+build/
+app/build/

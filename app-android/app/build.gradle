@@ -1,0 +1,35 @@
+plugins { id "com.android.application" }
+
+// A chave de assinatura fica FORA do git: app-android/assinatura.properties (veja LEIA-ME.md)
+def assin = new Properties()
+def arqAssin = rootProject.file("assinatura.properties")
+if (arqAssin.exists()) arqAssin.withInputStream { assin.load(it) }
+
+android {
+    namespace "app.pousada.painel"
+    compileSdk 34
+    defaultConfig {
+        applicationId "app.pousada.painel"
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+    }
+    signingConfigs {
+        release {
+            if (arqAssin.exists()) {
+                storeFile rootProject.file(assin["arquivo"])
+                storePassword assin["senha"]
+                keyAlias assin["apelido"]
+                keyPassword assin["senha"]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (arqAssin.exists()) signingConfig signingConfigs.release
+        }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
