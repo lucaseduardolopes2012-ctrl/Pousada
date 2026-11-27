@@ -174,6 +174,7 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
 .menu-filtro button:hover { background: var(--campo); }
 .menu-filtro button[aria-checked="true"] { background: var(--c10-clara); font-weight: 600; }
 .menu-filtro button span { color: var(--suave); font-variant-numeric: tabular-nums; }
+.aviso-site { margin: 0 0 14px; padding: 12px 14px; border-radius: 12px; border: 1px solid #e0a100; background: #fff7e0; color: #5a4300; font-size: 14px; }
 .filtro-ativo { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 7px; color: var(--nevoa); background: var(--azul); font-size: 12px; font-weight: 600; margin-bottom: 14px; }
 .filtro-ativo button { width: 20px; height: 20px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; color: var(--suave); border-radius: 5px; }
 .filtro-ativo button svg.i { width: 13px; height: 13px; }
@@ -683,6 +684,10 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
       <div class="acoes-cab"><div class="filtro-caixa"><button class="btn btn--borda" data-acao="filtro" aria-expanded="${S.menuFiltro}" aria-haspopup="true">${ic("filtro")}Filtro</button>
         ${S.menuFiltro ? `<div class="menu-filtro" role="menu">${FILTROS.map(([k, t]) => `<button role="menuitemradio" aria-checked="${S.filtro === k}" data-filtro="${k}">${t}<span>${sits.filter(s => casa(s.k, k)).length}</span></button>`).join("")}</div>` : ""}</div>
         <button class="btn btn--cheio" data-acao="novo-quarto">${ic("mais")}Adicionar quarto</button></div></div>
+      ${(() => { const vis = S.quartos.filter(q => q.ativo && Number(q.diaria) > 0).length, fora = S.quartos.filter(q => !q.ativo).length, zero = S.quartos.filter(q => q.ativo && !(Number(q.diaria) > 0)).length;
+        if (!S.quartos.length) return "";
+        if (!vis) return `<div class="aviso-site" role="alert"><b>O site está sem quartos.</b> ${fora ? `${plural(fora, "quarto está fora de uso", "quartos estão fora de uso")}` : ""}${fora && zero ? " e " : ""}${zero ? `${plural(zero, "está sem diária", "estão sem diária")}` : ""}. Abra cada quarto em <b>Editar</b>, coloque a diária e deixe <b>Quarto em uso</b> marcado.</div>`;
+        return fora || zero ? `<div class="aviso-site"><b>${vis} de ${S.quartos.length} aparecem no site.</b> ${fora ? `${plural(fora, "está fora de uso", "estão fora de uso")}` : ""}${fora && zero ? " e " : ""}${zero ? `${plural(zero, "está sem diária", "estão sem diária")}` : ""}.</div>` : ""; })()}
       ${S.filtro !== "todos" ? `<span class="filtro-ativo">${rotF}: ${lista.length}<button data-filtro="todos" aria-label="Tirar filtro">${ic("x")}</button></span>` : ""}
       <div class="quartos">${lista.map(s => cartaoQuarto(s.q)).join("") || `<div class="vazio" style="grid-column:1/-1">Nenhum quarto encontrado.</div>`}</div>`;
   }
@@ -902,19 +907,24 @@ table.tab { width: 100%; border-collapse: collapse; min-width: 760px; }
         <label class="todo">Nome ou número<input id="q-nome" maxlength="60" value="${esc(f.nome)}"></label>
         <label>Tipo<input id="q-tipo" maxlength="40" value="${esc(f.tipo)}" list="tipos"><datalist id="tipos"><option>Casal</option><option>Solteiro</option><option>Duplo</option><option>Triplo</option><option>Família</option><option>Suíte</option><option>Chalé</option></datalist></label>
         <label>Cabem<input id="q-cap" type="number" min="1" max="20" value="${f.capacidade}"></label>
-        <label class="todo">Diária (R$)<input id="q-dia" type="number" min="0" step="0.01" value="${esc(f.diaria)}"></label>
-        <label class="todo" style="display:flex;gap:10px;align-items:center"><input id="q-ativo" type="checkbox" style="width:18px;height:18px;accent-color:var(--salvia)" ${f.ativo ? "checked" : ""}> Quarto em uso</label></div>
+        <label class="todo">${S.pousada.cobranca === "pessoa" ? "Diária por pessoa (R$)" : "Diária do quarto (R$)"} <small>${S.pousada.cobranca === "pessoa" ? "o valor de UMA pessoa por noite" : "o valor do quarto por noite"}</small><input id="q-dia" type="text" inputmode="decimal" autocomplete="off" placeholder="Ex.: 180 ou 180,50" value="${f.diaria === "" ? "" : esc(String(Number(f.diaria) || "").replace(".", ","))}"></label>
+        <label class="todo" style="display:flex;gap:10px;align-items:center"><input id="q-ativo" type="checkbox" style="width:18px;height:18px;accent-color:var(--salvia)" ${f.ativo ? "checked" : ""}> Quarto em uso <small>(desmarcado, ele some do site)</small></label></div>
         <p class="erro" id="q-err" role="alert" hidden></p></form>
       <footer><button class="btn btn--cheio btn--grande" type="submit" form="f-q" style="flex:1">${q ? "Salvar quarto" : "Adicionar quarto"}</button></footer>`);
     $("f-q").addEventListener("submit", async e => {
       e.preventDefault(); const err = $("q-err"); err.hidden = true;
-      const d = { nome: $("q-nome").value.trim(), tipo: $("q-tipo").value.trim(), capacidade: Number($("q-cap").value), diaria: Number($("q-dia").value || 0), ativo: $("q-ativo").checked };
+      // aceita 180, 180.50, 180,50, 1.000,50 e "R$ 180"
+      const bruto = $("q-dia").value.replace(/[^\d.,]/g, "");
+      const numero = !bruto ? NaN : bruto.includes(",") ? Number(bruto.replace(/\./g, "").replace(",", ".")) : /^\d{1,3}(\.\d{3})+$/.test(bruto) ? Number(bruto.replace(/\./g, "")) : Number(bruto);
+      const d = { nome: $("q-nome").value.trim(), tipo: $("q-tipo").value.trim(), capacidade: Number($("q-cap").value), diaria: Math.round(numero * 100) / 100, ativo: $("q-ativo").checked };
       if (!d.nome) { err.textContent = "Dê um nome ou número ao quarto."; err.hidden = false; return; }
+      if (!(d.diaria >= 0) || d.diaria > 100000) { err.textContent = "Coloque a diária só com números, por exemplo 180 ou 180,50."; err.hidden = false; return; }
+      if (d.ativo && d.diaria <= 0) { err.textContent = "Coloque a diária para o quarto aparecer no site. Se ainda não tem o valor, desmarque \"Quarto em uso\"."; err.hidden = false; return; }
       if (!(d.capacidade >= 1 && d.capacidade <= 20)) { err.textContent = "Coloque de 1 a 20 pessoas."; err.hidden = false; return; }
       const res = q ? await sb.from("quartos").update(d).eq("id", q.id).select().single() : await sb.from("quartos").insert({ ...d, pousada_id: S.pousada.id }).select().single();
       if (res.error) { err.textContent = errText(res.error); err.hidden = false; return; }
       const i = S.quartos.findIndex(x => x.id === res.data.id); if (i >= 0) S.quartos[i] = res.data; else S.quartos.push(res.data);
-      S.quartos.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); toast(q ? "Quarto salvo." : "Quarto adicionado."); fechaGaveta();
+      S.quartos.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR", { numeric: true })); toast(!d.ativo ? "Quarto salvo, mas está FORA DE USO: não aparece no site." : q ? "Quarto salvo." : "Quarto adicionado."); fechaGaveta();
     });
   }
 

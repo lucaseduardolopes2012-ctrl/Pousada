@@ -1,0 +1,2 @@
+-- v24: quarto sem diária (R$ 0) não aparece no site nem entra na busca de quartos livres.
+-- (site_pousada e quartos_disponiveis passaram a filtrar "ativo e diaria > 0"; definições completas aplicadas no banco)
